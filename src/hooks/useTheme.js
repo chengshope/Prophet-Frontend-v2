@@ -8,7 +8,9 @@ export const useTheme = () => {
   // Check for saved theme preference or default to light mode
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const prefersDark = window.matchMedia(
+      '(prefers-color-scheme: dark)'
+    ).matches;
 
     if (savedTheme) {
       setIsDarkMode(savedTheme === 'dark');
@@ -19,7 +21,10 @@ export const useTheme = () => {
 
   // Apply theme to document
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+    document.documentElement.setAttribute(
+      'data-theme',
+      isDarkMode ? 'dark' : 'light'
+    );
     localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
   }, [isDarkMode]);
 

@@ -9,7 +9,17 @@ import {
   HomeOutlined,
   BulbOutlined,
 } from '@ant-design/icons';
-import { Layout, Menu, Button, Typography, Space, Avatar, Dropdown, theme, Breadcrumb } from 'antd';
+import {
+  Layout,
+  Menu,
+  Button,
+  Typography,
+  Space,
+  Avatar,
+  Dropdown,
+  theme,
+  Breadcrumb,
+} from 'antd';
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
@@ -163,7 +173,12 @@ const MainLayout = () => {
           )}
         </div>
 
-        <Menu mode='inline' selectedKeys={[location.pathname]} style={{ borderRight: 0 }} items={menuItems} />
+        <Menu
+          mode="inline"
+          selectedKeys={[location.pathname]}
+          style={{ borderRight: 0 }}
+          items={menuItems}
+        />
       </Sider>
 
       <Layout>
@@ -179,7 +194,7 @@ const MainLayout = () => {
         >
           <Space>
             <Button
-              type='text'
+              type="text"
               icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
               onClick={() => setCollapsed(!collapsed)}
               style={{ fontSize: '16px', width: 64, height: 64 }}
@@ -187,7 +202,11 @@ const MainLayout = () => {
           </Space>
 
           <Space>
-            <Dropdown menu={{ items: userMenuItems }} placement='bottomRight' trigger={['click']}>
+            <Dropdown
+              menu={{ items: userMenuItems }}
+              placement="bottomRight"
+              trigger={['click']}
+            >
               <Space style={{ cursor: 'pointer' }}>
                 <Avatar icon={<UserOutlined />} />
                 <span>{user?.name || 'User'}</span>
@@ -197,7 +216,10 @@ const MainLayout = () => {
         </Header>
 
         <Content style={{ margin: '24px' }}>
-          <Breadcrumb items={getBreadcrumbItems()} style={{ marginBottom: '16px' }} />
+          <Breadcrumb
+            items={getBreadcrumbItems()}
+            style={{ marginBottom: '16px' }}
+          />
 
           <div
             style={{

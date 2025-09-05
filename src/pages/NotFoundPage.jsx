@@ -6,11 +6,11 @@ const NotFoundPage = () => {
 
   return (
     <Result
-      status='404'
-      title='404'
-      subTitle='Sorry, the page you visited does not exist.'
+      status="404"
+      title="404"
+      subTitle="Sorry, the page you visited does not exist."
       extra={
-        <Button type='primary' onClick={() => navigate('/login')}>
+        <Button type="primary" onClick={() => navigate('/login')}>
           Back to Login
         </Button>
       }

@@ -12,7 +12,7 @@ const LoadingSpinner = ({ tip = 'Loading...' }) => {
           alignItems: 'center',
         }}
       >
-        <Spin size='large' tip={tip} />
+        <Spin size="large" tip={tip} />
       </Content>
     </Layout>
   );

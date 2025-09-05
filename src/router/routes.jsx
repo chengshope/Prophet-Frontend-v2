@@ -45,7 +45,9 @@ export const layout = (layoutComponent, children) => ({
 export const prefix = (pathPrefix, routes) =>
   routes.map((route) => ({
     ...route,
-    path: route.index ? undefined : `${pathPrefix}/${route.path}`.replace(/\/+/g, '/'),
+    path: route.index
+      ? undefined
+      : `${pathPrefix}/${route.path}`.replace(/\/+/g, '/'),
   }));
 
 export const protect = (element) => <ProtectedRoute>{element}</ProtectedRoute>;
@@ -53,10 +55,13 @@ export const protect = (element) => <ProtectedRoute>{element}</ProtectedRoute>;
 // Route configuration
 export const routeConfig = [
   // Root redirect
-  route('', <Navigate to='/login' replace />),
+  route('', <Navigate to="/login" replace />),
 
   // Auth routes with auth layout
-  layout(<AuthLayout />, [route('login', <LoginPage />), route('forgot-password', <ForgotPasswordPage />)]),
+  layout(<AuthLayout />, [
+    route('login', <LoginPage />),
+    route('forgot-password', <ForgotPasswordPage />),
+  ]),
 
   // Main app routes with main layout (protected)
   layout(protect(<MainLayout />), [
@@ -64,13 +69,16 @@ export const routeConfig = [
     route('dashboard', protect(<DashboardPage />)),
 
     // Profile routes
-    ...prefix('profile', [index(protect(<ProfilePage />)), route('settings', protect(<SettingsPage />))]),
+    ...prefix('profile', [
+      index(protect(<ProfilePage />)),
+      route('settings', protect(<SettingsPage />)),
+    ]),
 
     // Demo routes
     ...prefix('demo', [route('counter', protect(<CounterDemoPage />))]),
   ]),
 
-  // 404 and catch-all
+  // 404 and catch-allF
   route('404', <NotFoundPage />),
   route('*', <NotFoundPage />),
 ];

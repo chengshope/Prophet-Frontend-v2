@@ -46,7 +46,9 @@ const AuthLayout = () => {
           color: 'rgba(255, 255, 255, 0.8)',
         }}
       >
-        <Text style={{ color: 'rgba(255, 255, 255, 0.8)' }}>©2025 Sparebox Technologes</Text>
+        <Text style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+          ©2025 Sparebox Technologes
+        </Text>
       </Footer>
     </Layout>
   );
