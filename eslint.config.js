@@ -55,9 +55,6 @@ export default [
       },
     },
     rules: {
-      // Prettier integration
-      'prettier/prettier': 'error',
-
       // Formatting rules that align with Prettier
       'eol-last': ['error', 'always'], // require exactly one newline at EOF
       'no-multiple-empty-lines': ['error', { max: 1, maxEOF: 0, maxBOF: 0 }], // no multiple empty lines, no empty lines at end/beginning
