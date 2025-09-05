@@ -7,21 +7,22 @@ export const lightTheme = {
     colorWarning: '#faad14',
     colorError: '#ff4d4f',
     colorInfo: '#1890ff',
-    
+
     // Background colors
     colorBgContainer: '#ffffff',
     colorBgElevated: '#ffffff',
     colorBgLayout: '#f5f5f5',
     colorBgSpotlight: '#ffffff',
-    
+
     // Border
     borderRadius: 8,
     borderRadiusLG: 12,
     borderRadiusSM: 6,
     borderRadiusXS: 4,
-    
+
     // Typography
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif',
+    fontFamily:
+      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif',
     fontSize: 14,
     fontSizeLG: 16,
     fontSizeXL: 20,
@@ -30,34 +31,35 @@ export const lightTheme = {
     fontSizeHeading3: 24,
     fontSizeHeading4: 20,
     fontSizeHeading5: 16,
-    
+
     // Spacing
     padding: 16,
     paddingLG: 24,
     paddingXL: 32,
     paddingSM: 12,
     paddingXS: 8,
-    
+
     margin: 16,
     marginLG: 24,
     marginXL: 32,
     marginSM: 12,
     marginXS: 8,
-    
+
     // Layout
     sizeStep: 4,
     sizeUnit: 4,
-    
+
     // Animation
     motionDurationFast: '0.1s',
     motionDurationMid: '0.2s',
     motionDurationSlow: '0.3s',
-    
+
     // Box shadow
     boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02)',
-    boxShadowSecondary: '0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05)',
+    boxShadowSecondary:
+      '0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05)',
   },
-  
+
   components: {
     // Button customization
     Button: {
@@ -70,7 +72,7 @@ export const lightTheme = {
       paddingInlineSM: 12,
       fontWeight: 500,
     },
-    
+
     // Input customization
     Input: {
       borderRadius: 8,
@@ -81,7 +83,7 @@ export const lightTheme = {
       paddingInlineLG: 16,
       paddingInlineSM: 8,
     },
-    
+
     // Card customization
     Card: {
       borderRadius: 12,
@@ -89,7 +91,7 @@ export const lightTheme = {
       headerBg: 'transparent',
       headerHeight: 56,
     },
-    
+
     // Form customization
     Form: {
       labelFontSize: 14,
@@ -98,7 +100,7 @@ export const lightTheme = {
       itemMarginBottom: 24,
       verticalLabelPadding: '0 0 8px',
     },
-    
+
     // Layout customization
     Layout: {
       headerBg: '#ffffff',
@@ -108,7 +110,7 @@ export const lightTheme = {
       triggerBg: '#ffffff',
       triggerColor: 'rgba(0, 0, 0, 0.65)',
     },
-    
+
     // Menu customization
     Menu: {
       itemBg: 'transparent',
@@ -123,7 +125,7 @@ export const lightTheme = {
       iconSize: 16,
       fontSize: 14,
     },
-    
+
     // Table customization
     Table: {
       borderRadius: 8,
@@ -135,7 +137,7 @@ export const lightTheme = {
       cellPaddingBlock: 16,
       cellPaddingInline: 16,
     },
-    
+
     // Modal customization
     Modal: {
       borderRadius: 12,
@@ -144,7 +146,7 @@ export const lightTheme = {
       titleFontSize: 18,
       titleColor: 'rgba(0, 0, 0, 0.85)',
     },
-    
+
     // Drawer customization
     Drawer: {
       borderRadius: 0,
@@ -153,27 +155,27 @@ export const lightTheme = {
       footerPaddingBlock: 16,
       footerPaddingInline: 24,
     },
-    
+
     // Typography customization
     Typography: {
       titleMarginBottom: '0.5em',
       titleMarginTop: '1.2em',
     },
-    
+
     // Notification customization
     Notification: {
       borderRadius: 8,
       paddingInline: 24,
       paddingBlock: 16,
     },
-    
+
     // Message customization
     Message: {
       borderRadius: 8,
       paddingInline: 16,
       paddingBlock: 12,
     },
-    
+
     // Breadcrumb customization
     Breadcrumb: {
       fontSize: 14,
@@ -183,7 +185,7 @@ export const lightTheme = {
       separatorColor: 'rgba(0, 0, 0, 0.45)',
       separatorMargin: 8,
     },
-    
+
     // Steps customization
     Steps: {
       iconSize: 32,
@@ -192,7 +194,7 @@ export const lightTheme = {
       titleLineHeight: 1.5,
       descriptionMaxWidth: 140,
     },
-    
+
     // Tabs customization
     Tabs: {
       itemColor: 'rgba(0, 0, 0, 0.65)',
@@ -206,11 +208,11 @@ export const lightTheme = {
       cardPaddingLG: '12px 20px',
     },
   },
-  
+
   // CSS variables for custom styling
   cssVar: true,
   hashed: false,
-}
+};
 
 // Dark theme configuration
 export const darkTheme = {
@@ -261,12 +263,12 @@ export const darkTheme = {
       rowHoverBg: '#262626',
     },
   },
-}
+};
 
 // Default theme (light)
-export const antdTheme = lightTheme
+export const antdTheme = lightTheme;
 
 // Theme getter function
 export const getTheme = (isDark = false) => {
-  return isDark ? darkTheme : lightTheme
-}
+  return isDark ? darkTheme : lightTheme;
+};

@@ -1,10 +1,10 @@
-import { ConfigProvider, theme } from 'antd'
-import { getTheme } from '../styles/antd-theme'
-import { ThemeContextProvider, useThemeContext } from '../contexts/ThemeContext'
+import { ConfigProvider, theme } from 'antd';
+import { ThemeContextProvider, useThemeContext } from '../contexts/ThemeContext';
+import { getTheme } from '../styles/antd-theme';
 
 const AntdConfigProvider = ({ children }) => {
-  const { isDarkMode } = useThemeContext()
-  const currentTheme = getTheme(isDarkMode)
+  const { isDarkMode } = useThemeContext();
+  const currentTheme = getTheme(isDarkMode);
 
   return (
     <ConfigProvider
@@ -15,17 +15,15 @@ const AntdConfigProvider = ({ children }) => {
     >
       {children}
     </ConfigProvider>
-  )
-}
+  );
+};
 
 const ThemeProvider = ({ children }) => {
   return (
     <ThemeContextProvider>
-      <AntdConfigProvider>
-        {children}
-      </AntdConfigProvider>
+      <AntdConfigProvider>{children}</AntdConfigProvider>
     </ThemeContextProvider>
-  )
-}
+  );
+};
 
-export default ThemeProvider
+export default ThemeProvider;
