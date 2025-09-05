@@ -6,7 +6,8 @@ import {
   Button,
   Typography,
   message,
-  Result
+  Result,
+  Flex
 } from 'antd'
 import { MailOutlined, ArrowLeftOutlined } from '@ant-design/icons'
 
@@ -50,8 +51,8 @@ const ForgotPasswordPage = () => {
   }
 
   return (
-    <div style={{ textAlign: 'center' }}>
-      <div style={{ marginBottom: '24px' }}>
+    <Flex vertical>
+      <div style={{ marginBottom: '24px', textAlign: 'center' }}>
         <Title level={2} style={{ marginBottom: '8px' }}>
           Forgot Password?
         </Title>
@@ -87,6 +88,7 @@ const ForgotPasswordPage = () => {
             htmlType="submit"
             loading={loading}
             block
+            style={{ marginTop: 12 }}
           >
             Send Reset Link
           </Button>
@@ -101,7 +103,7 @@ const ForgotPasswordPage = () => {
           </RouterLink>
         </Text>
       </div>
-    </div>
+    </Flex>
   )
 }
 

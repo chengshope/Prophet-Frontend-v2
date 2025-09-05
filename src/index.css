@@ -1,4 +1,4 @@
-/* Reset and base styles */
+/* Base reset styles - keep minimal here, detailed styles are in global.css */
 * {
   margin: 0;
   padding: 0;
@@ -11,12 +11,14 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #f5f5f5;
 }
 
 #root {
   min-height: 100vh;
 }
 
+/* Ant Design specific overrides */
 :where(.css-dev-only-do-not-override-kbg4zp).ant-form-large .ant-form-item .ant-form-item-label>label {
   height: unset;
 }

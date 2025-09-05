@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Outlet, useNavigate, useLocation } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
+import { useThemeContext } from '../contexts/ThemeContext'
 import {
   Layout,
   Menu,
@@ -20,7 +21,8 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   ExperimentOutlined,
-  HomeOutlined
+  HomeOutlined,
+  BulbOutlined
 } from '@ant-design/icons'
 import { logout } from '../store/slices/authSlice'
 
@@ -33,6 +35,7 @@ const MainLayout = () => {
   const location = useLocation()
   const dispatch = useDispatch()
   const { user } = useSelector((state) => state.auth)
+  const { isDarkMode, toggleTheme } = useThemeContext()
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken()
@@ -92,6 +95,12 @@ const MainLayout = () => {
       icon: <SettingOutlined />,
       label: 'Settings',
       onClick: () => navigate('/profile/settings')
+    },
+    {
+      key: 'theme',
+      icon: <BulbOutlined />,
+      label: isDarkMode ? 'Light Mode' : 'Dark Mode',
+      onClick: toggleTheme
     },
     {
       type: 'divider'
