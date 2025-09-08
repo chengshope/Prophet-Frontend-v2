@@ -1,30 +1,29 @@
 import {
+  BulbOutlined,
   DashboardOutlined,
-  UserOutlined,
-  SettingOutlined,
+  ExperimentOutlined,
+  HomeOutlined,
   LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  ExperimentOutlined,
-  HomeOutlined,
-  BulbOutlined,
+  SettingOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
 import {
+  Avatar,
+  Breadcrumb,
+  Button,
+  Dropdown,
   Layout,
   Menu,
-  Button,
-  Typography,
   Space,
-  Avatar,
-  Dropdown,
   theme,
-  Breadcrumb,
+  Typography,
 } from 'antd';
 import { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useThemeContext } from '../contexts/ThemeContext';
-import { logout } from '../store/slices/authSlice';
 
 const { Header, Sider, Content } = Layout;
 const { Title } = Typography;
@@ -109,7 +108,7 @@ const MainLayout = () => {
       key: 'logout',
       icon: <LogoutOutlined />,
       label: 'Logout',
-      onClick: handleLogout,
+      onClick: () => {},
       danger: true,
     },
   ];
