@@ -10,58 +10,23 @@ import {
   Space,
   Typography,
 } from 'antd';
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import {
-  clearError,
-  loginFailure,
-  loginStart,
-  loginSuccess,
-} from '../../store/slices/authSlice';
+import { Link as RouterLink } from 'react-router-dom';
+import { useLoginMutation } from '../../api/authApi';
 
-const { Title, Text, Link } = Typography;
+const { Title, Text } = Typography;
 
 const LoginPage = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { loading, error } = useSelector((state) => state.auth);
-
-  useEffect(() => {
-    // Clear any previous errors when component mounts
-    if (error) {
-      dispatch(clearError());
-    }
-  }, []);
+  const [login, { isLoading }] = useLoginMutation();
 
   const onFinish = async (values) => {
-    dispatch(loginStart());
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Mock user data
-      const userData = {
-        id: 1,
+      await login({
         email: values.email,
-        name: 'John Doe',
-        role: 'admin',
-      };
-
-      dispatch(loginSuccess(userData));
-      message.success('Login successful!');
-
-      // Navigate to dashboard after successful login
-      navigate('/dashboard');
-    } catch {
-      dispatch(loginFailure('Login failed. Please try again.'));
-      message.error('Login failed. Please try again.');
+        password: values.password,
+      }).unwrap();
+    } catch (error) {
+      // Auto
     }
-  };
-
-  const onFinishFailed = (errorInfo) => {
-    console.log('Failed:', errorInfo);
-    message.error('Please check your input and try again.');
   };
 
   return (
@@ -76,7 +41,6 @@ const LoginPage = () => {
       <Form
         name="login"
         onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
         autoComplete="off"
         layout="vertical"
         size="large"
@@ -118,7 +82,7 @@ const LoginPage = () => {
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" htmlType="submit" loading={loading} block>
+          <Button type="primary" htmlType="submit" loading={isLoading} block>
             Sign In
           </Button>
         </Form.Item>
