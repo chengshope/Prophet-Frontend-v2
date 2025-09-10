@@ -1,20 +1,20 @@
 import {
-  UserOutlined,
-  ShoppingCartOutlined,
-  DollarOutlined,
-  RiseOutlined,
-  TrophyOutlined,
-  ClockCircleOutlined,
+    ClockCircleOutlined,
+    DollarOutlined,
+    RiseOutlined,
+    ShoppingCartOutlined,
+    TrophyOutlined,
+    UserOutlined,
 } from '@ant-design/icons';
 import {
-  Typography,
-  Row,
-  Col,
-  Card,
-  Statistic,
-  Progress,
-  List,
-  Avatar,
+    Avatar,
+    Card,
+    Col,
+    List,
+    Progress,
+    Row,
+    Statistic,
+    Typography,
 } from 'antd';
 import { useSelector } from 'react-redux';
 

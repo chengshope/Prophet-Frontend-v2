@@ -3,12 +3,12 @@ import ProtectedRoute from '../components/ProtectedRoute';
 import AuthLayout from '../layouts/AuthLayout';
 import MainLayout from '../layouts/MainLayout';
 
-import ForgotPasswordPage from '../pages/auth/ForgotPasswordPage';
-import LoginPage from '../pages/auth/LoginPage';
-import DashboardPage from '../pages/dashboard/DashboardPage';
+import ForgotPasswordPage from '../pages/ForgotPasswordPage';
+import LoginPage from '../pages/LoginPage';
+import DashboardPage from '../pages/DashboardPage';
 import NotFoundPage from '../pages/NotFoundPage';
-import ProfilePage from '../pages/profile/ProfilePage';
-import SettingsPage from '../pages/settings/SettingsPage';
+import ProfilePage from '../pages/ProfilePage';
+import SettingsPage from '../pages/SettingsPage';
 
 export const routeConfig = [
   { path: '/', element: <Navigate to="/login" replace /> },

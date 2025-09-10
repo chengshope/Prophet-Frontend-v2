@@ -23,7 +23,7 @@ import {
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { useThemeContext } from '../contexts/ThemeContext';
+import { useThemeContext } from '../../contexts/ThemeContext';
 
 const { Header, Sider, Content } = Layout;
 const { Title } = Typography;

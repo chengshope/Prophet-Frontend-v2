@@ -1,6 +1,6 @@
 import { Layout, Typography, theme } from 'antd';
 import { Outlet } from 'react-router-dom';
-import ProphetLogo from '../assets/prophet_logo.svg';
+import ProphetLogo from '../../assets/prophet_logo.svg';
 
 const { Content } = Layout;
 const { Text } = Typography;
