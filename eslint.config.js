@@ -52,9 +52,19 @@ export default [
         node: {
           extensions: ['.js', '.jsx'],
         },
+        alias: {
+          map: [['@', './src']],
+          extensions: ['.js', '.jsx'],
+        },
       },
     },
     rules: {
+      // ✅ prefer relative imports in same folder, but allow alias imports
+      'import/no-relative-parent-imports': 'off',
+
+      // Disable restricted paths to allow alias imports
+      'import/no-restricted-paths': 'off',
+
       // Formatting rules that align with Prettier
       'eol-last': ['error', 'always'], // require exactly one newline at EOF
       'no-multiple-empty-lines': ['error', { max: 1, maxEOF: 0, maxBOF: 0 }], // no multiple empty lines, no empty lines at end/beginning
