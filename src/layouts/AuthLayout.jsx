@@ -1,7 +1,8 @@
 import { Layout, Typography, theme } from 'antd';
 import { Outlet } from 'react-router-dom';
+import ProphetLogo from '../assets/prophet_logo.svg';
 
-const { Content, Footer } = Layout;
+const { Content } = Layout;
 const { Text } = Typography;
 
 const AuthLayout = () => {
@@ -23,8 +24,27 @@ const AuthLayout = () => {
           justifyContent: 'center',
           alignItems: 'center',
           padding: '20px',
+          flex: 1,
         }}
       >
+        {/* Logo above the modal */}
+        <div
+          style={{
+            marginBottom: '40px',
+            textAlign: 'center',
+          }}
+        >
+          <img
+            src={ProphetLogo}
+            alt="Prophet Logo"
+            style={{
+              height: '60px',
+              width: 'auto',
+            }}
+          />
+        </div>
+
+        {/* Authentication form modal */}
         <div
           style={{
             background: colorBgContainer,
@@ -37,19 +57,19 @@ const AuthLayout = () => {
         >
           <Outlet />
         </div>
-      </Content>
 
-      <Footer
-        style={{
-          textAlign: 'center',
-          background: 'transparent',
-          color: 'rgba(255, 255, 255, 0.8)',
-        }}
-      >
-        <Text style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
-          ©2025 Sparebox Technologes
-        </Text>
-      </Footer>
+        {/* License below the modal */}
+        <div
+          style={{
+            marginTop: '40px',
+            textAlign: 'center',
+          }}
+        >
+          <Text style={{ color: 'gray' }}>
+            ©2025 Sparebox Technologies
+          </Text>
+        </div>
+      </Content>
     </Layout>
   );
 };
