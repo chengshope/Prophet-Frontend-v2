@@ -9,17 +9,7 @@ import {
   SettingOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import {
-  Avatar,
-  Breadcrumb,
-  Button,
-  Dropdown,
-  Layout,
-  Menu,
-  Space,
-  theme,
-  Typography,
-} from 'antd';
+import { Avatar, Breadcrumb, Button, Dropdown, Layout, Menu, Space, theme, Typography } from 'antd';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
@@ -201,11 +191,7 @@ const MainLayout = () => {
           </Space>
 
           <Space>
-            <Dropdown
-              menu={{ items: userMenuItems }}
-              placement="bottomRight"
-              trigger={['click']}
-            >
+            <Dropdown menu={{ items: userMenuItems }} placement="bottomRight" trigger={['click']}>
               <Space style={{ cursor: 'pointer' }}>
                 <Avatar icon={<UserOutlined />} />
                 <span>{user?.name || 'User'}</span>
@@ -215,10 +201,7 @@ const MainLayout = () => {
         </Header>
 
         <Content style={{ margin: '24px' }}>
-          <Breadcrumb
-            items={getBreadcrumbItems()}
-            style={{ marginBottom: '16px' }}
-          />
+          <Breadcrumb items={getBreadcrumbItems()} style={{ marginBottom: '16px' }} />
 
           <div
             style={{

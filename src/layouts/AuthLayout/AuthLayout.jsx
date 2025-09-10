@@ -65,9 +65,7 @@ const AuthLayout = () => {
             textAlign: 'center',
           }}
         >
-          <Text style={{ color: 'gray' }}>
-            ©2025 Sparebox Technologies
-          </Text>
+          <Text style={{ color: 'gray' }}>©2025 Sparebox Technologies</Text>
         </div>
       </Content>
     </Layout>

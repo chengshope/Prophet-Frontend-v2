@@ -107,9 +107,7 @@ const SettingsPage = () => {
                       if (!value || getFieldValue('newPassword') === value) {
                         return Promise.resolve();
                       }
-                      return Promise.reject(
-                        new Error('Passwords do not match!')
-                      );
+                      return Promise.reject(new Error('Passwords do not match!'));
                     },
                   }),
                 ]}
@@ -119,21 +117,12 @@ const SettingsPage = () => {
 
               <Divider />
 
-              <Form.Item
-                label="Two-Factor Authentication"
-                name="twoFactor"
-                valuePropName="checked"
-              >
+              <Form.Item label="Two-Factor Authentication" name="twoFactor" valuePropName="checked">
                 <Switch />
               </Form.Item>
 
               <Form.Item>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  loading={loading}
-                  icon={<SaveOutlined />}
-                >
+                <Button type="primary" htmlType="submit" loading={loading} icon={<SaveOutlined />}>
                   Update Password
                 </Button>
               </Form.Item>
@@ -176,29 +165,16 @@ const SettingsPage = () => {
                 <Switch />
               </Form.Item>
 
-              <Form.Item
-                label="SMS Notifications"
-                name="smsNotifications"
-                valuePropName="checked"
-              >
+              <Form.Item label="SMS Notifications" name="smsNotifications" valuePropName="checked">
                 <Switch />
               </Form.Item>
 
-              <Form.Item
-                label="Marketing Emails"
-                name="marketingEmails"
-                valuePropName="checked"
-              >
+              <Form.Item label="Marketing Emails" name="marketingEmails" valuePropName="checked">
                 <Switch />
               </Form.Item>
 
               <Form.Item>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  loading={loading}
-                  icon={<SaveOutlined />}
-                >
+                <Button type="primary" htmlType="submit" loading={loading} icon={<SaveOutlined />}>
                   Save Notifications
                 </Button>
               </Form.Item>
@@ -270,12 +246,7 @@ const SettingsPage = () => {
               </Row>
 
               <Form.Item>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  loading={loading}
-                  icon={<SaveOutlined />}
-                >
+                <Button type="primary" htmlType="submit" loading={loading} icon={<SaveOutlined />}>
                   Save Preferences
                 </Button>
               </Form.Item>

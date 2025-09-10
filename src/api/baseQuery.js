@@ -1,6 +1,6 @@
+import { removeApiToken } from '@/features/auth/authSlice';
 import { fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { message } from 'antd';
-import { removeApiToken } from '../features/auth/authSlice';
 
 const rawBaseQuery = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_BACKEND_HOST || '/',
@@ -17,7 +17,12 @@ const rawBaseQuery = fetchBaseQuery({
 export const baseQuery = async (args, api, extraOptions) => {
   const result = await rawBaseQuery(args, api, extraOptions);
 
-  if (result.data && typeof result.data === 'object' && 'success' in result.data && result.data.success === false) {
+  if (
+    result.data &&
+    typeof result.data === 'object' &&
+    'success' in result.data &&
+    result.data.success === false
+  ) {
     const data = result.data;
 
     if (data.message) {

@@ -1,21 +1,12 @@
 import {
-    ClockCircleOutlined,
-    DollarOutlined,
-    RiseOutlined,
-    ShoppingCartOutlined,
-    TrophyOutlined,
-    UserOutlined,
+  ClockCircleOutlined,
+  DollarOutlined,
+  RiseOutlined,
+  ShoppingCartOutlined,
+  TrophyOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
-import {
-    Avatar,
-    Card,
-    Col,
-    List,
-    Progress,
-    Row,
-    Statistic,
-    Typography,
-} from 'antd';
+import { Avatar, Card, Col, List, Progress, Row, Statistic, Typography } from 'antd';
 import { useSelector } from 'react-redux';
 
 const { Title, Text } = Typography;
@@ -34,34 +25,19 @@ const DashboardPage = () => {
       title: 'Order completed',
       description: 'Order #12345 has been processed',
       time: '15 minutes ago',
-      avatar: (
-        <Avatar
-          icon={<ShoppingCartOutlined />}
-          style={{ backgroundColor: '#52c41a' }}
-        />
-      ),
+      avatar: <Avatar icon={<ShoppingCartOutlined />} style={{ backgroundColor: '#52c41a' }} />,
     },
     {
       title: 'Payment received',
       description: '$1,250 payment from client',
       time: '1 hour ago',
-      avatar: (
-        <Avatar
-          icon={<DollarOutlined />}
-          style={{ backgroundColor: '#1890ff' }}
-        />
-      ),
+      avatar: <Avatar icon={<DollarOutlined />} style={{ backgroundColor: '#1890ff' }} />,
     },
     {
       title: 'System update',
       description: 'Database optimization completed',
       time: '3 hours ago',
-      avatar: (
-        <Avatar
-          icon={<RiseOutlined />}
-          style={{ backgroundColor: '#722ed1' }}
-        />
-      ),
+      avatar: <Avatar icon={<RiseOutlined />} style={{ backgroundColor: '#722ed1' }} />,
     },
   ];
 
@@ -69,9 +45,7 @@ const DashboardPage = () => {
     <div>
       <div style={{ marginBottom: '24px' }}>
         <Title level={2}>Welcome back, {user?.name || 'User'}! 👋</Title>
-        <Text type="secondary">
-          Here's what's happening with your business today.
-        </Text>
+        <Text type="secondary">Here's what's happening with your business today.</Text>
       </div>
 
       {/* Statistics Cards */}
@@ -83,9 +57,7 @@ const DashboardPage = () => {
               value={11280}
               prefix={<UserOutlined />}
               valueStyle={{ color: '#3f8600' }}
-              suffix={
-                <span style={{ fontSize: '14px', color: '#52c41a' }}>+12%</span>
-              }
+              suffix={<span style={{ fontSize: '14px', color: '#52c41a' }}>+12%</span>}
             />
           </Card>
         </Col>
@@ -96,9 +68,7 @@ const DashboardPage = () => {
               value={1128}
               prefix={<ShoppingCartOutlined />}
               valueStyle={{ color: '#1890ff' }}
-              suffix={
-                <span style={{ fontSize: '14px', color: '#52c41a' }}>+8%</span>
-              }
+              suffix={<span style={{ fontSize: '14px', color: '#52c41a' }}>+8%</span>}
             />
           </Card>
         </Col>
@@ -110,9 +80,7 @@ const DashboardPage = () => {
               precision={2}
               prefix={<DollarOutlined />}
               valueStyle={{ color: '#cf1322' }}
-              suffix={
-                <span style={{ fontSize: '14px', color: '#52c41a' }}>+15%</span>
-              }
+              suffix={<span style={{ fontSize: '14px', color: '#52c41a' }}>+15%</span>}
             />
           </Card>
         </Col>
@@ -133,10 +101,7 @@ const DashboardPage = () => {
       <Row gutter={[16, 16]}>
         {/* Performance Chart */}
         <Col xs={24} lg={16}>
-          <Card
-            title="Performance Overview"
-            extra={<a href="#">View Details</a>}
-          >
+          <Card title="Performance Overview" extra={<a href="#">View Details</a>}>
             <div style={{ marginBottom: '16px' }}>
               <Text strong>Sales Performance</Text>
               <Progress percent={75} status="active" />

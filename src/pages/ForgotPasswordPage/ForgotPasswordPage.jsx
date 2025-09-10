@@ -49,8 +49,7 @@ const ForgotPasswordPage = () => {
           Forgot Password?
         </Title>
         <Text type="secondary">
-          Enter your email address and we'll send you a link to reset your
-          password.
+          Enter your email address and we'll send you a link to reset your password.
         </Text>
       </div>
 
@@ -69,10 +68,7 @@ const ForgotPasswordPage = () => {
             { type: 'email', message: 'Please enter a valid email!' },
           ]}
         >
-          <Input
-            prefix={<MailOutlined />}
-            placeholder="Enter your email address"
-          />
+          <Input prefix={<MailOutlined />} placeholder="Enter your email address" />
         </Form.Item>
 
         <Form.Item>

@@ -1,15 +1,5 @@
 import { GoogleOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
-import {
-  Button,
-  Checkbox,
-  Divider,
-  Flex,
-  Form,
-  Input,
-  message,
-  Space,
-  Typography,
-} from 'antd';
+import { Button, Checkbox, Divider, Flex, Form, Input, message, Space, Typography } from 'antd';
 import { Link as RouterLink } from 'react-router-dom';
 import { useLoginMutation } from '../../api/authApi';
 
@@ -38,13 +28,7 @@ const LoginPage = () => {
         <Text type="secondary">Sign in to your account</Text>
       </div>
 
-      <Form
-        name="login"
-        onFinish={onFinish}
-        autoComplete="off"
-        layout="vertical"
-        size="large"
-      >
+      <Form name="login" onFinish={onFinish} autoComplete="off" layout="vertical" size="large">
         <Form.Item
           label="Email"
           name="email"
@@ -64,10 +48,7 @@ const LoginPage = () => {
             { min: 6, message: 'Password must be at least 6 characters!' },
           ]}
         >
-          <Input.Password
-            prefix={<LockOutlined />}
-            placeholder="Enter your password"
-          />
+          <Input.Password prefix={<LockOutlined />} placeholder="Enter your password" />
         </Form.Item>
 
         <Form.Item>

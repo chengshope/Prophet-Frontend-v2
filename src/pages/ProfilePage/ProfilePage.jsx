@@ -5,17 +5,7 @@ import {
   PhoneOutlined,
   EnvironmentOutlined,
 } from '@ant-design/icons';
-import {
-  Typography,
-  Card,
-  Row,
-  Col,
-  Avatar,
-  Descriptions,
-  Tag,
-  Button,
-  Space,
-} from 'antd';
+import { Typography, Card, Row, Col, Avatar, Descriptions, Tag, Button, Space } from 'antd';
 import { useSelector } from 'react-redux';
 
 const { Title, Text } = Typography;
@@ -61,9 +51,7 @@ const ProfilePage = () => {
         <Col xs={24} lg={16}>
           <Card title="Personal Information">
             <Descriptions column={1} bordered>
-              <Descriptions.Item label="Full Name">
-                {user?.name || 'John Doe'}
-              </Descriptions.Item>
+              <Descriptions.Item label="Full Name">{user?.name || 'John Doe'}</Descriptions.Item>
               <Descriptions.Item label="Email" icon={<MailOutlined />}>
                 {user?.email || 'john.doe@example.com'}
               </Descriptions.Item>
@@ -76,15 +64,9 @@ const ProfilePage = () => {
               <Descriptions.Item label="Role">
                 <Tag color="blue">{user?.role || 'Administrator'}</Tag>
               </Descriptions.Item>
-              <Descriptions.Item label="Department">
-                Engineering
-              </Descriptions.Item>
-              <Descriptions.Item label="Join Date">
-                January 15, 2024
-              </Descriptions.Item>
-              <Descriptions.Item label="Last Login">
-                Today at 9:30 AM
-              </Descriptions.Item>
+              <Descriptions.Item label="Department">Engineering</Descriptions.Item>
+              <Descriptions.Item label="Join Date">January 15, 2024</Descriptions.Item>
+              <Descriptions.Item label="Last Login">Today at 9:30 AM</Descriptions.Item>
             </Descriptions>
           </Card>
         </Col>
