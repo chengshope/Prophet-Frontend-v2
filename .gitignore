@@ -7,20 +7,35 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
+# Build directories
+node_modules          # PnP doesn't use it, safe to ignore
+dist/
+dist-ssr/
+
+# Local environment files
 *.local
-.react-router
 .env
+
+# React Router cache
+.react-router
+
+# Yarn PnP files — commit these
+!.pnp.cjs              # Required for Yarn PnP
+!.yarn/cache/
+!.yarn/releases/
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
-.idea
+.idea/
 .DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# Optional: Yarn unplugged folder can be ignored
+.yarn/unplugged/
+.yarn/build-state.yml
+.yarn/install-state.gz
