@@ -8,7 +8,7 @@ pnpm-debug.log*
 lerna-debug.log*
 
 # Build directories
-node_modules          # PnP doesn't use it, safe to ignore
+node_modules
 dist/
 dist-ssr/
 
@@ -39,3 +39,4 @@ dist-ssr/
 .yarn/unplugged/
 .yarn/build-state.yml
 .yarn/install-state.gz
+node_modules
