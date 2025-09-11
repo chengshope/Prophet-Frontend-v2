@@ -1,2 +1,2 @@
-export { baseQuery } from '../baseQuery';
 export * from './authApi';
+export { baseQuery } from './baseQuery';
