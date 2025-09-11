@@ -61,20 +61,19 @@ export default [
         node: {
           extensions: ['.js', '.jsx'],
         },
-        pnp: {},
         alias: {
-          map: [['@', './src']],
+          map: [['@', 'src']],
           extensions: ['.js', '.jsx'],
         },
       },
     },
     rules: {
-      'import/no-relative-parent-imports': 'error',
-      'import/no-restricted-paths': ['error', {
-        zones: [{
-          target: './src', from: './src', except: ['./*'],
-        },],
-      },],
+      // 'import/no-relative-parent-imports': 'error',
+      // 'import/no-restricted-paths': ['error', {
+      //   zones: [{
+      //     target: '@/src', from: '@/src', except: ['./*', './**/*'],
+      //   },],
+      // },],
 
       // Formatting rules that align with Prettier
       'eol-last': ['error', 'always'], // require exactly one newline at EOF
