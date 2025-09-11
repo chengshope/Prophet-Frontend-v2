@@ -71,7 +71,7 @@ export default [
       // 'import/no-relative-parent-imports': 'error',
       // 'import/no-restricted-paths': ['error', {
       //   zones: [{
-      //     target: '@/src', from: '@/src', except: ['./*', './**/*'],
+      //     target: './src', from: './src', except: ['./*', './**/*'],
       //   },],
       // },],
 
