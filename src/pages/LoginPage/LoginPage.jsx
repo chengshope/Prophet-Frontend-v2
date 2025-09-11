@@ -1,7 +1,8 @@
-import { GoogleOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Divider, Flex, Form, Input, message, Space, Typography } from 'antd';
 import { Link as RouterLink } from 'react-router-dom';
 import { useLoginMutation } from '../../api/authApi';
+import GoogleIcon from '../../components/GoogleIcon';
 
 const { Title, Text } = Typography;
 
@@ -73,7 +74,7 @@ const LoginPage = () => {
 
       <Space direction="vertical" style={{ width: '100%', marginTop: 10 }}>
         <Button
-          icon={<GoogleOutlined />}
+          icon={<GoogleIcon size={16} />}
           onClick={() => message.info('Google login not implemented yet')}
           block
           size="large"
