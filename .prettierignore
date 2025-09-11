@@ -96,6 +96,8 @@ pnpm-lock.yaml
 # Generated files
 *.min.js
 *.min.css
+.pnp.cjs
+.pnp.loader.mjs
 
 # Documentation
 docs/

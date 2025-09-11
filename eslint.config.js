@@ -13,7 +13,16 @@ const gitignorePath = fileURLToPath(new URL('.gitignore', import.meta.url));
 export default [
   // Global ignores
   {
-    ignores: ['dist/**', 'build/**', 'node_modules/**'],
+    ignores: [
+      '.pnp.cjs',
+      '.pnp.loader.mjs',
+      'node_modules/**',
+      'dist/**',
+      'build/**',
+      '.vscode/**',
+      '*.log',
+      '.env'
+    ],
   },
 
   // Include .gitignore patterns
