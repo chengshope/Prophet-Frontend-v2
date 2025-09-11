@@ -32,6 +32,12 @@ export const lightTheme = {
     fontSizeHeading4: 20,
     fontSizeHeading5: 16,
 
+    // Text colors
+    colorText: 'rgba(0, 0, 0, 0.88)',
+    colorTextSecondary: 'rgba(0, 0, 0, 0.65)',
+    colorTextTertiary: 'rgba(0, 0, 0, 0.45)',
+    colorTextQuaternary: 'rgba(0, 0, 0, 0.25)',
+
     // Spacing
     padding: 16,
     paddingLG: 24,
@@ -83,6 +89,10 @@ export const lightTheme = {
       paddingInline: 12,
       paddingInlineLG: 16,
       paddingInlineSM: 8,
+      colorText: 'rgba(0, 0, 0, 0.88)',
+      colorTextPlaceholder: 'rgba(0, 0, 0, 0.45)',
+      colorIcon: 'rgba(0, 0, 0, 0.45)',
+      colorIconHover: 'rgba(0, 0, 0, 0.65)',
     },
 
     // Card customization
@@ -235,6 +245,13 @@ export const darkTheme = {
   },
   components: {
     ...lightTheme.components,
+    Input: {
+      ...lightTheme.components.Input,
+      colorText: 'rgba(255, 255, 255, 0.88)',
+      colorTextPlaceholder: 'rgba(255, 255, 255, 0.45)',
+      colorIcon: 'rgba(255, 255, 255, 0.45)',
+      colorIconHover: 'rgba(255, 255, 255, 0.65)',
+    },
     Layout: {
       ...lightTheme.components.Layout,
       headerBg: '#141414',

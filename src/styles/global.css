@@ -171,6 +171,12 @@ body {
   border-radius: 8px;
   border: 1px solid #d9d9d9;
   transition: all 0.2s ease;
+  color: rgba(0, 0, 0, 0.88) !important;
+}
+
+.ant-input::placeholder,
+.ant-input-password input::placeholder {
+  color: rgba(0, 0, 0, 0.45) !important;
 }
 
 .ant-input:focus,
@@ -182,6 +188,15 @@ body {
 
 .ant-input-affix-wrapper {
   border-radius: 8px;
+}
+
+.ant-input-affix-wrapper input {
+  color: rgba(0, 0, 0, 0.88) !important;
+}
+
+.ant-input-affix-wrapper .ant-input-prefix,
+.ant-input-affix-wrapper .ant-input-suffix {
+  color: rgba(0, 0, 0, 0.45);
 }
 
 /* Layout Customizations */
@@ -474,7 +489,48 @@ input:-webkit-autofill:active {
   }
 }
 
-/* Dark mode support (optional) */
+/* Dark mode support */
 @media (prefers-color-scheme: dark) {
-  /* Add dark mode styles here if needed */
+  .ant-input,
+  .ant-input-password,
+  .ant-select-selector {
+    color: rgba(255, 255, 255, 0.88) !important;
+    background-color: #141414;
+    border-color: #434343;
+  }
+
+  .ant-input::placeholder,
+  .ant-input-password input::placeholder {
+    color: rgba(255, 255, 255, 0.45) !important;
+  }
+
+  .ant-input-affix-wrapper input {
+    color: rgba(255, 255, 255, 0.88) !important;
+  }
+
+  .ant-input-affix-wrapper .ant-input-prefix,
+  .ant-input-affix-wrapper .ant-input-suffix {
+    color: rgba(255, 255, 255, 0.45);
+  }
+}
+
+/* Theme-specific overrides for when dark theme is applied via class */
+.dark-theme .ant-input,
+.dark-theme .ant-input-password,
+.dark-theme .ant-select-selector {
+  color: rgba(255, 255, 255, 0.88) !important;
+}
+
+.dark-theme .ant-input::placeholder,
+.dark-theme .ant-input-password input::placeholder {
+  color: rgba(255, 255, 255, 0.45) !important;
+}
+
+.dark-theme .ant-input-affix-wrapper input {
+  color: rgba(255, 255, 255, 0.88) !important;
+}
+
+.dark-theme .ant-input-affix-wrapper .ant-input-prefix,
+.dark-theme .ant-input-affix-wrapper .ant-input-suffix {
+  color: rgba(255, 255, 255, 0.45);
 }
