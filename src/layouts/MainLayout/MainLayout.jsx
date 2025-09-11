@@ -14,6 +14,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useThemeContext } from '../../contexts/ThemeContext';
+import './MainLayout.less';
 
 const { Header, Sider, Content } = Layout;
 const { Title } = Typography;
@@ -126,37 +127,23 @@ const MainLayout = () => {
   };
 
   return (
-    <Layout style={{ minHeight: '100vh' }}>
+    <Layout className="main-layout">
       <Sider
         trigger={null}
         collapsible
         collapsed={collapsed}
-        style={{
-          background: colorBgContainer,
-          borderRight: '1px solid #f0f0f0',
-        }}
+        className="sidebar"
+        style={{ background: colorBgContainer }}
       >
-        <div
-          style={{
-            height: 64,
-            margin: 16,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: collapsed ? 'center' : 'flex-start',
-          }}
-        >
+        <div className={`logo-area ${collapsed ? 'collapsed' : ''}`}>
           <Title
             level={4}
-            style={{
-              margin: 0,
-              color: '#1890ff',
-              display: collapsed ? 'none' : 'block',
-            }}
+            className={`logo-title ${collapsed ? 'hidden' : ''}`}
           >
             Prophet
           </Title>
           {collapsed && (
-            <Title level={4} style={{ margin: 0, color: '#1890ff' }}>
+            <Title level={4} className="logo-title">
               P
             </Title>
           )}
@@ -165,34 +152,28 @@ const MainLayout = () => {
         <Menu
           mode="inline"
           selectedKeys={[location.pathname]}
-          style={{ borderRight: 0 }}
+          className="navigation-menu"
           items={menuItems}
         />
       </Sider>
 
       <Layout>
         <Header
-          style={{
-            padding: '0 24px',
-            background: colorBgContainer,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            borderBottom: '1px solid #f0f0f0',
-          }}
+          className="top-header"
+          style={{ background: colorBgContainer }}
         >
           <Space>
             <Button
               type="text"
               icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
               onClick={() => setCollapsed(!collapsed)}
-              style={{ fontSize: '16px', width: 64, height: 64 }}
+              className="menu-toggle-btn"
             />
           </Space>
 
           <Space>
             <Dropdown menu={{ items: userMenuItems }} placement="bottomRight" trigger={['click']}>
-              <Space style={{ cursor: 'pointer' }}>
+              <Space className="user-profile">
                 <Avatar icon={<UserOutlined />} />
                 <span>{user?.name || 'User'}</span>
               </Space>
@@ -200,13 +181,12 @@ const MainLayout = () => {
           </Space>
         </Header>
 
-        <Content style={{ margin: '24px' }}>
-          <Breadcrumb items={getBreadcrumbItems()} style={{ marginBottom: '16px' }} />
+        <Content className="page-content">
+          <Breadcrumb items={getBreadcrumbItems()} className="breadcrumb-nav" />
 
           <div
+            className="content-area"
             style={{
-              padding: 24,
-              minHeight: 360,
               background: colorBgContainer,
               borderRadius: borderRadiusLG,
             }}

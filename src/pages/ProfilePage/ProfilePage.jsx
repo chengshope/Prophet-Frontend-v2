@@ -1,12 +1,13 @@
 import {
-  UserOutlined,
-  EditOutlined,
-  MailOutlined,
-  PhoneOutlined,
-  EnvironmentOutlined,
+    EditOutlined,
+    EnvironmentOutlined,
+    MailOutlined,
+    PhoneOutlined,
+    UserOutlined,
 } from '@ant-design/icons';
-import { Typography, Card, Row, Col, Avatar, Descriptions, Tag, Button, Space } from 'antd';
+import { Avatar, Button, Card, Col, Descriptions, Row, Space, Tag, Typography } from 'antd';
 import { useSelector } from 'react-redux';
+import './ProfilePage.less';
 
 const { Title, Text } = Typography;
 
@@ -21,20 +22,20 @@ const ProfilePage = () => {
         {/* Profile Header */}
         <Col span={24}>
           <Card>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+            <div className="profile-header">
               <Avatar size={120} icon={<UserOutlined />} />
-              <div style={{ flex: 1 }}>
-                <Title level={3} style={{ margin: 0 }}>
+              <div className="user-details">
+                <Title level={3} className="user-name">
                   {user?.name || 'John Doe'}
                 </Title>
-                <Text type="secondary" style={{ fontSize: '16px' }}>
+                <Text type="secondary" className="user-role">
                   {user?.role || 'Administrator'}
                 </Text>
-                <div style={{ marginTop: '8px' }}>
+                <div className="status-badges">
                   <Tag color="blue">Active</Tag>
                   <Tag color="green">Verified</Tag>
                 </div>
-                <div style={{ marginTop: '16px' }}>
+                <div className="profile-actions">
                   <Space>
                     <Button type="primary" icon={<EditOutlined />}>
                       Edit Profile
@@ -73,22 +74,22 @@ const ProfilePage = () => {
 
         {/* Quick Stats */}
         <Col xs={24} lg={8}>
-          <Card title="Quick Stats" style={{ marginBottom: '16px' }}>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ marginBottom: '16px' }}>
-                <Title level={3} style={{ margin: 0, color: '#1890ff' }}>
+          <Card title="Quick Stats" className="stats-card">
+            <div className="stats-grid">
+              <div className="stat-item">
+                <Title level={3} className="stat-number primary">
                   156
                 </Title>
                 <Text type="secondary">Projects Completed</Text>
               </div>
-              <div style={{ marginBottom: '16px' }}>
-                <Title level={3} style={{ margin: 0, color: '#52c41a' }}>
+              <div className="stat-item">
+                <Title level={3} className="stat-number success">
                   89%
                 </Title>
                 <Text type="secondary">Success Rate</Text>
               </div>
-              <div>
-                <Title level={3} style={{ margin: 0, color: '#faad14' }}>
+              <div className="stat-item">
+                <Title level={3} className="stat-number warning">
                   4.8
                 </Title>
                 <Text type="secondary">Average Rating</Text>

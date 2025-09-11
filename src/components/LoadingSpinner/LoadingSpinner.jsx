@@ -1,17 +1,12 @@
-import { Spin, Layout } from 'antd';
+import { Layout, Spin } from 'antd';
+import './LoadingSpinner.less';
 
 const { Content } = Layout;
 
 const LoadingSpinner = ({ tip = 'Loading...' }) => {
   return (
-    <Layout style={{ minHeight: '100vh' }}>
-      <Content
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
+    <Layout className="loading-page">
+      <Content className="spinner-container">
         <Spin size="large" tip={tip} />
       </Content>
     </Layout>

@@ -1,4 +1,2 @@
-// Export all API hooks and utilities
-export * from '../features/auth/authSlice';
+export { baseQuery } from '../baseQuery';
 export * from './authApi';
-export { baseQuery } from './baseQuery';

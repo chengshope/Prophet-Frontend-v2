@@ -1,6 +1,7 @@
 import { Layout, Typography, theme } from 'antd';
 import { Outlet } from 'react-router-dom';
 import ProphetLogo from '../../assets/prophet_logo.svg';
+import './AuthLayout.less';
 
 const { Content } = Layout;
 const { Text } = Typography;
@@ -11,61 +12,24 @@ const AuthLayout = () => {
   } = theme.useToken();
 
   return (
-    <Layout
-      style={{
-        minHeight: '100vh',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      }}
-    >
-      <Content
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          padding: '20px',
-          flex: 1,
-        }}
-      >
+    <Layout className="auth-page">
+      <Content className="auth-container">
         {/* Logo above the modal */}
-        <div
-          style={{
-            marginBottom: '40px',
-            textAlign: 'center',
-          }}
-        >
-          <img
-            src={ProphetLogo}
-            alt="Prophet Logo"
-            style={{
-              height: '60px',
-              width: 'auto',
-            }}
-          />
+        <div className="brand-logo">
+          <img src={ProphetLogo} alt="Prophet Logo" />
         </div>
 
         {/* Authentication form modal */}
         <div
-          style={{
-            background: colorBgContainer,
-            borderRadius: '12px',
-            padding: '40px',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-            width: '100%',
-            maxWidth: '450px',
-          }}
+          className="login-form"
+          style={{ background: colorBgContainer }}
         >
           <Outlet />
         </div>
 
         {/* License below the modal */}
-        <div
-          style={{
-            marginTop: '40px',
-            textAlign: 'center',
-          }}
-        >
-          <Text style={{ color: 'gray' }}>©2025 Sparebox Technologies</Text>
+        <div className="copyright-notice">
+          <Text>©2025 Sparebox Technologies</Text>
         </div>
       </Content>
     </Layout>
