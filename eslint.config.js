@@ -61,6 +61,7 @@ export default [
         node: {
           extensions: ['.js', '.jsx'],
         },
+        pnp: {},
         alias: {
           map: [['@', './src']],
           extensions: ['.js', '.jsx'],
@@ -68,11 +69,12 @@ export default [
       },
     },
     rules: {
-      // ✅ prefer relative imports in same folder, but allow alias imports
-      'import/no-relative-parent-imports': 'off',
-
-      // Disable restricted paths to allow alias imports
-      'import/no-restricted-paths': 'off',
+      'import/no-relative-parent-imports': 'error',
+      'import/no-restricted-paths': ['error', {
+        zones: [{
+          target: './src', from: './src', except: ['./*'],
+        },],
+      },],
 
       // Formatting rules that align with Prettier
       'eol-last': ['error', 'always'], // require exactly one newline at EOF

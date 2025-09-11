@@ -2245,7 +2245,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^9.33.0":
+"eslint@npm:^9.35.0":
   version: 9.35.0
   resolution: "eslint@npm:9.35.0"
   dependencies:
@@ -3673,7 +3673,7 @@ __metadata:
     "@types/react-dom": "npm:^19.1.7"
     "@vitejs/plugin-react": "npm:^5.0.0"
     antd: "npm:^5.27.2"
-    eslint: "npm:^9.33.0"
+    eslint: "npm:^9.35.0"
     eslint-config-prettier: "npm:^10.1.8"
     eslint-import-resolver-alias: "npm:^1.1.2"
     eslint-plugin-import: "npm:^2.32.0"
