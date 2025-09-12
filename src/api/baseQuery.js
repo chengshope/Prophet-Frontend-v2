@@ -6,7 +6,9 @@ const rawBaseQuery = fetchBaseQuery({
   baseUrl: `${import.meta.env.VITE_BACKEND_HOST || '/'}/api`,
   prepareHeaders: (headers, { getState }) => {
     const token = getState().auth?.token;
-    if (token) headers.set('X-API-Token', token);
+    if (token) {
+      headers.set('Authorization', `Bearer ${token}`);
+    }
     return headers;
   },
 });

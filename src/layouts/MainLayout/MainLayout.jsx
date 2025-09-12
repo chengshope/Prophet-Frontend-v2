@@ -1,3 +1,5 @@
+import { useLogoutMutation } from '@/api/authApi';
+import { clearToken } from '@/features/auth/authSlice';
 import {
   BulbOutlined,
   DashboardOutlined,
@@ -30,9 +32,15 @@ const MainLayout = () => {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
-  const handleLogout = () => {
-    dispatch(logout());
-    navigate('/login');
+  const [logoutApi] = useLogoutMutation();
+  const handleLogout = async () => {
+    try {
+      await logoutApi().unwrap();
+    } catch (e) {
+      // ignore API failure and still clear local state
+    } finally {
+      dispatch(clearToken());
+    }
   };
 
   const menuItems = [
@@ -99,7 +107,7 @@ const MainLayout = () => {
       key: 'logout',
       icon: <LogoutOutlined />,
       label: 'Logout',
-      onClick: () => {},
+      onClick: handleLogout,
       danger: true,
     },
   ];

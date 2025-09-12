@@ -1,6 +1,7 @@
-import ProtectedRoute from '@/components/ProtectedRoute';
 import AuthLayout from '@/layouts/AuthLayout';
 import MainLayout from '@/layouts/MainLayout';
+import ProtectedRoute from '@/router/guards/ProtectedRoute';
+import PublicRoute from '@/router/guards/PublicRoute';
 import { Navigate } from 'react-router-dom';
 
 import DashboardPage from '@/pages/DashboardPage';
@@ -15,7 +16,11 @@ export const routeConfig = [
   { path: '/', element: <Navigate to="/login" replace /> },
   {
     path: '/',
-    element: <AuthLayout />,
+    element: (
+      <PublicRoute>
+        <AuthLayout />
+      </PublicRoute>
+    ),
     children: [
       { path: 'login', element: <LoginPage /> },
       { path: 'forgot-password', element: <ForgotPasswordPage /> },
