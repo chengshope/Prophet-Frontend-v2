@@ -127,43 +127,6 @@ body {
   color: #40a9ff !important;
 }
 
-/* Card Customizations */
-.ant-card {
-  border-radius: 12px;
-  box-shadow:
-    0 1px 2px 0 rgba(0, 0, 0, 0.03),
-    0 1px 6px -1px rgba(0, 0, 0, 0.02),
-    0 2px 4px 0 rgba(0, 0, 0, 0.02);
-  border: 1px solid #f0f0f0;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform, box-shadow;
-  backface-visibility: hidden;
-  transform: translateZ(0);
-}
-
-.ant-card:hover {
-  box-shadow:
-    0 4px 12px 0 rgba(0, 0, 0, 0.05),
-    0 2px 4px 0 rgba(0, 0, 0, 0.08);
-  transform: translateY(-2px) translateZ(0);
-}
-
-.ant-card-head {
-  border-bottom: 1px solid #f0f0f0;
-  padding: 16px 24px;
-  min-height: 56px;
-}
-
-.ant-card-head-title {
-  font-weight: 600;
-  font-size: 16px;
-  color: rgba(0, 0, 0, 0.85);
-}
-
-.ant-card-body {
-  padding: 24px;
-}
-
 /* Input Customizations */
 .ant-input,
 .ant-input-password,

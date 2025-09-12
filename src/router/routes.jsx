@@ -46,7 +46,7 @@ export const routeConfig = [
       { path: 'existing-customer-rate-increases', element: <ExistingCustomersPage /> },
       { path: 'competitors', element: <CompetitorsPage /> },
       { path: 'competitors/:id', element: <CompetitorsPage /> },
-      { path: 'reporting', element: <ReportingPage /> },
+      { path: 'reporting/*', element: <ReportingPage /> },
       { path: 'settings', element: <SettingsPage /> },
       { path: 'portfolio', element: <PortfolioPage /> },
       { path: 'portfolio/:id', element: <PortfolioPage /> },
