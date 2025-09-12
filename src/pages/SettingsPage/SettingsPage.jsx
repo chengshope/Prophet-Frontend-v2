@@ -1,3 +1,4 @@
+import { showError, showSuccess } from '@/utils/messageService';
 import {
   BellOutlined,
   GlobalOutlined,
@@ -11,7 +12,6 @@ import {
   Divider,
   Form,
   Input,
-  message,
   Row,
   Select,
   Switch,
@@ -31,9 +31,9 @@ const SettingsPage = () => {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
       console.log('Settings updated:', values);
-      message.success('Settings updated successfully!');
+      showSuccess('Settings updated successfully!');
     } catch {
-      message.error('Failed to update settings');
+      showError('Failed to update settings');
     } finally {
       setLoading(false);
     }

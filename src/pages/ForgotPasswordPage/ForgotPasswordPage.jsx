@@ -1,5 +1,6 @@
+import { showError, showSuccess } from '@/utils/messageService';
 import { ArrowLeftOutlined, MailOutlined } from '@ant-design/icons';
-import { Button, Flex, Form, Input, message, Result, Typography } from 'antd';
+import { Button, Flex, Form, Input, Result, Typography } from 'antd';
 import { useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -17,9 +18,9 @@ const ForgotPasswordPage = () => {
 
       console.log('Reset email for:', values.email);
       setEmailSent(true);
-      message.success('Password reset email sent!');
+      showSuccess('Password reset email sent!');
     } catch {
-      message.error('Failed to send reset email. Please try again.');
+      showError('Failed to send reset email. Please try again.');
     } finally {
       setLoading(false);
     }

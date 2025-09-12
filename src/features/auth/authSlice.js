@@ -38,7 +38,6 @@ const tokenSlice = createSlice({
       state.token = action.payload.accessToken;
       state.user = action.payload.user;
       saveToStorage(action.payload.accessToken, action.payload.user);
-      console.log('Login success:', action.payload);
     });
 
     builder.addMatcher(authApi.endpoints.login.matchRejected, (state, action) => {
