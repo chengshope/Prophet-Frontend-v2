@@ -1,86 +1,55 @@
 import { removeApiToken } from '@/features/auth/authSlice';
+import { showError } from '@/utils/messageService';
 import { fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { message } from 'antd';
 
 const rawBaseQuery = fetchBaseQuery({
-  baseUrl: import.meta.env.VITE_BACKEND_HOST || '/',
+  baseUrl: `${import.meta.env.VITE_BACKEND_HOST || '/'}/api`,
   prepareHeaders: (headers, { getState }) => {
-    const state = getState();
-    const token = state.apiToken?.token;
-    if (token) {
-      headers.set('X-API-Token', token);
-    }
+    const token = getState().auth?.token;
+    if (token) headers.set('X-API-Token', token);
     return headers;
   },
 });
 
 export const baseQuery = async (args, api, extraOptions) => {
-  const result = await rawBaseQuery(args, api, extraOptions);
+  const res = await rawBaseQuery(args, api, extraOptions);
 
-  if (
-    result.data &&
-    typeof result.data === 'object' &&
-    'success' in result.data &&
-    result.data.success === false
-  ) {
-    const data = result.data;
-
-    if (data.message) {
-      message.error(data.message);
-    } else if (data.errors) {
-      const errorMessage = Array.isArray(data.errors) ? data.errors.join(', ') : data.errors;
-      message.error(errorMessage);
-    } else {
-      message.error('Operation failed. Please try again.');
-    }
-  }
-
-  if (result.error) {
-    const { status, data } = result.error;
+  // Handle HTTP / API errors
+  if (res.error) {
+    const { status, data } = res.error;
+    const message = data?.error || data?.message || 'Something went wrong';
 
     switch (status) {
       case 401:
         api.dispatch(removeApiToken());
-        message.error('Session expired. Please log in again.');
+        showError(message || 'Session expired. Please log in again.');
         break;
-
       case 403:
-        message.error('Access denied. You do not have permission to perform this action.');
+        showError(message || 'Access denied.');
         break;
-
       case 404:
-        message.error('Resource not found. Please try again.');
+        showError(message || 'Resource not found.');
         break;
-
       case 422:
         if (data?.errors) {
-          const errorMessage = Array.isArray(data.errors) ? data.errors.join(', ') : data.errors;
-          message.error(errorMessage);
-        } else if (data?.message) {
-          message.error(data.message);
+          showError(Array.isArray(data.errors) ? data.errors.join(', ') : data.errors);
         } else {
-          message.error('Validation failed. Please check your input.');
+          showError(message);
         }
         break;
-
       default:
-        if (status === undefined) {
-          message.error('Network error. Please check your connection and try again.');
-        } else if (status >= 500) {
-          message.error('Server error. Please try again later.');
-        } else {
-          if (data?.message) {
-            message.error(data.message);
-          } else if (data?.errors) {
-            const errorMessage = Array.isArray(data.errors) ? data.errors.join(', ') : data.errors;
-            message.error(errorMessage);
-          } else {
-            message.error('Something went wrong. Please try again.');
-          }
-        }
+        showError(message);
         break;
     }
+
+    return { error: res.error };
   }
 
-  return result;
+  // Success: unwrap "result" from API response
+  if (res.data && typeof res.data === 'object' && 'result' in res.data) {
+    return { data: res.data.result };
+  }
+
+  // Fallback: return raw data if "result" is missing
+  return { data: res.data };
 };
