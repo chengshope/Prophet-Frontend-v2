@@ -47,8 +47,8 @@ export const authApi = createApi({
     // Logout endpoint
     logout: builder.mutation({
       query: () => ({
-        url: '/users/sign_out',
-        method: 'DELETE',
+        url: '/logout',
+        method: 'GET',
       }),
       invalidatesTags: ['User'],
     }),
