@@ -15,6 +15,7 @@ const LoginPage = () => {
       await login({
         email: values.email,
         password: values.password,
+        remember: !!values.remember,
       }).unwrap();
     } catch (error) {
       // Auto
@@ -23,12 +24,10 @@ const LoginPage = () => {
 
   return (
     <Flex vertical>
-      <div style={{ marginBottom: '24px', textAlign: 'center' }}>
-        <Title level={2} style={{ marginBottom: '8px' }}>
-          Welcome Back
-        </Title>
+      <Flex vertical align="center" gap="small" style={{ marginBottom: '24px' }}>
+        <Title level={2}>Welcome Back</Title>
         <Text type="secondary">Sign in to your account</Text>
-      </div>
+      </Flex>
 
       <Form name="login" onFinish={onFinish} autoComplete="off" layout="vertical" size="large">
         <Form.Item
@@ -58,8 +57,8 @@ const LoginPage = () => {
             <Form.Item name="remember" valuePropName="checked" noStyle>
               <Checkbox>Remember me</Checkbox>
             </Form.Item>
-            <RouterLink to="/forgot-password" style={{ color: '#1890ff' }}>
-              Forgot password?
+            <RouterLink to="/forgot-password">
+                Forgot password?
             </RouterLink>
           </Flex>
         </Form.Item>
@@ -73,7 +72,7 @@ const LoginPage = () => {
 
       <Divider style={{ margin: '0 0 14px' }}>Or</Divider>
 
-      <Space direction="vertical" style={{ width: '100%', marginTop: 10 }}>
+      <Space direction="vertical">
         <Button
           icon={<GoogleIcon size={16} />}
           onClick={() => showInfo('Google login not implemented yet')}

@@ -1,26 +1,11 @@
 import { authApi } from '@/api';
 import { createSlice } from '@reduxjs/toolkit';
 
-const TOKEN_KEY = 'PROPHET-TOKEN';
-const USER_KEY = 'PROPHET-USER';
-
-const isBrowser = typeof window !== 'undefined';
-const saveToStorage = (token, user) => {
-  if (isBrowser) {
-    localStorage.setItem(TOKEN_KEY, token);
-    localStorage.setItem(USER_KEY, JSON.stringify(user));
-  }
-};
-const removeFromStorage = () => {
-  if (isBrowser) {
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(USER_KEY);
-  }
-};
+import { clearAuth, getAuthToken, getAuthUser, saveAuth } from '@/utils/authStorage';
 
 const initialState = {
-  token: isBrowser ? localStorage.getItem(TOKEN_KEY) : null,
-  user: isBrowser ? JSON.parse(localStorage.getItem(USER_KEY)) : null,
+  token: getAuthToken(),
+  user: getAuthUser(),
 };
 
 const tokenSlice = createSlice({
@@ -30,17 +15,18 @@ const tokenSlice = createSlice({
     clearToken(state) {
       state.token = null;
       state.user = null;
-      removeFromStorage();
+      clearAuth();
     },
   },
   extraReducers: (builder) => {
     builder.addMatcher(authApi.endpoints.login.matchFulfilled, (state, action) => {
       state.token = action.payload.accessToken;
       state.user = action.payload.user;
-      saveToStorage(action.payload.accessToken, action.payload.user);
+      const remember = !!action?.meta?.arg?.originalArgs?.remember;
+      saveAuth(action.payload.accessToken, action.payload.user, remember);
     });
 
-    builder.addMatcher(authApi.endpoints.login.matchRejected, (state, action) => {
+    builder.addMatcher(authApi.endpoints.login.matchRejected, (_, action) => {
       console.error('Login failed:', action.error);
     });
   },
