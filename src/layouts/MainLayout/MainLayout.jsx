@@ -1,21 +1,38 @@
 import { useLogoutMutation } from '@/api/authApi';
+import { useThemeContext } from '@/contexts/ThemeContext';
 import { clearToken } from '@/features/auth/authSlice';
 import {
+  AppstoreOutlined,
+  BellOutlined,
+  BookOutlined,
   BulbOutlined,
   DashboardOutlined,
-  ExperimentOutlined,
   HomeOutlined,
+  LineChartOutlined,
   LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   SettingOutlined,
+  ShopOutlined,
+  TeamOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { Avatar, Breadcrumb, Button, Dropdown, Layout, Menu, Space, theme, Typography } from 'antd';
+import {
+  Avatar,
+  Badge,
+  Breadcrumb,
+  Button,
+  Dropdown,
+  Input,
+  Layout,
+  Menu,
+  Space,
+  Typography,
+} from 'antd';
+
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { useThemeContext } from '../../contexts/ThemeContext';
 import './MainLayout.less';
 
 const { Header, Sider, Content } = Layout;
@@ -27,10 +44,8 @@ const MainLayout = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
+  const isIntegrator = user?.role?.name === 'integrator' || user?.user?.role?.name === 'integrator';
   const { isDarkMode, toggleTheme } = useThemeContext();
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
 
   const [logoutApi] = useLogoutMutation();
   const handleLogout = async () => {
@@ -51,34 +66,45 @@ const MainLayout = () => {
       onClick: () => navigate('/dashboard'),
     },
     {
-      key: '/profile',
-      icon: <UserOutlined />,
-      label: 'Profile',
-      children: [
-        {
-          key: '/profile',
-          label: 'View Profile',
-          onClick: () => navigate('/profile'),
-        },
-        {
-          key: '/profile/settings',
-          label: 'Settings',
-          onClick: () => navigate('/profile/settings'),
-        },
-      ],
+      key: '/street-rates',
+      icon: <AppstoreOutlined />,
+      label: 'Street Rates',
+      onClick: () => navigate('/street-rates'),
     },
     {
-      key: '/demo',
-      icon: <ExperimentOutlined />,
-      label: 'Demo',
-      children: [
-        {
-          key: '/demo/counter',
-          label: 'Counter Demo',
-          onClick: () => navigate('/demo/counter'),
-        },
-      ],
+      key: '/existing-customer-rate-increases',
+      icon: <TeamOutlined />,
+      label: 'Existing Customers',
+      onClick: () => navigate('/existing-customer-rate-increases'),
     },
+    {
+      key: '/competitors',
+      icon: <ShopOutlined />,
+      label: 'Competitors',
+      onClick: () => navigate('/competitors'),
+    },
+    {
+      key: '/reporting',
+      icon: <LineChartOutlined />,
+      label: 'Reporting',
+      onClick: () => navigate('/reporting'),
+    },
+    {
+      key: '/settings',
+      icon: <SettingOutlined />,
+      label: 'Settings',
+      onClick: () => navigate('/profile/settings'),
+    },
+    ...(isIntegrator
+      ? [
+          {
+            key: '/portfolio',
+            icon: <BookOutlined />,
+            label: 'Portfolio',
+            onClick: () => navigate('/portfolio'),
+          },
+        ]
+      : []),
   ];
 
   const userMenuItems = [
@@ -136,13 +162,7 @@ const MainLayout = () => {
 
   return (
     <Layout className="main-layout">
-      <Sider
-        trigger={null}
-        collapsible
-        collapsed={collapsed}
-        className="sidebar"
-        style={{ background: colorBgContainer }}
-      >
+      <Sider trigger={null} collapsible collapsed={collapsed} className="sidebar">
         <div className={`logo-area ${collapsed ? 'collapsed' : ''}`}>
           <Title level={4} className={`logo-title ${collapsed ? 'hidden' : ''}`}>
             Prophet
@@ -163,17 +183,23 @@ const MainLayout = () => {
       </Sider>
 
       <Layout>
-        <Header className="top-header" style={{ background: colorBgContainer }}>
-          <Space>
+        <Header className="top-header">
+          <Space className="header-left" size={12}>
             <Button
               type="text"
               icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
               onClick={() => setCollapsed(!collapsed)}
               className="menu-toggle-btn"
             />
+            <Breadcrumb items={getBreadcrumbItems()} className="breadcrumb-nav" />
           </Space>
 
-          <Space>
+          <Space className="header-right" size={12}>
+            <Input.Search placeholder="Search" allowClear className="top-search" />
+            <Button type="text" icon={<BulbOutlined />} onClick={toggleTheme} />
+            <Badge dot>
+              <Button type="text" icon={<BellOutlined />} />
+            </Badge>
             <Dropdown menu={{ items: userMenuItems }} placement="bottomRight" trigger={['click']}>
               <Space className="user-profile">
                 <Avatar icon={<UserOutlined />} />
@@ -184,15 +210,7 @@ const MainLayout = () => {
         </Header>
 
         <Content className="page-content">
-          <Breadcrumb items={getBreadcrumbItems()} className="breadcrumb-nav" />
-
-          <div
-            className="content-area"
-            style={{
-              background: colorBgContainer,
-              borderRadius: borderRadiusLG,
-            }}
-          >
+          <div className="content-area">
             <Outlet />
           </div>
         </Content>

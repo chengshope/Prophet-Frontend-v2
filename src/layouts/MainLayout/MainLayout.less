@@ -5,6 +5,7 @@
 
 .sidebar {
   border-right: 1px solid #f0f0f0;
+  background: var(--ant-colorBgContainer);
 }
 
 .logo-area {
@@ -38,6 +39,7 @@
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid #f0f0f0;
+  background: var(--ant-colorBgContainer);
 }
 
 .menu-toggle-btn {
@@ -79,10 +81,15 @@
 }
 
 .breadcrumb-nav {
-  margin-bottom: 16px;
+  margin: 0; /* lives in header now */
 }
 
 .content-area {
   padding: 24px;
-  /* let content grow naturally; scrolling handled by .page-content */
+  background: var(--ant-colorBgContainer);
+  border-radius: var(--ant-borderRadiusLG);
+}
+
+.top-search {
+  width: 280px;
 }
