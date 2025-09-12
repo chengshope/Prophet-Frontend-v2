@@ -1,8 +1,19 @@
 import { showError, showSuccess } from '@/utils/messageService';
+import { SaveOutlined } from '@ant-design/icons';
 import {
-    SaveOutlined
-} from '@ant-design/icons';
-import { Button, Card, Col, Divider, Form, InputNumber, Radio, Row, Select, Switch, TimePicker, Typography } from 'antd';
+  Button,
+  Card,
+  Col,
+  Divider,
+  Form,
+  InputNumber,
+  Radio,
+  Row,
+  Select,
+  Switch,
+  TimePicker,
+  Typography,
+} from 'antd';
 import { useState } from 'react';
 
 const { Title } = Typography;
@@ -114,7 +125,9 @@ const SettingsPage = () => {
               <Form.Item label="Day of Month" name="dayOfMonth">
                 <Select>
                   {Array.from({ length: 31 }, (_, i) => (
-                    <Option key={i + 1} value={i + 1}>{i + 1}</Option>
+                    <Option key={i + 1} value={i + 1}>
+                      {i + 1}
+                    </Option>
                   ))}
                 </Select>
               </Form.Item>
@@ -126,7 +139,11 @@ const SettingsPage = () => {
             </Col>
             <Col xs={24} md={24} lg={16}>
               <Form.Item label="Notification Emails" name="emails">
-                <Select mode="tags" tokenSeparators={[',']} placeholder="Add email and press Enter" />
+                <Select
+                  mode="tags"
+                  tokenSeparators={[',']}
+                  placeholder="Add email and press Enter"
+                />
               </Form.Item>
             </Col>
           </Row>
@@ -134,7 +151,11 @@ const SettingsPage = () => {
           <Divider orientation="left">Rates To Update</Divider>
           <Row gutter={[16, 16]}>
             <Col xs={24} md={12} lg={8}>
-              <Form.Item name="overridePortfolio" valuePropName="checked" label="Override Portfolio Rate Setting (Facility)">
+              <Form.Item
+                name="overridePortfolio"
+                valuePropName="checked"
+                label="Override Portfolio Rate Setting (Facility)"
+              >
                 <Switch />
               </Form.Item>
             </Col>
@@ -149,7 +170,11 @@ const SettingsPage = () => {
               </Form.Item>
             </Col>
             <Col xs={24} md={12} lg={8}>
-              <Form.Item name="rate_hold_on_occupancy" valuePropName="checked" label="Do not decrease rates on fully occupied types (Portfolio)">
+              <Form.Item
+                name="rate_hold_on_occupancy"
+                valuePropName="checked"
+                label="Do not decrease rates on fully occupied types (Portfolio)"
+              >
                 <Switch />
               </Form.Item>
             </Col>
@@ -219,12 +244,12 @@ const SettingsPage = () => {
           </Row>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" loading={loading} icon={<SaveOutlined />}>Save</Button>
+            <Button type="primary" htmlType="submit" loading={loading} icon={<SaveOutlined />}>
+              Save
+            </Button>
           </Form.Item>
         </Form>
       </Card>
-
-
     </div>
   );
 };
