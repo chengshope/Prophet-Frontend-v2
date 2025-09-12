@@ -1,5 +1,6 @@
 .main-layout {
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .sidebar {
@@ -50,7 +51,31 @@
 }
 
 .page-content {
-  margin: 24px;
+  padding: 24px;
+  height: calc(100vh - 64px); /* viewport minus header */
+  overflow: auto; /* scroll appears in the red area */
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.25) #fff; /* thumb color, track color */
+}
+/* WebKit */
+.page-content::-webkit-scrollbar {
+  width: 10px;
+}
+.page-content::-webkit-scrollbar-track {
+  background: #fff;
+  border-radius: 8px;
+}
+.page-content::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.25);
+  border-radius: 8px;
+  border: 2px solid #fff; /* makes thumb separate from white track */
+}
+.page-content::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
 .breadcrumb-nav {
@@ -59,5 +84,5 @@
 
 .content-area {
   padding: 24px;
-  min-height: 360px;
+  /* let content grow naturally; scrolling handled by .page-content */
 }
