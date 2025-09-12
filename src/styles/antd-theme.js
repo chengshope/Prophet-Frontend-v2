@@ -12,7 +12,8 @@ export const lightTheme = {
     colorBgContainer: '#ffffff',
     colorBgElevated: '#ffffff',
     colorBgLayout: '#f5f5f5',
-    colorBgSpotlight: '#ffffff',
+    // Use dark tooltip background in light mode for readability
+    colorBgSpotlight: 'rgba(0, 0, 0, 0.85)',
 
     // Border
     borderRadius: 8,
