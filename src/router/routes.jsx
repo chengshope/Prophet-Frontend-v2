@@ -1,8 +1,8 @@
 import AuthLayout from '@/layouts/AuthLayout';
 import MainLayout from '@/layouts/MainLayout';
-import ProtectedRoute from '@/router/guards/ProtectedRoute';
-import PublicRoute from '@/router/guards/PublicRoute';
 import { Navigate } from 'react-router-dom';
+import ProtectedRoute from './guards/ProtectedRoute';
+import PublicRoute from './guards/PublicRoute';
 
 import DashboardPage from '@/pages/DashboardPage';
 import ForgotPasswordPage from '@/pages/ForgotPasswordPage';

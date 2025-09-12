@@ -1,6 +1,6 @@
+import { ThemeContextProvider, useThemeContext } from '@/contexts/ThemeContext';
+import { getTheme } from '@/styles/antd-theme';
 import { ConfigProvider, theme } from 'antd';
-import { ThemeContextProvider, useThemeContext } from '../../contexts/ThemeContext';
-import { getTheme } from '../../styles/antd-theme';
 
 const AntdConfigProvider = ({ children }) => {
   const { isDarkMode } = useThemeContext();
