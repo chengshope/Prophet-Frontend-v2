@@ -1,5 +1,17 @@
-
-import { Button, Card, Col, Empty, Input, Radio, Row, Select, Space, Table, Tag, Typography } from 'antd';
+import {
+  Button,
+  Card,
+  Col,
+  Empty,
+  Input,
+  Radio,
+  Row,
+  Select,
+  Space,
+  Table,
+  Tag,
+  Typography,
+} from 'antd';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -12,7 +24,6 @@ const STRATEGY_OPTIONS = [
   { label: 'Happy Medium', value: 'happy_medium' },
   { label: 'Maverick+', value: 'maverick_plus' },
 ];
-
 
 const competitorTypeOptions = [
   { label: 'Direct', value: 'Direct' },
@@ -29,12 +40,15 @@ const CompetitorsPage = () => {
   const [search, setSearch] = useState('');
   const [data, setData] = useState([]);
 
-  const facilityOptions = useMemo(() => [
-    { label: 'Facility A', value: '1' },
-    { label: 'Facility B', value: '2' },
-  ], []);
+  const facilityOptions = useMemo(
+    () => [
+      { label: 'Facility A', value: '1' },
+      { label: 'Facility B', value: '2' },
+    ],
+    []
+  );
 
-  const strategyLabels = useMemo(() => STRATEGY_OPTIONS.map(s => s.label), []);
+  const strategyLabels = useMemo(() => STRATEGY_OPTIONS.map((s) => s.label), []);
 
   const columns = [
     {
@@ -73,7 +87,9 @@ const CompetitorsPage = () => {
           style={{ width: 160 }}
           options={competitorTypeOptions}
           onChange={(val) => {
-            setData((prev) => prev.map((row) => row.id === record.id ? { ...row, comp_type: val } : row));
+            setData((prev) =>
+              prev.map((row) => (row.id === record.id ? { ...row, comp_type: val } : row))
+            );
           }}
         />
       ),
@@ -102,12 +118,11 @@ const CompetitorsPage = () => {
           <Col xs={24} md={10}>
             <Space direction="vertical" style={{ width: '100%' }}>
               <Text strong>Strategy</Text>
-              <Radio.Group
-                value={strategy}
-                onChange={(e) => setStrategy(e.target.value)}
-              >
+              <Radio.Group value={strategy} onChange={(e) => setStrategy(e.target.value)}>
                 {strategyLabels.map((label) => (
-                  <Radio.Button key={label} value={label}>{label}</Radio.Button>
+                  <Radio.Button key={label} value={label}>
+                    {label}
+                  </Radio.Button>
                 ))}
               </Radio.Group>
             </Space>
@@ -115,7 +130,11 @@ const CompetitorsPage = () => {
           <Col xs={24} md={6}>
             <Space direction="vertical" style={{ width: '100%' }}>
               <Text strong>Search</Text>
-              <Search placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
+              <Search
+                placeholder="Search..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
             </Space>
           </Col>
         </Row>
