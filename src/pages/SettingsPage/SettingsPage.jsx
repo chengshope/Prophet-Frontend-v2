@@ -1,11 +1,8 @@
 import { showError, showSuccess } from '@/utils/messageService';
 import {
-  BellOutlined,
-  GlobalOutlined,
-  SaveOutlined,
-  SecurityScanOutlined,
+    SaveOutlined
 } from '@ant-design/icons';
-import { Button, Card, Col, Divider, Form, Input, Row, Select, Switch, Typography } from 'antd';
+import { Button, Card, Col, Divider, Form, InputNumber, Radio, Row, Select, Switch, TimePicker, Typography } from 'antd';
 import { useState } from 'react';
 
 const { Title } = Typography;
@@ -32,217 +29,202 @@ const SettingsPage = () => {
     <div>
       <Title level={2}>Settings</Title>
 
-      <Row gutter={[16, 16]}>
-        {/* Account Settings */}
-        <Col xs={24} lg={12}>
-          <Card
-            title={
-              <>
-                <SecurityScanOutlined /> Account Settings
-              </>
-            }
-          >
-            <Form
-              layout="vertical"
-              onFinish={onFinish}
-              initialValues={{
-                currentPassword: '',
-                newPassword: '',
-                confirmPassword: '',
-                twoFactor: false,
-              }}
-            >
-              <Form.Item
-                label="Current Password"
-                name="currentPassword"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please input your current password!',
-                  },
-                ]}
-              >
-                <Input.Password placeholder="Enter current password" />
+      <Card title="Portfolio & Facility Settings" style={{ marginBottom: 16 }}>
+        <Form
+          layout="vertical"
+          onFinish={onFinish}
+          initialValues={{
+            scope: 'portfolio',
+            frequency: 'Daily',
+            weekday: 'Mon',
+            dayOfMonth: 1,
+            timeOfDay: null,
+            emails: [],
+            overridePortfolio: false,
+            web_rate: false,
+            street_rate: true,
+            rate_hold_on_occupancy: false,
+            averagePercentIncrease: null,
+            maxDollarIncrease: null,
+            minDollarIncrease: null,
+            maxPercentIncrease: null,
+            minPercentIncrease: null,
+            storeOccupancyThreshold: null,
+            timeSinceLastIncrease: null,
+            timeSinceMoveIn: null,
+            limitAboveStreetRate: null,
+            maxMoveOutProbability: null,
+          }}
+        >
+          <Row gutter={[16, 16]}>
+            <Col xs={24} md={12} lg={8}>
+              <Form.Item label="Scope" name="scope">
+                <Select>
+                  <Option value="portfolio">Portfolio</Option>
+                  <Option value="facility">Facility (example)</Option>
+                </Select>
               </Form.Item>
-
-              <Form.Item
-                label="New Password"
-                name="newPassword"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please input your new password!',
-                  },
-                  {
-                    min: 8,
-                    message: 'Password must be at least 8 characters!',
-                  },
-                ]}
-              >
-                <Input.Password placeholder="Enter new password" />
+            </Col>
+            <Col xs={24} md={12} lg={8}>
+              <Form.Item label="Street Rate Strategy" name="strategy">
+                <Radio.Group>
+                  <Radio.Button value="mirror">Mirror Competitors</Radio.Button>
+                  <Radio.Button value="maverick">Maverick</Radio.Button>
+                  <Radio.Button value="happy_medium">Happy Medium</Radio.Button>
+                  <Radio.Button value="maverick_plus">Maverick+</Radio.Button>
+                </Radio.Group>
               </Form.Item>
-
-              <Form.Item
-                label="Confirm New Password"
-                name="confirmPassword"
-                dependencies={['newPassword']}
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please confirm your new password!',
-                  },
-                  ({ getFieldValue }) => ({
-                    validator(_, value) {
-                      if (!value || getFieldValue('newPassword') === value) {
-                        return Promise.resolve();
-                      }
-                      return Promise.reject(new Error('Passwords do not match!'));
-                    },
-                  }),
-                ]}
-              >
-                <Input.Password placeholder="Confirm new password" />
+            </Col>
+            <Col xs={24} md={12} lg={8}>
+              <Form.Item label="Value Pricing" name="valuePricing">
+                <Radio.Group>
+                  <Radio.Button value="on">On</Radio.Button>
+                  <Radio.Button value="off">Off</Radio.Button>
+                  <Radio.Button value="multiple">Multiple</Radio.Button>
+                </Radio.Group>
               </Form.Item>
+            </Col>
+          </Row>
 
-              <Divider />
+          <Divider orientation="left">Street Rate Update Strategy</Divider>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} md={12} lg={8}>
+              <Form.Item label="Frequency" name="frequency">
+                <Radio.Group>
+                  <Radio.Button value="Daily">Daily</Radio.Button>
+                  <Radio.Button value="Weekly">Weekly</Radio.Button>
+                  <Radio.Button value="Monthly">Monthly</Radio.Button>
+                </Radio.Group>
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={12} lg={8}>
+              <Form.Item label="Day of Week" name="weekday">
+                <Radio.Group>
+                  <Radio.Button value="Mon">Mon</Radio.Button>
+                  <Radio.Button value="Tue">Tue</Radio.Button>
+                  <Radio.Button value="Wed">Wed</Radio.Button>
+                  <Radio.Button value="Thur">Thur</Radio.Button>
+                  <Radio.Button value="Fri">Fri</Radio.Button>
+                  <Radio.Button value="Sat">Sat</Radio.Button>
+                  <Radio.Button value="Sun">Sun</Radio.Button>
+                </Radio.Group>
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={12} lg={8}>
+              <Form.Item label="Day of Month" name="dayOfMonth">
+                <Select>
+                  {Array.from({ length: 31 }, (_, i) => (
+                    <Option key={i + 1} value={i + 1}>{i + 1}</Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={12} lg={8}>
+              <Form.Item label="Time of Day" name="timeOfDay">
+                <TimePicker style={{ width: '100%' }} format="HH:mm" />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={24} lg={16}>
+              <Form.Item label="Notification Emails" name="emails">
+                <Select mode="tags" tokenSeparators={[',']} placeholder="Add email and press Enter" />
+              </Form.Item>
+            </Col>
+          </Row>
 
-              <Form.Item label="Two-Factor Authentication" name="twoFactor" valuePropName="checked">
+          <Divider orientation="left">Rates To Update</Divider>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} md={12} lg={8}>
+              <Form.Item name="overridePortfolio" valuePropName="checked" label="Override Portfolio Rate Setting (Facility)">
                 <Switch />
               </Form.Item>
-
-              <Form.Item>
-                <Button type="primary" htmlType="submit" loading={loading} icon={<SaveOutlined />}>
-                  Update Password
-                </Button>
-              </Form.Item>
-            </Form>
-          </Card>
-        </Col>
-
-        {/* Notification Settings */}
-        <Col xs={24} lg={12}>
-          <Card
-            title={
-              <>
-                <BellOutlined /> Notification Settings
-              </>
-            }
-          >
-            <Form
-              layout="vertical"
-              onFinish={onFinish}
-              initialValues={{
-                emailNotifications: true,
-                pushNotifications: false,
-                smsNotifications: false,
-                marketingEmails: true,
-              }}
-            >
-              <Form.Item
-                label="Email Notifications"
-                name="emailNotifications"
-                valuePropName="checked"
-              >
+            </Col>
+            <Col xs={24} md={12} lg={8}>
+              <Form.Item name="web_rate" valuePropName="checked" label="Web Rate">
                 <Switch />
               </Form.Item>
-
-              <Form.Item
-                label="Push Notifications"
-                name="pushNotifications"
-                valuePropName="checked"
-              >
+            </Col>
+            <Col xs={24} md={12} lg={8}>
+              <Form.Item name="street_rate" valuePropName="checked" label="Street Rate">
                 <Switch />
               </Form.Item>
-
-              <Form.Item label="SMS Notifications" name="smsNotifications" valuePropName="checked">
+            </Col>
+            <Col xs={24} md={12} lg={8}>
+              <Form.Item name="rate_hold_on_occupancy" valuePropName="checked" label="Do not decrease rates on fully occupied types (Portfolio)">
                 <Switch />
               </Form.Item>
+            </Col>
+          </Row>
 
-              <Form.Item label="Marketing Emails" name="marketingEmails" valuePropName="checked">
-                <Switch />
+          <Divider orientation="left">Revenue Goal</Divider>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} md={12} lg={8}>
+              <Form.Item label="Average Percent Increase" name="averagePercentIncrease">
+                <InputNumber style={{ width: '100%' }} min={0} max={100} addonAfter="%" />
               </Form.Item>
+            </Col>
+          </Row>
 
-              <Form.Item>
-                <Button type="primary" htmlType="submit" loading={loading} icon={<SaveOutlined />}>
-                  Save Notifications
-                </Button>
+          <Divider orientation="left">Rate Increase Criteria</Divider>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} md={12} lg={8}>
+              <Form.Item label="Notification Days (Portfolio)" name="notificationDays">
+                <InputNumber style={{ width: '100%' }} min={0} />
               </Form.Item>
-            </Form>
-          </Card>
-        </Col>
-
-        {/* Preferences */}
-        <Col span={24}>
-          <Card
-            title={
-              <>
-                <GlobalOutlined /> Preferences
-              </>
-            }
-          >
-            <Form
-              layout="vertical"
-              onFinish={onFinish}
-              initialValues={{
-                language: 'en',
-                timezone: 'UTC-5',
-                theme: 'light',
-                dateFormat: 'MM/DD/YYYY',
-              }}
-            >
-              <Row gutter={16}>
-                <Col xs={24} sm={12} md={6}>
-                  <Form.Item label="Language" name="language">
-                    <Select>
-                      <Option value="en">English</Option>
-                      <Option value="es">Spanish</Option>
-                      <Option value="fr">French</Option>
-                      <Option value="de">German</Option>
-                    </Select>
-                  </Form.Item>
-                </Col>
-
-                <Col xs={24} sm={12} md={6}>
-                  <Form.Item label="Timezone" name="timezone">
-                    <Select>
-                      <Option value="UTC-8">Pacific Time (UTC-8)</Option>
-                      <Option value="UTC-7">Mountain Time (UTC-7)</Option>
-                      <Option value="UTC-6">Central Time (UTC-6)</Option>
-                      <Option value="UTC-5">Eastern Time (UTC-5)</Option>
-                    </Select>
-                  </Form.Item>
-                </Col>
-
-                <Col xs={24} sm={12} md={6}>
-                  <Form.Item label="Theme" name="theme">
-                    <Select>
-                      <Option value="light">Light</Option>
-                      <Option value="dark">Dark</Option>
-                      <Option value="auto">Auto</Option>
-                    </Select>
-                  </Form.Item>
-                </Col>
-
-                <Col xs={24} sm={12} md={6}>
-                  <Form.Item label="Date Format" name="dateFormat">
-                    <Select>
-                      <Option value="MM/DD/YYYY">MM/DD/YYYY</Option>
-                      <Option value="DD/MM/YYYY">DD/MM/YYYY</Option>
-                      <Option value="YYYY-MM-DD">YYYY-MM-DD</Option>
-                    </Select>
-                  </Form.Item>
-                </Col>
-              </Row>
-
-              <Form.Item>
-                <Button type="primary" htmlType="submit" loading={loading} icon={<SaveOutlined />}>
-                  Save Preferences
-                </Button>
+            </Col>
+            <Col xs={24} md={12} lg={8}>
+              <Form.Item label="Max Dollar Increase" name="maxDollarIncrease">
+                <InputNumber style={{ width: '100%' }} min={0} addonBefore="$" />
               </Form.Item>
-            </Form>
-          </Card>
-        </Col>
-      </Row>
+            </Col>
+            <Col xs={24} md={12} lg={8}>
+              <Form.Item label="Min Dollar Increase" name="minDollarIncrease">
+                <InputNumber style={{ width: '100%' }} min={0} addonBefore="$" />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={12} lg={8}>
+              <Form.Item label="Max Percent Increase" name="maxPercentIncrease">
+                <InputNumber style={{ width: '100%' }} min={0} max={100} addonAfter="%" />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={12} lg={8}>
+              <Form.Item label="Min Percent Increase" name="minPercentIncrease">
+                <InputNumber style={{ width: '100%' }} min={0} max={100} addonAfter="%" />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={12} lg={8}>
+              <Form.Item label="Store Occupancy Threshold" name="storeOccupancyThreshold">
+                <InputNumber style={{ width: '100%' }} min={0} max={100} addonAfter="%" />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={12} lg={8}>
+              <Form.Item label="Time Since Last Increase (months)" name="timeSinceLastIncrease">
+                <InputNumber style={{ width: '100%' }} min={0} />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={12} lg={8}>
+              <Form.Item label="Time Since Move-in (months)" name="timeSinceMoveIn">
+                <InputNumber style={{ width: '100%' }} min={0} />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={12} lg={8}>
+              <Form.Item label="Limit Above Street Rate" name="limitAboveStreetRate">
+                <InputNumber style={{ width: '100%' }} min={0} addonBefore="$" />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={12} lg={8}>
+              <Form.Item label="Max Move-Out Probability" name="maxMoveOutProbability">
+                <InputNumber style={{ width: '100%' }} min={0} max={100} addonAfter="%" />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Form.Item>
+            <Button type="primary" htmlType="submit" loading={loading} icon={<SaveOutlined />}>Save</Button>
+          </Form.Item>
+        </Form>
+      </Card>
+
+
     </div>
   );
 };

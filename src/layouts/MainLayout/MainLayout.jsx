@@ -93,7 +93,7 @@ const MainLayout = () => {
       key: '/settings',
       icon: <SettingOutlined />,
       label: 'Settings',
-      onClick: () => navigate('/profile/settings'),
+      onClick: () => navigate('/settings'),
     },
     ...(isIntegrator
       ? [
@@ -118,7 +118,7 @@ const MainLayout = () => {
       key: 'settings',
       icon: <SettingOutlined />,
       label: 'Settings',
-      onClick: () => navigate('/profile/settings'),
+      onClick: () => navigate('/settings'),
     },
     {
       key: 'theme',
