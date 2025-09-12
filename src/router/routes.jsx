@@ -5,7 +5,6 @@ import ProtectedRoute from './guards/ProtectedRoute';
 import PublicRoute from './guards/PublicRoute';
 
 import CompetitorsPage from '@/pages/CompetitorsPage';
-import DashboardPage from '@/pages/DashboardPage';
 import ExistingCustomersPage from '@/pages/ExistingCustomersPage';
 import ForgotPasswordPage from '@/pages/ForgotPasswordPage';
 import LoginPage from '@/pages/LoginPage';
@@ -40,8 +39,7 @@ export const routeConfig = [
       </ProtectedRoute>
     ),
     children: [
-      { index: true, element: <DashboardPage /> },
-      { path: 'dashboard', element: <DashboardPage /> },
+      { index: true, element: <StreetRatesPage /> },
       { path: 'street-rates', element: <StreetRatesPage /> },
       { path: 'existing-customer-rate-increases', element: <ExistingCustomersPage /> },
       { path: 'competitors', element: <CompetitorsPage /> },

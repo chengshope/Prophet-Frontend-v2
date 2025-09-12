@@ -5,7 +5,6 @@ import {
   AppstoreOutlined,
   BookOutlined,
   BulbOutlined,
-  DashboardOutlined,
   HomeOutlined,
   LineChartOutlined,
   LogoutOutlined,
@@ -47,12 +46,6 @@ const MainLayout = () => {
   };
 
   const menuItems = [
-    {
-      key: '/dashboard',
-      icon: <DashboardOutlined />,
-      label: 'Dashboard',
-      onClick: () => navigate('/dashboard'),
-    },
     {
       key: '/street-rates',
       icon: <AppstoreOutlined />,
@@ -131,7 +124,7 @@ const MainLayout = () => {
     const items = [
       {
         title: <HomeOutlined />,
-        onClick: () => navigate('/dashboard'),
+        onClick: () => navigate('/street-rates'),
       },
     ];
 
