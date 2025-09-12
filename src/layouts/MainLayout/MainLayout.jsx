@@ -3,40 +3,28 @@ import { useThemeContext } from '@/contexts/ThemeContext';
 import { clearToken } from '@/features/auth/authSlice';
 import {
   AppstoreOutlined,
-  BellOutlined,
   BookOutlined,
   BulbOutlined,
   DashboardOutlined,
   HomeOutlined,
   LineChartOutlined,
   LogoutOutlined,
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
   SettingOutlined,
   ShopOutlined,
   TeamOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import {
-  Avatar,
-  Badge,
-  Breadcrumb,
-  Button,
-  Dropdown,
-  Input,
-  Layout,
-  Menu,
-  Space,
-  Typography,
-} from 'antd';
+import { Layout } from 'antd';
+import AppFooter from './Footer';
+import HeaderBar from './Header';
+import Navbar from './Navbar';
 
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import './MainLayout.less';
 
-const { Header, Sider, Content } = Layout;
-const { Title } = Typography;
+const { Content } = Layout;
 
 const MainLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -162,58 +150,25 @@ const MainLayout = () => {
 
   return (
     <Layout className="main-layout">
-      <Sider trigger={null} collapsible collapsed={collapsed} className="sidebar">
-        <div className={`logo-area ${collapsed ? 'collapsed' : ''}`}>
-          <Title level={4} className={`logo-title ${collapsed ? 'hidden' : ''}`}>
-            Prophet
-          </Title>
-          {collapsed && (
-            <Title level={4} className="logo-title">
-              P
-            </Title>
-          )}
-        </div>
-
-        <Menu
-          mode="inline"
-          selectedKeys={[location.pathname]}
-          className="navigation-menu"
-          items={menuItems}
-        />
-      </Sider>
+      <Navbar collapsed={collapsed} selectedKey={location.pathname} items={menuItems} />
 
       <Layout>
-        <Header className="top-header">
-          <Space className="header-left" size={12}>
-            <Button
-              type="text"
-              icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-              onClick={() => setCollapsed(!collapsed)}
-              className="menu-toggle-btn"
-            />
-            <Breadcrumb items={getBreadcrumbItems()} className="breadcrumb-nav" />
-          </Space>
-
-          <Space className="header-right" size={12}>
-            <Input.Search placeholder="Search" allowClear className="top-search" />
-            <Button type="text" icon={<BulbOutlined />} onClick={toggleTheme} />
-            <Badge dot>
-              <Button type="text" icon={<BellOutlined />} />
-            </Badge>
-            <Dropdown menu={{ items: userMenuItems }} placement="bottomRight" trigger={['click']}>
-              <Space className="user-profile">
-                <Avatar icon={<UserOutlined />} />
-                <span>{user?.name || 'User'}</span>
-              </Space>
-            </Dropdown>
-          </Space>
-        </Header>
+        <HeaderBar
+          collapsed={collapsed}
+          onToggleCollapsed={() => setCollapsed(!collapsed)}
+          breadcrumbItems={getBreadcrumbItems()}
+          user={user}
+          userMenuItems={userMenuItems}
+          onToggleTheme={toggleTheme}
+        />
 
         <Content className="page-content">
           <div className="content-area">
             <Outlet />
           </div>
         </Content>
+
+        <AppFooter />
       </Layout>
     </Layout>
   );
