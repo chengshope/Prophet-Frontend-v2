@@ -136,10 +136,7 @@ const MainLayout = () => {
         style={{ background: colorBgContainer }}
       >
         <div className={`logo-area ${collapsed ? 'collapsed' : ''}`}>
-          <Title
-            level={4}
-            className={`logo-title ${collapsed ? 'hidden' : ''}`}
-          >
+          <Title level={4} className={`logo-title ${collapsed ? 'hidden' : ''}`}>
             Prophet
           </Title>
           {collapsed && (
@@ -158,10 +155,7 @@ const MainLayout = () => {
       </Sider>
 
       <Layout>
-        <Header
-          className="top-header"
-          style={{ background: colorBgContainer }}
-        >
+        <Header className="top-header" style={{ background: colorBgContainer }}>
           <Space>
             <Button
               type="text"

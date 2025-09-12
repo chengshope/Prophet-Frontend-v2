@@ -1,14 +1,15 @@
+import ProtectedRoute from '@/components/ProtectedRoute';
+import AuthLayout from '@/layouts/AuthLayout';
+import MainLayout from '@/layouts/MainLayout';
 import { Navigate } from 'react-router-dom';
-import ProtectedRoute from '../components/ProtectedRoute';
-import AuthLayout from '../layouts/AuthLayout';
-import MainLayout from '../layouts/MainLayout';
 
-import ForgotPasswordPage from '../pages/ForgotPasswordPage';
-import LoginPage from '../pages/LoginPage';
-import DashboardPage from '../pages/DashboardPage';
-import NotFoundPage from '../pages/NotFoundPage';
-import ProfilePage from '../pages/ProfilePage';
-import SettingsPage from '../pages/SettingsPage';
+import DashboardPage from '@/pages/DashboardPage';
+import ForgotPasswordPage from '@/pages/ForgotPasswordPage';
+import LoginPage from '@/pages/LoginPage';
+import NotFoundPage from '@/pages/NotFoundPage';
+import ProfilePage from '@/pages/ProfilePage';
+import ResetPasswordPage from '@/pages/ResetPasswordPage';
+import SettingsPage from '@/pages/SettingsPage';
 
 export const routeConfig = [
   { path: '/', element: <Navigate to="/login" replace /> },
@@ -18,6 +19,7 @@ export const routeConfig = [
     children: [
       { path: 'login', element: <LoginPage /> },
       { path: 'forgot-password', element: <ForgotPasswordPage /> },
+      { path: 'reset-password', element: <ResetPasswordPage /> },
     ],
   },
   {

@@ -1,28 +1,21 @@
-import { showError, showSuccess } from '@/utils/messageService';
 import { ArrowLeftOutlined, MailOutlined } from '@ant-design/icons';
 import { Button, Flex, Form, Input, Result, Typography } from 'antd';
 import { useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import { useForgotPasswordMutation } from '../../api/authApi';
 
 const { Title, Text } = Typography;
 
 const ForgotPasswordPage = () => {
-  const [loading, setLoading] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
+  const [forgotPassword, { isLoading }] = useForgotPasswordMutation();
 
   const onFinish = async (values) => {
-    setLoading(true);
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      console.log('Reset email for:', values.email);
+      await forgotPassword({ email: values.email }).unwrap();
       setEmailSent(true);
-      showSuccess('Password reset email sent!');
-    } catch {
-      showError('Failed to send reset email. Please try again.');
-    } finally {
-      setLoading(false);
+    } catch (err) {
+      // baseQuery already shows error messages; keep a fallback just in case
     }
   };
 
@@ -76,7 +69,7 @@ const ForgotPasswordPage = () => {
           <Button
             type="primary"
             htmlType="submit"
-            loading={loading}
+            loading={isLoading}
             block
             style={{ marginTop: 12 }}
           >
