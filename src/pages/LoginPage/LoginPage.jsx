@@ -57,9 +57,7 @@ const LoginPage = () => {
             <Form.Item name="remember" valuePropName="checked" noStyle>
               <Checkbox>Remember me</Checkbox>
             </Form.Item>
-            <RouterLink to="/forgot-password">
-                Forgot password?
-            </RouterLink>
+            <RouterLink to="/forgot-password">Forgot password?</RouterLink>
           </Flex>
         </Form.Item>
 
