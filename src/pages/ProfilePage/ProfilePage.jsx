@@ -1,9 +1,9 @@
 import {
-    EditOutlined,
-    EnvironmentOutlined,
-    MailOutlined,
-    PhoneOutlined,
-    UserOutlined,
+  EditOutlined,
+  EnvironmentOutlined,
+  MailOutlined,
+  PhoneOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
 import { Avatar, Button, Card, Col, Descriptions, Row, Space, Tag, Typography } from 'antd';
 import { useSelector } from 'react-redux';

@@ -5,18 +5,7 @@ import {
   SaveOutlined,
   SecurityScanOutlined,
 } from '@ant-design/icons';
-import {
-  Button,
-  Card,
-  Col,
-  Divider,
-  Form,
-  Input,
-  Row,
-  Select,
-  Switch,
-  Typography,
-} from 'antd';
+import { Button, Card, Col, Divider, Form, Input, Row, Select, Switch, Typography } from 'antd';
 import { useState } from 'react';
 
 const { Title } = Typography;

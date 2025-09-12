@@ -20,10 +20,7 @@ const AuthLayout = () => {
         </div>
 
         {/* Authentication form modal */}
-        <div
-          className="login-form"
-          style={{ background: colorBgContainer }}
-        >
+        <div className="login-form" style={{ background: colorBgContainer }}>
           <Outlet />
         </div>
 
