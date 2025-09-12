@@ -9,34 +9,12 @@ export const authApi = createApi({
     // Login endpoint
     login: builder.mutation({
       query: (credentials) => ({
-        url: '/users/sign_in',
+        url: '/login',
         method: 'POST',
         body: {
-          user: {
-            email: credentials.email,
-            password: credentials.password,
-          },
+          email: credentials.email,
+          password: credentials.password,
         },
-      }),
-      invalidatesTags: ['User'],
-    }),
-
-    // Signup endpoint
-    signup: builder.mutation({
-      query: (userData) => ({
-        url: '/users/sign_up',
-        method: 'POST',
-        body: userData,
-      }),
-      invalidatesTags: ['User'],
-    }),
-
-    // Onboarding endpoint
-    onboarding: builder.mutation({
-      query: (data) => ({
-        url: '/users/onboarding',
-        method: 'POST',
-        body: data,
       }),
       invalidatesTags: ['User'],
     }),
@@ -44,12 +22,10 @@ export const authApi = createApi({
     // Forgot password endpoint
     forgotPassword: builder.mutation({
       query: (data) => ({
-        url: '/users/password',
+        url: '/forgot-password',
         method: 'POST',
         body: {
-          user: {
-            email: data.email,
-          },
+          email: data.email,
         },
       }),
     }),
@@ -67,19 +43,6 @@ export const authApi = createApi({
           },
         },
       }),
-    }),
-
-    // Google login endpoint
-    googleLogin: builder.mutation({
-      query: (data) => ({
-        url: '/users/google_sign_in',
-        method: 'POST',
-        body: {
-          credential: data.credential,
-          user_info: data.userInfo,
-        },
-      }),
-      invalidatesTags: ['User'],
     }),
 
     // Logout endpoint
