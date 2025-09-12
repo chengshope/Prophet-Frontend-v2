@@ -17,15 +17,9 @@ const Navbar = ({ collapsed, selectedKey, items }) => {
         )}
       </div>
 
-      <Menu
-        mode="inline"
-        selectedKeys={[selectedKey]}
-        className="navigation-menu"
-        items={items}
-      />
+      <Menu mode="inline" selectedKeys={[selectedKey]} className="navigation-menu" items={items} />
     </Sider>
   );
 };
 
 export default Navbar;
-

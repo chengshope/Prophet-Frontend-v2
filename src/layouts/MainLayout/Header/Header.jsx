@@ -1,19 +1,9 @@
-import {
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-  UserOutlined
-} from '@ant-design/icons';
+import { MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, Button, Dropdown, Layout, Space } from 'antd';
 
 const { Header } = Layout;
 
-const MainHeader = ({
-  collapsed,
-  onToggleCollapsed,
-  user,
-  userMenuItems = [],
-  onToggleTheme,
-}) => {
+const MainHeader = ({ collapsed, onToggleCollapsed, user, userMenuItems = [], onToggleTheme }) => {
   return (
     <Header className="top-header">
       <Space className="header-left" size={12}>
