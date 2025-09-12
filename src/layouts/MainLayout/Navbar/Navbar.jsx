@@ -1,19 +1,17 @@
-import { Layout, Menu, Typography } from 'antd';
+import fullLogo from '@/assets/prophet_logo.svg';
+import logoIcon from '@/assets/prophet_logo_icon.svg';
+import { Image, Layout, Menu } from 'antd';
 
 const { Sider } = Layout;
-const { Title } = Typography;
 
 const Navbar = ({ collapsed, selectedKey, items }) => {
   return (
     <Sider trigger={null} collapsible collapsed={collapsed} className="sidebar">
       <div className={`logo-area ${collapsed ? 'collapsed' : ''}`}>
-        <Title level={4} className={`logo-title ${collapsed ? 'hidden' : ''}`}>
-          Prophet
-        </Title>
-        {collapsed && (
-          <Title level={4} className="logo-title">
-            P
-          </Title>
+        {!collapsed ? (
+          <Image src={fullLogo} alt="Prophet" preview={false} className="logo-img logo-img-full" />
+        ) : (
+          <Image src={logoIcon} alt="Prophet" preview={false} className="logo-img logo-img-icon" />
         )}
       </div>
 

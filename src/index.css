@@ -17,11 +17,3 @@ body {
 #root {
   min-height: 100vh;
 }
-
-/* Ant Design specific overrides */
-:where(.css-dev-only-do-not-override-kbg4zp).ant-form-large
-  .ant-form-item
-  .ant-form-item-label
-  > label {
-  height: unset;
-}

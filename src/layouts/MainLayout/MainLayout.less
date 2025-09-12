@@ -20,6 +20,17 @@
   }
 }
 
+.logo-img {
+  display: block;
+}
+.logo-img-full {
+  height: 28px;
+}
+.logo-img-icon {
+  height: 28px;
+}
+
+
 .logo-title {
   margin: 0;
   color: #1890ff;
@@ -59,37 +70,9 @@
   display: flex;
   flex-direction: column;
   background: transparent;
-  /* Firefox */
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.25) #fff; /* thumb color, track color */
-}
-/* WebKit */
-.page-content::-webkit-scrollbar {
-  width: 10px;
-}
-.page-content::-webkit-scrollbar-track {
-  background: #fff;
-  border-radius: 8px;
-}
-.page-content::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.25);
-  border-radius: 8px;
-  border: 2px solid #fff; /* makes thumb separate from white track */
-}
-.page-content::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(0, 0, 0, 0.4);
-}
-
-.breadcrumb-nav {
-  margin: 0; /* lives in header now */
 }
 
 .content-area {
-  padding: 24px;
   background: var(--ant-colorBgContainer);
   border-radius: var(--ant-borderRadiusLG);
-}
-
-.top-search {
-  width: 280px;
 }
