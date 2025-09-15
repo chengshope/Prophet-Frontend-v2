@@ -14,7 +14,6 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import { Layout } from 'antd';
-import AppFooter from './Footer';
 import HeaderBar from './Header';
 import Navbar from './Navbar';
 
@@ -32,7 +31,7 @@ const MainLayout = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const isIntegrator = user?.role?.name === 'integrator' || user?.user?.role?.name === 'integrator';
-  const { isDarkMode, toggleTheme } = useThemeContext();
+  const { isDarkMode, toggleTheme, toggleDensity } = useThemeContext();
 
   const [logoutApi] = useLogoutMutation();
   const handleLogout = async () => {
@@ -121,21 +120,21 @@ const MainLayout = () => {
 
   const getBreadcrumbItems = () => {
     const pathSegments = location.pathname.split('/').filter(Boolean);
-    const items = [
-      {
-        title: <HomeOutlined />,
-        onClick: () => navigate('/street-rates'),
-      },
-    ];
+    const labelMap = {
+      'street-rates': 'Street Rates',
+      'existing-customer-rate-increases': 'Existing Customers',
+      competitors: 'Competitors',
+      reporting: 'Reporting',
+      settings: 'Settings',
+      portfolio: 'Portfolio',
+    };
+    const items = [{ title: <HomeOutlined />, onClick: () => navigate('/street-rates') }];
 
     pathSegments.forEach((segment, index) => {
       const path = `/${pathSegments.slice(0, index + 1).join('/')}`;
-      const title = segment.charAt(0).toUpperCase() + segment.slice(1);
-
-      items.push({
-        title,
-        onClick: () => navigate(path),
-      });
+      const title =
+        labelMap[segment] || segment.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+      items.push({ title, onClick: () => navigate(path) });
     });
 
     return items;
@@ -143,25 +142,24 @@ const MainLayout = () => {
 
   return (
     <Layout className="main-layout">
-      <Navbar collapsed={collapsed} selectedKey={location.pathname} items={menuItems} />
-
+      <Navbar
+        collapsed={collapsed}
+        onToggleCollapsed={() => setCollapsed(!collapsed)}
+        selectedKey={location.pathname}
+        items={menuItems}
+      />
       <Layout>
         <HeaderBar
-          collapsed={collapsed}
-          onToggleCollapsed={() => setCollapsed(!collapsed)}
           breadcrumbItems={getBreadcrumbItems()}
-          user={user}
           userMenuItems={userMenuItems}
           onToggleTheme={toggleTheme}
+          onToggleDensity={toggleDensity}
         />
-
         <Content className="page-content">
           <div className="content-area">
             <Outlet />
           </div>
         </Content>
-
-        <AppFooter />
       </Layout>
     </Layout>
   );

@@ -3,7 +3,7 @@ import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Divider, Flex, Form, Input, Space, Typography } from 'antd';
 import { Link as RouterLink } from 'react-router-dom';
 import { useLoginMutation } from '../../api/authApi';
-import GoogleIcon from '../../components/GoogleIcon';
+import GoogleIcon from '@/components/common/GoogleIcon';
 
 const { Title, Text } = Typography;
 

@@ -1,4 +1,4 @@
-import { authApi } from '@/api';
+import { authApi } from '@/api/authApi';
 import { createSlice } from '@reduxjs/toolkit';
 
 import { clearAuth, getAuthToken, getAuthUser, saveAuth } from '@/utils/authStorage';

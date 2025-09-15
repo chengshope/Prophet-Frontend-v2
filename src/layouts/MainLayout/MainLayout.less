@@ -4,8 +4,15 @@
 }
 
 .sidebar {
-  border-right: 1px solid #f0f0f0;
-  background: var(--ant-colorBgContainer);
+  display: flex;
+  flex-direction: column;
+  padding: 0 8px 8px;
+  border-right: 1px solid var(--ant-color-border-secondary);
+
+  .ant-layout-sider-children {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 .logo-area {
@@ -13,7 +20,7 @@
   margin: 16px;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
 
   &.collapsed {
     justify-content: center;
@@ -23,13 +30,14 @@
 .logo-img {
   display: block;
 }
+
 .logo-img-full {
-  height: 28px;
-}
-.logo-img-icon {
-  height: 28px;
+  height: 44px !important;
 }
 
+.logo-img-icon {
+  height: 28px !important;
+}
 
 .logo-title {
   margin: 0;
@@ -41,16 +49,46 @@
 }
 
 .navigation-menu {
-  border-right: 0;
+  border-right: 0 !important;
+  flex: 1 1 auto;
+}
+
+.sider-collapse-btn {
+  height: 40px;
+}
+
+.sider-bottom {
+  padding: 4px 8px;
+  border-top: 1px solid var(--ant-colorBorder);
+}
+
+.sider-filler {
+  flex: 1 1 auto;
 }
 
 .top-header {
   padding: 0 24px;
+
+  .user-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    line-height: 1.3;
+  }
+  .user-name {
+    font-size: 14px;
+    color: var(--ant-color-text);
+  }
+  .user-portfolio {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ant-color-text);
+  }
+
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #f0f0f0;
-  background: var(--ant-colorBgContainer);
+  border-bottom: 1px solid var(--ant-color-border-secondary);
 }
 
 .menu-toggle-btn {
@@ -61,18 +99,69 @@
 
 .user-profile {
   cursor: pointer;
+  display: flex;
+  margin-left: 16px;
 }
 
 .page-content {
-  padding: 24px;
   height: calc(100vh - 64px); /* viewport minus header */
-  overflow: auto; /* scroll appears in the red area */
-  display: flex;
-  flex-direction: column;
+  overflow-y: scroll; /* always show scrollbar to prevent flickering */
+  overflow-x: hidden;
   background: transparent;
+
+  /* Custom scrollbar styling */
+  scrollbar-width: thin;
+  scrollbar-color: var(--ant-colorBorder) rgba(0, 0, 0, 0.05);
+
+  /* Webkit scrollbar styling */
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--ant-colorBorder);
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+
+    /* Make thumb visible even when not needed */
+    min-height: 20px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--ant-colorPrimary);
+  }
+
+  /* Hide scrollbar thumb when content doesn't overflow but keep track */
+  &::-webkit-scrollbar-thumb {
+    background: var(--ant-colorBorder);
+    opacity: 1;
+  }
 }
 
 .content-area {
   background: var(--ant-colorBgContainer);
-  border-radius: var(--ant-borderRadiusLG);
+  border-radius: 8px;
+  min-height: calc(100vh - 64px);
+}
+
+/* Dark mode scrollbar styling */
+[data-theme='dark'] .page-content {
+  scrollbar-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.1);
+
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--ant-colorPrimary);
+  }
 }

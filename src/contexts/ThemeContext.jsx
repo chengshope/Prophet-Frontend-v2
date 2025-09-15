@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 
 const ThemeContext = createContext();
 
@@ -12,10 +12,11 @@ export const useThemeContext = () => {
 
 export const ThemeContextProvider = ({ children }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isCompact, setIsCompact] = useState(false);
 
-  // Check for saved theme preference or default to light mode
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
+    const savedDensity = localStorage.getItem('density');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
     if (savedTheme) {
@@ -23,27 +24,36 @@ export const ThemeContextProvider = ({ children }) => {
     } else {
       setIsDarkMode(prefersDark);
     }
+    if (savedDensity) {
+      setIsCompact(savedDensity === 'compact');
+    }
   }, []);
 
-  // Apply theme to document
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
     localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
   }, [isDarkMode]);
 
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-  };
+  useEffect(() => {
+    localStorage.setItem('density', isCompact ? 'compact' : 'comfortable');
+  }, [isCompact]);
 
-  const setTheme = (theme) => {
-    setIsDarkMode(theme === 'dark');
-  };
+  const toggleTheme = () => setIsDarkMode((v) => !v);
+  const setTheme = (theme) => setIsDarkMode(theme === 'dark');
+
+  const toggleDensity = () => setIsCompact((v) => !v);
+  const setDensity = (density) => setIsCompact(density === 'compact');
 
   const value = {
     isDarkMode,
     toggleTheme,
     setTheme,
     theme: isDarkMode ? 'dark' : 'light',
+    // density
+    isCompact,
+    toggleDensity,
+    setDensity,
+    density: isCompact ? 'compact' : 'comfortable',
   };
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

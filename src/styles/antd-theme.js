@@ -16,10 +16,10 @@ export const lightTheme = {
     colorBgSpotlight: 'rgba(0, 0, 0, 0.85)',
 
     // Border
-    borderRadius: 8,
-    borderRadiusLG: 12,
-    borderRadiusSM: 6,
-    borderRadiusXS: 4,
+    borderRadius: 6,
+    borderRadiusLG: 6,
+    borderRadiusSM: 3,
+    borderRadiusXS: 2,
 
     // Typography
     fontFamily:
@@ -71,7 +71,7 @@ export const lightTheme = {
   components: {
     // Button customization
     Button: {
-      borderRadius: 8,
+      borderRadius: 6,
       controlHeight: 40,
       controlHeightLG: 48,
       controlHeightSM: 32,
@@ -83,7 +83,7 @@ export const lightTheme = {
 
     // Input customization
     Input: {
-      borderRadius: 8,
+      borderRadius: 6,
       controlHeight: 40,
       controlHeightLG: 48,
       controlHeightSM: 32,
@@ -219,6 +219,110 @@ export const lightTheme = {
       cardPaddingSM: '6px 12px',
       cardPaddingLG: '12px 20px',
     },
+
+    // Select customization - match Input padding
+    Select: {
+      borderRadius: 6,
+      controlHeight: 40,
+      controlHeightLG: 48,
+      controlHeightSM: 32,
+      paddingInline: 12,
+      paddingInlineLG: 16,
+      paddingInlineSM: 8,
+    },
+
+    // Segmented customization - match Input/Button padding
+    Segmented: {
+      borderRadius: 6,
+      controlHeight: 40,
+      controlHeightLG: 48,
+      controlHeightSM: 32,
+      itemSelectedBg: '#1890ff',
+      itemSelectedColor: '#ffffff',
+      itemHoverBg: '#f5f5f5',
+      itemHoverColor: 'rgba(0, 0, 0, 0.88)',
+      itemActiveBg: '#e6f7ff',
+      itemActiveColor: '#1890ff',
+      trackBg: '#f5f5f5',
+      trackPadding: 2,
+    },
+
+    // DatePicker customization - match Input padding
+    DatePicker: {
+      borderRadius: 6,
+      controlHeight: 40,
+      controlHeightLG: 48,
+      controlHeightSM: 32,
+      paddingInline: 12,
+      paddingInlineLG: 16,
+      paddingInlineSM: 8,
+    },
+
+    // TimePicker customization - match Input padding
+    TimePicker: {
+      borderRadius: 6,
+      controlHeight: 40,
+      controlHeightLG: 48,
+      controlHeightSM: 32,
+      paddingInline: 12,
+      paddingInlineLG: 16,
+      paddingInlineSM: 8,
+    },
+
+    // InputNumber customization - match Input padding
+    InputNumber: {
+      borderRadius: 6,
+      controlHeight: 40,
+      controlHeightLG: 48,
+      controlHeightSM: 32,
+      paddingInline: 12,
+      paddingInlineLG: 16,
+      paddingInlineSM: 8,
+    },
+
+    // AutoComplete customization - match Input padding
+    AutoComplete: {
+      borderRadius: 6,
+      controlHeight: 40,
+      controlHeightLG: 48,
+      controlHeightSM: 32,
+      paddingInline: 12,
+      paddingInlineLG: 16,
+      paddingInlineSM: 8,
+    },
+
+    // Cascader customization - match Input padding
+    Cascader: {
+      borderRadius: 6,
+      controlHeight: 40,
+      controlHeightLG: 48,
+      controlHeightSM: 32,
+      paddingInline: 12,
+      paddingInlineLG: 16,
+      paddingInlineSM: 8,
+    },
+
+    // TreeSelect customization - match Input padding
+    TreeSelect: {
+      borderRadius: 6,
+      controlHeight: 40,
+      controlHeightLG: 48,
+      controlHeightSM: 32,
+      paddingInline: 12,
+      paddingInlineLG: 16,
+      paddingInlineSM: 8,
+    },
+
+    // Mentions customization - match Input padding
+    Mentions: {
+      borderRadius: 6,
+      controlHeight: 40,
+      controlHeightLG: 48,
+      controlHeightSM: 32,
+      paddingInline: 12,
+      paddingInlineLG: 16,
+      paddingInlineSM: 8,
+    },
   },
 
   // CSS variables for custom styling
@@ -253,6 +357,40 @@ export const darkTheme = {
       colorIcon: 'rgba(255, 255, 255, 0.45)',
       colorIconHover: 'rgba(255, 255, 255, 0.65)',
     },
+    Select: {
+      ...lightTheme.components.Select,
+    },
+    Segmented: {
+      ...lightTheme.components.Segmented,
+      itemSelectedBg: '#1890ff',
+      itemSelectedColor: '#ffffff',
+      itemHoverBg: '#262626',
+      itemHoverColor: 'rgba(255, 255, 255, 0.88)',
+      itemActiveBg: '#1890ff',
+      itemActiveColor: '#ffffff',
+      trackBg: '#262626',
+    },
+    DatePicker: {
+      ...lightTheme.components.DatePicker,
+    },
+    TimePicker: {
+      ...lightTheme.components.TimePicker,
+    },
+    InputNumber: {
+      ...lightTheme.components.InputNumber,
+    },
+    AutoComplete: {
+      ...lightTheme.components.AutoComplete,
+    },
+    Cascader: {
+      ...lightTheme.components.Cascader,
+    },
+    TreeSelect: {
+      ...lightTheme.components.TreeSelect,
+    },
+    Mentions: {
+      ...lightTheme.components.Mentions,
+    },
     Layout: {
       ...lightTheme.components.Layout,
       headerBg: '#141414',
@@ -266,8 +404,9 @@ export const darkTheme = {
       itemSelectedBg: '#1890ff',
       itemSelectedColor: '#ffffff',
       itemHoverBg: '#262626',
-      itemHoverColor: '#1890ff',
+      itemHoverColor: 'rgba(255, 255, 255, 0.88)',
       itemActiveBg: '#1890ff',
+      itemActiveColor: '#ffffff',
     },
     Card: {
       ...lightTheme.components.Card,

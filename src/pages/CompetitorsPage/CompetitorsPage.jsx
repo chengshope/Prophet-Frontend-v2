@@ -1,21 +1,10 @@
-import {
-  Button,
-  Card,
-  Col,
-  Empty,
-  Input,
-  Radio,
-  Row,
-  Select,
-  Space,
-  Table,
-  Tag,
-  Typography,
-} from 'antd';
+import PageFrame from '@/components/common/PageFrame';
+import { ArrowLeftOutlined } from '@ant-design/icons';
+import { Button, Card, Col, Empty, Input, Row, Segmented, Select, Space, Table, Tag } from 'antd';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import './CompetitorsPage.less';
 
-const { Title, Text } = Typography;
 const { Search } = Input;
 
 const STRATEGY_OPTIONS = [
@@ -97,73 +86,69 @@ const CompetitorsPage = () => {
   ];
 
   return (
-    <Space direction="vertical" size="large" style={{ width: '100%' }}>
-      <Title level={3}>Competitors</Title>
-
-      <Card>
-        <Row gutter={[16, 16]} align="middle" justify="space-between">
-          <Col xs={24} md={8}>
-            <Space direction="vertical" style={{ width: '100%' }}>
-              <Text strong>Facility</Text>
-              <Select
-                showSearch
-                allowClear
-                placeholder="Select Facility"
-                options={facilityOptions}
-                value={selectedFacility}
-                onChange={(val) => setSelectedFacility(val)}
-              />
-            </Space>
+    <PageFrame
+      title="Competitors"
+      extra={[
+        <Space>
+          <Select
+            showSearch
+            allowClear
+            size="middle"
+            placeholder="Select Facility"
+            options={facilityOptions}
+            value={selectedFacility}
+            onChange={(val) => setSelectedFacility(val)}
+          />
+          <Segmented
+            size="middle"
+            value={strategy}
+            onChange={setStrategy}
+            options={strategyLabels}
+          />
+        </Space>,
+      ]}
+    >
+      <Space direction="vertical" size="large" className="page">
+        <Row gutter={[16, 8]} align="middle" justify="space-between">
+          <Col xs={24} md={12}>
+            <Search
+              size="middle"
+              placeholder="Search..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
           </Col>
-          <Col xs={24} md={10}>
-            <Space direction="vertical" style={{ width: '100%' }}>
-              <Text strong>Strategy</Text>
-              <Radio.Group value={strategy} onChange={(e) => setStrategy(e.target.value)}>
-                {strategyLabels.map((label) => (
-                  <Radio.Button key={label} value={label}>
-                    {label}
-                  </Radio.Button>
-                ))}
-              </Radio.Group>
-            </Space>
-          </Col>
-          <Col xs={24} md={6}>
-            <Space direction="vertical" style={{ width: '100%' }}>
-              <Text strong>Search</Text>
-              <Search
-                placeholder="Search..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-            </Space>
-          </Col>
-        </Row>
-        <Row justify="end" style={{ marginTop: 16 }}>
-          <Col>
-            <Button onClick={() => navigate('/street-rates')}>Back to Street Rates</Button>
+          <Col xs={24} md={12} className="actions-col">
+            <Button
+              color="green"
+              variant="solid"
+              icon={<ArrowLeftOutlined />}
+              onClick={() => navigate('/street-rates')}
+            >
+              Back to Street Rates
+            </Button>
           </Col>
         </Row>
-      </Card>
 
-      <Row gutter={[16, 16]}>
-        <Col xs={24} lg={12}>
-          <Card>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} lg={12}>
             <Table
               rowKey="id"
-              size="middle"
+              bordered
+              size="small"
               columns={columns}
               dataSource={data}
               pagination={{ pageSize: 10 }}
             />
-          </Card>
-        </Col>
-        <Col xs={24} lg={12}>
-          <Card title="Map">
-            <Empty description="Map will appear here" />
-          </Card>
-        </Col>
-      </Row>
-    </Space>
+          </Col>
+          <Col xs={24} lg={12}>
+            <Card className="page-card" title="Map">
+              <Empty description="Map will appear here" />
+            </Card>
+          </Col>
+        </Row>
+      </Space>
+    </PageFrame>
   );
 };
 

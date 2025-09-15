@@ -1,7 +1,10 @@
-import { Button, Card, Col, Input, Row, Space, Table, Tag, Typography } from 'antd';
+import PageFrame from '@/components/common/PageFrame';
+import { CloudUploadOutlined, ReloadOutlined } from '@ant-design/icons';
+import { Button, Col, Input, Row, Space, Table, Tag, Typography } from 'antd';
 import { useMemo, useState } from 'react';
+import './ExistingCustomersPage.less';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 const { Search } = Input;
 
 const ExistingCustomersPage = () => {
@@ -78,11 +81,16 @@ const ExistingCustomersPage = () => {
   );
 
   return (
-    <Space direction="vertical" size="large" style={{ width: '100%' }}>
-      <Title level={3}>Existing Customers</Title>
-
-      <Card>
-        <Row gutter={[16, 16]} align="middle" justify="space-between">
+    <PageFrame
+      title="Existing Customers"
+      extra={[
+        <Button color="danger" variant="filled" icon={<ReloadOutlined />}>
+          Refresh Model
+        </Button>,
+      ]}
+    >
+      <Space direction="vertical" size="large" className="page">
+        <Row gutter={[16, 8]} align="middle" justify="space-between">
           <Col xs={24} md={12}>
             <Search
               placeholder="Search or filter..."
@@ -90,29 +98,23 @@ const ExistingCustomersPage = () => {
               onChange={(e) => setSearch(e.target.value)}
             />
           </Col>
-          <Col xs={24} md={12}>
-            <Space style={{ width: '100%' }} align="center" justify="end">
-              <Button>Refresh Model</Button>
-              <Button type="primary">Publish All</Button>
-            </Space>
+          <Col xs={24} md={12} className="actions-col">
+            <Button color="green" variant="solid" icon={<CloudUploadOutlined />}>
+              Publish New Rates
+            </Button>
           </Col>
         </Row>
-        <Row style={{ marginTop: 8 }}>
-          <Col flex="auto">
-            <Text type="secondary">Last Updated: —</Text>
-          </Col>
-        </Row>
-      </Card>
 
-      <Card>
         <Table
+          size="small"
+          bordered
           rowKey={(r) => r.id || `${r.facility_id}`}
           columns={columns}
           dataSource={data}
           pagination={{ pageSize: 10 }}
         />
-      </Card>
-    </Space>
+      </Space>
+    </PageFrame>
   );
 };
 
