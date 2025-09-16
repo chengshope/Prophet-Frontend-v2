@@ -1,30 +1,16 @@
-import { useGetFacilitiesQuery } from '@/api/facilitiesApi';
+import { useGetFacilitiesListQuery } from '@/api/facilitiesApi';
 import { Col, DatePicker, Row, Select } from 'antd';
 
 const { RangePicker } = DatePicker;
 
 const Filters = ({ dateRange, onDateRangeChange, facility, onFacilityChange, picker }) => {
-  // Fetch facilities for the dropdown
-  const {
-    data: facilities = [],
-    isLoading: facilitiesLoading,
-    error: facilitiesError,
-  } = useGetFacilitiesQuery();
+  const { data: facilitiesResponse, isLoading: facilitiesLoading } = useGetFacilitiesListQuery();
 
-  // Fallback mock data when API fails (for development)
-  const mockFacilities = [
-    { id: 1, facility_name: 'Downtown Storage', name: 'Downtown Storage' },
-    { id: 2, facility_name: 'Westside Storage', name: 'Westside Storage' },
-    { id: 3, facility_name: 'Northgate Storage', name: 'Northgate Storage' },
-  ];
+  const facilities = Array.isArray(facilitiesResponse) ? facilitiesResponse : [];
 
-  // Use mock data if there's an error or no facilities returned
-  const facilitiesData = facilitiesError || facilities.length === 0 ? mockFacilities : facilities;
-
-  // Prepare facility options (remove "All Facilities" for multi-select)
-  const facilityOptions = facilitiesData.map((f) => ({
-    label: f.name || f.facility_name || `Facility ${f.id}`,
-    value: f.id,
+  const facilityOptions = facilities.map((f) => ({
+    label: f.facility_name,
+    value: f.facility_id,
   }));
 
   return (

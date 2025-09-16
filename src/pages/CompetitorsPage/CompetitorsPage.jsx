@@ -1,5 +1,5 @@
 import PageFrame from '@/components/common/PageFrame';
-import { ArrowLeftOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, EnvironmentOutlined, ShopOutlined } from '@ant-design/icons';
 import { Button, Card, Col, Empty, Input, Row, Segmented, Select, Space, Table, Tag } from 'antd';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -138,12 +138,62 @@ const CompetitorsPage = () => {
               size="small"
               columns={columns}
               dataSource={data}
+              locale={{
+                emptyText: (
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      padding: '40px 20px',
+                      color: '#8c8c8c',
+                    }}
+                  >
+                    <ShopOutlined
+                      style={{ fontSize: '48px', marginBottom: '16px', color: '#d9d9d9' }}
+                    />
+                    <div
+                      style={{
+                        fontSize: '16px',
+                        fontWeight: 500,
+                        marginBottom: '8px',
+                        color: '#595959',
+                      }}
+                    >
+                      No Competitors Found
+                    </div>
+                    <div style={{ fontSize: '14px', textAlign: 'center', lineHeight: '1.5' }}>
+                      Competitor information will appear here when available.
+                      <br />
+                      Try adjusting your search criteria or check back later.
+                    </div>
+                  </div>
+                ),
+              }}
               pagination={{ pageSize: 10 }}
             />
           </Col>
           <Col xs={24} lg={12}>
-            <Card className="page-card" title="Map">
-              <Empty description="Map will appear here" />
+            <Card className="page-card">
+              <div
+                style={{
+                  height: '400px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  backgroundColor: '#fafafa',
+                  border: '2px dashed #d9d9d9',
+                  borderRadius: '8px',
+                  color: '#8c8c8c',
+                }}
+              >
+                <EnvironmentOutlined style={{ fontSize: '48px', marginBottom: '16px' }} />
+                <div style={{ fontSize: '16px', fontWeight: 500 }}>Interactive Map</div>
+                <div style={{ fontSize: '14px', marginTop: '8px' }}>
+                  Competitor locations will appear here
+                </div>
+              </div>
             </Card>
           </Col>
         </Row>

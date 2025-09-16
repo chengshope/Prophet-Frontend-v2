@@ -31,7 +31,7 @@ const OccupancyChart = ({ apiParams }) => {
         data={formattedOccupancyData}
         dataKey="occupancy"
         title="Occupancy Over Time"
-        color="#52c41a"
+        color="#1890ff"
         formatter={formatOccupancy}
         tooltipLabel="Occupancy"
         domain={[0, 'dataMax + 4']}

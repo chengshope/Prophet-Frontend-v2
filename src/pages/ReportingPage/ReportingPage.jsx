@@ -1,10 +1,10 @@
 import PageFrame from '@/components/common/PageFrame';
 import { Segmented, Space } from 'antd';
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ExecutiveSummaryTab from '@/components/widgets/ExecutiveSummary';
-import ExistingRatesTab from './components/ExistingRatesTab';
-import StreetRatesTab from './components/StreetRatesTab';
+import StreetRatesTab from '@/components/widgets/StreetRates';
+import ExistingRatesTab from '@/components/widgets/ExistingRates';
 
 const tabItems = [
   {
@@ -30,30 +30,24 @@ const tabItems = [
 const ReportingPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('executive-summary');
 
-  const handleTabChange = (key) => {
-    const tab = tabItems.find((t) => t.key === key);
-    if (tab) {
-      setActiveTab(key);
-      navigate(tab.path);
-    }
-  };
+  const currentKey = useMemo(
+    () => tabItems.find((t) => location.pathname.startsWith(t.path))?.key ?? 'executive-summary',
+    [location.pathname]
+  );
 
-  useEffect(() => {
-    const currentPath = location.pathname;
-    const currentKey =
-      tabItems.find((t) => currentPath.startsWith(t.path))?.key || 'executive-summary';
-    setActiveTab(currentKey);
-  }, [location.pathname]);
-
-  const currentTab = tabItems.find((t) => t.key === activeTab);
-  const CurrentComponent = currentTab?.component || ExecutiveSummaryTab;
+  const CurrentComponent =
+    tabItems.find((t) => t.key === currentKey)?.component ?? ExecutiveSummaryTab;
 
   const segmentedOptions = tabItems.map((item) => ({
     label: item.label,
     value: item.key,
   }));
+
+  const handleTabChange = (key) => {
+    const tab = tabItems.find((t) => t.key === key);
+    if (tab) navigate(tab.path);
+  };
 
   return (
     <PageFrame
@@ -61,7 +55,7 @@ const ReportingPage = () => {
       extra={[
         <Segmented
           size="middle"
-          value={activeTab}
+          value={currentKey}
           onChange={handleTabChange}
           options={segmentedOptions}
         />,

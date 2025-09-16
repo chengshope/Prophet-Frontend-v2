@@ -1,5 +1,5 @@
 import PageFrame from '@/components/common/PageFrame';
-import { CloudUploadOutlined, ReloadOutlined } from '@ant-design/icons';
+import { CloudUploadOutlined, ReloadOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Col, Input, Row, Space, Table, Tag, Typography } from 'antd';
 import { useMemo, useState } from 'react';
 import './ExistingCustomersPage.less';
@@ -111,6 +111,38 @@ const ExistingCustomersPage = () => {
           rowKey={(r) => r.id || `${r.facility_id}`}
           columns={columns}
           dataSource={data}
+          locale={{
+            emptyText: (
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  padding: '40px 20px',
+                  color: '#8c8c8c',
+                }}
+              >
+                <UserOutlined
+                  style={{ fontSize: '48px', marginBottom: '16px', color: '#d9d9d9' }}
+                />
+                <div
+                  style={{
+                    fontSize: '16px',
+                    fontWeight: 500,
+                    marginBottom: '8px',
+                    color: '#595959',
+                  }}
+                >
+                  No Customer Data
+                </div>
+                <div style={{ fontSize: '14px', textAlign: 'center', lineHeight: '1.5' }}>
+                  Existing customer information will appear here when available.
+                  <br />
+                  Check your facility selection or refresh the data.
+                </div>
+              </div>
+            ),
+          }}
           pagination={{ pageSize: 10 }}
         />
       </Space>

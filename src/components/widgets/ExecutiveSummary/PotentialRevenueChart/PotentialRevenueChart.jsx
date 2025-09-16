@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { Col } from 'antd';
 import LineChart from '@/components/common/LineChart';
 import { useGetGrossPotentialRevenueOverTimeQuery } from '@/api/reportingApi';
-import { formatRevenue } from '../ExecutiveSummaryTab/utils';
+import { formatRevenue } from '@/utils/formatters';
 
 const PotentialRevenueChart = ({ apiParams }) => {
   const {
@@ -11,28 +11,18 @@ const PotentialRevenueChart = ({ apiParams }) => {
     isFetching: fetchingPotentialChart,
   } = useGetGrossPotentialRevenueOverTimeQuery(apiParams);
 
-  // Format data for chart
   const formattedPotentialData = useMemo(() => {
-    console.log('PotentialRevenueChart - Raw API response:', potentialRevenueOverTime);
-    const potentialData =
-      potentialRevenueOverTime?.data?.data || potentialRevenueOverTime?.data || [];
-    console.log('PotentialRevenueChart - Extracted data:', potentialData);
+    const potentialData = potentialRevenueOverTime?.data || [];
 
-    const result = Array.isArray(potentialData)
+    return Array.isArray(potentialData)
       ? potentialData.map((item) => {
-          console.log('PotentialRevenueChart - Processing item:', item);
-          const potential = item.gross_potential_revenue || item.potential_revenue || 0;
-          console.log('PotentialRevenueChart - Extracted potential value:', potential);
           return {
             date: item.date,
-            potential: potential,
+            potential: item.gross_potential_revenue || item.potential_revenue || 0,
             formattedDate: item.formatted_date,
           };
         })
       : [];
-
-    console.log('PotentialRevenueChart - Final formatted data:', result);
-    return result;
   }, [potentialRevenueOverTime]);
 
   return (

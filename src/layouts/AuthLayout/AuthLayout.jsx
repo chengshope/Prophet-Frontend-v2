@@ -14,17 +14,14 @@ const AuthLayout = () => {
   return (
     <Layout className="auth-page">
       <Content className="auth-container">
-        {/* Logo above the modal */}
         <div className="brand-logo">
           <img src={ProphetLogo} alt="Prophet Logo" />
         </div>
 
-        {/* Authentication form modal */}
         <div className="login-form" style={{ background: colorBgContainer }}>
           <Outlet />
         </div>
 
-        {/* License below the modal */}
         <div className="copyright-notice">
           <Text>©2025 Sparebox Technologies</Text>
         </div>

@@ -6,7 +6,7 @@ import {
   useGetOccupancyQuery,
   useGetRevPAFQuery,
 } from '@/api/reportingApi';
-import { getChangeType, formatChange, getFormattedDate } from '../ExecutiveSummaryTab/utils';
+import { getChangeType, formatChange, getFormattedDate } from '@/utils/formatters';
 
 const MetricCards = ({ apiParams, range }) => {
   const {

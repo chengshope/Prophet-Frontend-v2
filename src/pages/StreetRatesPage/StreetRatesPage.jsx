@@ -1,5 +1,10 @@
 import PageFrame from '@/components/common/PageFrame';
-import { CloudUploadOutlined, ReloadOutlined } from '@ant-design/icons';
+import {
+  CloudUploadOutlined,
+  ReloadOutlined,
+  SettingOutlined,
+  DollarOutlined,
+} from '@ant-design/icons';
 import { Button, Card, Col, Input, Row, Space, Table, Tag, Typography } from 'antd';
 import { useMemo, useState } from 'react';
 import './StreetRatesPage.less';
@@ -124,10 +129,56 @@ const StreetRatesPage = () => {
           columns={columns}
           dataSource={data}
           bordered
+          locale={{
+            emptyText: (
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  padding: '40px 20px',
+                  color: '#8c8c8c',
+                }}
+              >
+                <DollarOutlined
+                  style={{ fontSize: '48px', marginBottom: '16px', color: '#d9d9d9' }}
+                />
+                <div
+                  style={{
+                    fontSize: '16px',
+                    fontWeight: 500,
+                    marginBottom: '8px',
+                    color: '#595959',
+                  }}
+                >
+                  No Street Rate Data
+                </div>
+                <div style={{ fontSize: '14px', textAlign: 'center', lineHeight: '1.5' }}>
+                  Street rate information will appear here when available.
+                  <br />
+                  Check your facility selection or refresh the data.
+                </div>
+              </div>
+            ),
+          }}
           expandable={{
             expandedRowRender: () => (
               <Card size="small" className="inner-panel">
-                <Text type="secondary">Unit types and rate editor coming soon</Text>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    padding: '24px',
+                    color: '#8c8c8c',
+                  }}
+                >
+                  <SettingOutlined style={{ fontSize: '32px', marginBottom: '12px' }} />
+                  <Text strong style={{ fontSize: '16px', marginBottom: '8px' }}>
+                    Unit Type Editor
+                  </Text>
+                  <Text type="secondary">Unit types and rate editor coming soon</Text>
+                </div>
               </Card>
             ),
           }}

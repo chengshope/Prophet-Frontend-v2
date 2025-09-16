@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { Col } from 'antd';
 import LineChart from '@/components/common/LineChart';
 import { useGetGrossRentalRevenueOverTimeQuery } from '@/api/reportingApi';
-import { formatRevenue } from '../ExecutiveSummaryTab/utils';
+import { formatRevenue } from '@/utils/formatters';
 
 const RevenueChart = ({ apiParams }) => {
   const {
@@ -11,27 +11,18 @@ const RevenueChart = ({ apiParams }) => {
     isFetching: fetchingRevenueChart,
   } = useGetGrossRentalRevenueOverTimeQuery(apiParams);
 
-  // Format data for chart
   const formattedRevenueData = useMemo(() => {
-    console.log('RevenueChart - Raw API response:', revenueOverTime);
     const revenueData = revenueOverTime?.data || [];
-    console.log('RevenueChart - Extracted data:', revenueData);
 
-    const result = Array.isArray(revenueData)
+    return Array.isArray(revenueData)
       ? revenueData.map((item) => {
-          console.log('RevenueChart - Processing item:', item);
-          const revenue = item.gross_rental_revenue || item.revenue || 0;
-          console.log('RevenueChart - Extracted revenue value:', revenue);
           return {
             date: item.date,
-            revenue: revenue,
+            revenue: item.gross_rental_revenue || item.revenue || 0,
             formattedDate: item.formatted_date,
           };
         })
       : [];
-
-    console.log('RevenueChart - Final formatted data:', result);
-    return result;
   }, [revenueOverTime]);
 
   return (

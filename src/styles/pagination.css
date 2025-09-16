@@ -1,0 +1,218 @@
+/* Global Pagination Styling - Consistent Height Fix */
+
+/* Base pagination container */
+.ant-pagination {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  font-size: 14px !important;
+}
+
+/* All pagination buttons - force 32px height */
+.ant-pagination .ant-pagination-item,
+.ant-pagination .ant-pagination-prev,
+.ant-pagination .ant-pagination-next,
+.ant-pagination .ant-pagination-jump-prev,
+.ant-pagination .ant-pagination-jump-next {
+  min-width: 32px !important;
+  width: auto !important;
+  height: 32px !important;
+  line-height: 30px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 14px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Page number links */
+.ant-pagination .ant-pagination-item a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+/* Navigation button links */
+.ant-pagination .ant-pagination-prev .ant-pagination-item-link,
+.ant-pagination .ant-pagination-next .ant-pagination-item-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 14px;
+}
+
+/* Disabled states */
+.ant-pagination .ant-pagination-disabled,
+.ant-pagination .ant-pagination-disabled:hover {
+  cursor: not-allowed;
+}
+
+/* Page size selector - consistent 32px height */
+.ant-pagination .ant-pagination-options {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 16px;
+}
+
+.ant-pagination .ant-pagination-options .ant-select {
+  height: 32px;
+  position: relative !important;
+}
+
+.ant-pagination .ant-pagination-options .ant-select .ant-select-selector {
+  height: 32px !important;
+  padding: 0 24px 0 11px !important;
+  border-radius: 6px !important;
+  display: flex !important;
+  align-items: center !important;
+  font-size: 14px !important;
+  line-height: 1.5715 !important;
+}
+
+.ant-pagination .ant-pagination-options .ant-select .ant-select-selection-item {
+  line-height: 30px !important;
+  padding: 0 !important;
+  font-size: 14px !important;
+  flex: 1 !important;
+}
+
+.ant-pagination .ant-pagination-options .ant-select .ant-select-arrow {
+  position: absolute !important;
+  top: 50% !important;
+  right: 8px !important;
+  /* transform: translateY(-50%) !important; */
+  width: 12px !important;
+  height: 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Quick jumper - force 32px height */
+.ant-pagination .ant-pagination-options .ant-pagination-options-quick-jumper {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  font-size: 14px !important;
+  margin-left: 16px !important;
+  height: 32px !important;
+}
+
+.ant-pagination .ant-pagination-options .ant-pagination-options-quick-jumper input {
+  height: 32px !important;
+  min-height: 32px !important;
+  padding: 4px 11px !important;
+  border-radius: 6px !important;
+  font-size: 14px !important;
+  line-height: 24px !important;
+  min-width: 50px !important;
+  width: 50px !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+  vertical-align: top !important;
+}
+
+/* Quick jumper text elements */
+.ant-pagination .ant-pagination-options .ant-pagination-options-quick-jumper span {
+  font-size: 14px !important;
+  line-height: 32px !important;
+  height: 32px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Total items display - force 32px height */
+.ant-pagination .ant-pagination-total-text {
+  font-size: 14px !important;
+  line-height: 32px !important;
+  margin-right: 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  height: 32px !important;
+  min-height: 32px !important;
+  box-sizing: border-box !important;
+}
+
+/* Size changer text */
+.ant-pagination .ant-pagination-options-size-changer {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  font-size: 14px;
+}
+
+/* Quick jumper text */
+.ant-pagination-options-quick-jumper {
+  font-size: 14px !important;
+  line-height: 32px !important;
+  height: 32px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Additional fixes for all pagination elements */
+.ant-pagination * {
+  box-sizing: border-box !important;
+}
+
+/* Ensure all interactive elements have same height */
+.ant-pagination .ant-pagination-item,
+.ant-pagination .ant-pagination-prev,
+.ant-pagination .ant-pagination-next,
+.ant-pagination .ant-pagination-jump-prev,
+.ant-pagination .ant-pagination-jump-next,
+.ant-pagination .ant-select,
+.ant-pagination .ant-select-selector,
+.ant-pagination input {
+  height: 32px !important;
+  min-height: 32px !important;
+  max-height: 32px !important;
+}
+
+/* Force consistent line heights */
+.ant-pagination .ant-pagination-item a,
+.ant-pagination .ant-pagination-prev .ant-pagination-item-link,
+.ant-pagination .ant-pagination-next .ant-pagination-item-link,
+.ant-pagination .ant-select-selection-item,
+.ant-pagination input,
+.ant-pagination span {
+  line-height: 30px !important;
+  height: 30px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .ant-pagination {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .ant-pagination .ant-pagination-total-text {
+    order: -1;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 8px;
+    margin-right: 0;
+  }
+
+  .ant-pagination .ant-pagination-options {
+    margin-left: 8px;
+  }
+
+  .ant-pagination .ant-pagination-options .ant-pagination-options-quick-jumper {
+    margin-left: 8px;
+  }
+}
