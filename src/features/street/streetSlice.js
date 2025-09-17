@@ -25,12 +25,52 @@ const streetSlice = createSlice({
       );
 
       state.changedFacilities = trackChangedFacility(state.changedFacilities, facility, unit);
+
+      // Track rate changes separately for publishing
+      if (newRate && (unit.new_std_rate !== undefined || unit.new_web_rate !== undefined)) {
+        const unitKey = unit.ut_id;
+        if (!state.newRateUnitKeys.includes(unitKey)) {
+          state.newRateUnitKeys.push(unitKey);
+        }
+      }
     },
     clearChangedUnitByFacilityId: (state, action) => {
       const facilityId = action.payload;
       state.changedFacilities = state.changedFacilities.filter(
         (f) => f.facility_id !== facilityId
       );
+
+      // Also remove rate change tracking for units in this facility
+      const facility = state.facilities.find((f) => f.facility_id === facilityId);
+      if (facility && facility.units_statistics) {
+        const facilityUnitIds = facility.units_statistics.map(unit => unit.ut_id);
+        state.newRateUnitKeys = state.newRateUnitKeys.filter(
+          unitId => !facilityUnitIds.includes(unitId)
+        );
+      }
+    },
+    addRateChangedUnit: (state, action) => {
+      const unitId = action.payload;
+      if (!state.newRateUnitKeys.includes(unitId)) {
+        state.newRateUnitKeys.push(unitId);
+      }
+    },
+    removeRateChangedUnit: (state, action) => {
+      const unitId = action.payload;
+      state.newRateUnitKeys = state.newRateUnitKeys.filter(id => id !== unitId);
+    },
+    clearAllRateChangedUnits: (state) => {
+      state.newRateUnitKeys = [];
+    },
+    clearRateChangedUnitsByFacility: (state, action) => {
+      const facilityId = action.payload;
+      const facility = state.facilities.find((f) => f.facility_id === facilityId);
+      if (facility && facility.units_statistics) {
+        const facilityUnitIds = facility.units_statistics.map(unit => unit.ut_id);
+        state.newRateUnitKeys = state.newRateUnitKeys.filter(
+          unitId => !facilityUnitIds.includes(unitId)
+        );
+      }
     },
   },
   extraReducers: (builder) => {
@@ -44,5 +84,12 @@ const streetSlice = createSlice({
   },
 });
 
-export const { updateFacility, clearChangedUnitByFacilityId } = streetSlice.actions;
+export const {
+  updateFacility,
+  clearChangedUnitByFacilityId,
+  addRateChangedUnit,
+  removeRateChangedUnit,
+  clearAllRateChangedUnits,
+  clearRateChangedUnitsByFacility
+} = streetSlice.actions;
 export default streetSlice.reducer;

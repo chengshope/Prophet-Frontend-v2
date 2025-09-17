@@ -12,7 +12,9 @@ import dayjs from 'dayjs';
 import moment from 'moment';
 // Removed legacy v1 imports
 import { selectPortfolioId } from '@/features/auth/authSelector';
-import { getChangedUnits, getRateChangedUnits, selectStreetTotal } from '@/features/street/streetSelector';
+import { getChangedUnits, getRateChangedUnits, selectStreetTotal, selectChangedFacilities } from '@/features/street/streetSelector';
+import { clearAllRateChangedUnits } from '@/features/street/streetSlice';
+import { useDispatch } from 'react-redux';
 
 const { Search } = Input;
 const PAGE_SIZE = 10;
@@ -34,10 +36,12 @@ const StreetRatesManagement = () => {
   const [changedFacilities, setChangedFacilities] = useState(null);
 
   // Get user info from Redux store
+  const dispatch = useDispatch();
   const portfolio_id = useSelector(selectPortfolioId);
   const totalFacilities = useSelector(selectStreetTotal);
   const changedUnits = useSelector(getChangedUnits);
   const rateChangedUnits = useSelector(getRateChangedUnits);
+  const changedFacilitiesFromStore = useSelector(selectChangedFacilities);
 
   // API queries and mutations
   const {
@@ -75,8 +79,8 @@ const StreetRatesManagement = () => {
 
   // Track updated facilities count
   useEffect(() => {
-    setUpdatedFacilitiesCount(changedUnits.length);
-  }, [changedUnits]);
+    setUpdatedFacilitiesCount(changedFacilitiesFromStore.length);
+  }, [changedFacilitiesFromStore]);
 
   // Handle search with debouncing
   const handleSearch = (value) => {
@@ -114,11 +118,20 @@ const StreetRatesManagement = () => {
 
   const confirmPublishAllRates = async () => {
     try {
+      if (rateChangedUnits.length === 0) {
+        message.warning('No rate changes to publish');
+        setPublishModalOpen(false);
+        return;
+      }
+
       // Use only units with rate changes for publishing
       await submitAllRates(rateChangedUnits).unwrap();
       setLatestPublishedDate(moment(new Date()).format('MM/DD/YYYY, hh:mm A'));
       message.success('Rates published successfully');
       setPublishModalOpen(false);
+
+      // Clear the rate changed units after successful publishing
+      dispatch(clearAllRateChangedUnits());
     } catch (error) {
       console.error('Error publishing rates:', error);
 
@@ -221,7 +234,7 @@ const StreetRatesManagement = () => {
             icon={<CloudUploadOutlined />}
             loading={isSubmitting}
             onClick={handlePublishNewRates}
-            disabled={changedUnits.length === 0}
+            disabled={rateChangedUnits.length === 0}
           >
             Publish New Rates
           </Button>
@@ -268,7 +281,7 @@ const StreetRatesManagement = () => {
         cancelText="Cancel"
       >
         <p>Are you sure you want to publish the new street rates?</p>
-        <p>This will update rates for {changedUnits.length} unit types across all facilities.</p>
+        <p>This will update rates for {rateChangedUnits.length} unit types across all facilities.</p>
       </Modal>
 
       {/* Error Modal */}

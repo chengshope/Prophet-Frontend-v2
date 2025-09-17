@@ -7,9 +7,16 @@ import { formatCurrency, formatPercent } from '@/utils/formatters';
 import './StreetRatesTable.less';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { getChangedUnits, getChangedUnitsByFacilityId, selectStreetFacilities } from '@/features/street/streetSelector';
+import {
+  getChangedUnits,
+  getChangedUnitsByFacilityId,
+  selectStreetFacilities,
+  getRateChangedUnits,
+  getRateChangedUnitsByFacility,
+  selectNewRateUnitKeys
+} from '@/features/street/streetSelector';
 import { getRateType } from '@/utils/rateHelper';
-import { clearChangedUnitByFacilityId } from '@/features/street/streetSlice';
+import { clearChangedUnitByFacilityId, clearRateChangedUnitsByFacility } from '@/features/street/streetSlice';
 
 const { Text } = Typography;
 
@@ -29,8 +36,10 @@ const StreetRatesTable = ({
   const [selectedFacility, setSelectedFacility] = useState(null);
   const navigate = useNavigate();
 
-  const rateChangedFacility = useSelector(getChangedUnitsByFacilityId);
+  const changedUnitsByFacility = useSelector(getChangedUnitsByFacilityId);
   const changedUnits = useSelector(getChangedUnits);
+  const rateChangedUnits = useSelector(getRateChangedUnits);
+  const newRateUnitKeys = useSelector(selectNewRateUnitKeys);
 
   const [submitIndividualRates, { isLoading: isSubmittingIndividual }] =
     useSubmitIndividualRatesMutation();
@@ -78,7 +87,17 @@ const StreetRatesTable = ({
 
     try {
       // Get only units with rate changes for this facility
-      const facilityRateChangedUnits = rateChangedFacility[selectedFacility.facility_id] || [];
+      const allChangedUnitsForFacility = changedUnitsByFacility[selectedFacility.facility_id] || [];
+      const facilityRateChangedUnits = allChangedUnitsForFacility.filter(unit =>
+        newRateUnitKeys.includes(unit.ut_id)
+      );
+
+      if (facilityRateChangedUnits.length === 0) {
+        message.warning('No rate changes to publish for this facility');
+        setPublishModalOpen(false);
+        setSelectedFacility(null);
+        return;
+      }
 
       await submitIndividualRates({
         facilityId: selectedFacility.facility_id,
@@ -89,8 +108,9 @@ const StreetRatesTable = ({
       setPublishModalOpen(false);
       setSelectedFacility(null);
 
-      // Remove published units from rate changed units
+      // Remove published units from both changed units and rate changed units
       dispatch(clearChangedUnitByFacilityId(selectedFacility.facility_id));
+      dispatch(clearRateChangedUnitsByFacility(selectedFacility.facility_id));
     } catch (error) {
       console.log(error);
       message.error('Failed to publish rates');

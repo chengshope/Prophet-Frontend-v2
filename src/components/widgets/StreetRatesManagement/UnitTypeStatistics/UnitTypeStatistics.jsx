@@ -64,7 +64,8 @@ const UnitTypeStatistics = ({ facilityId, rows, rateType, changedUnits = [] }) =
       ...unit,
       [rateType === 'street_rate' ? 'new_std_rate' : 'new_web_rate']: newRate,
     };
-    dispatch(updateFacility({ facilityId, unit: updatedUnit }));
+    // Pass newRate: true to track this as a rate change for publishing
+    dispatch(updateFacility({ facilityId, unit: updatedUnit, newRate: true }));
   };
 
   const saveUnitTypeLink = async () => {
