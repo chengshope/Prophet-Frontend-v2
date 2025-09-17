@@ -25,3 +25,5 @@ export const selectPortfolioId = (state) => {
 };
 
 export const selectIsAuthenticated = (state) => Boolean(state.auth.token);
+
+export const selectPmsType = (state) => state.auth.user?.pf?.pms_type;

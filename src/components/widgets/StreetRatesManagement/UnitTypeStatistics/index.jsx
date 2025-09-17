@@ -1,1 +1,1 @@
-export { default } from './UnitTypeStatistics';
+export { default } from './UnitTypeStatistics.jsx';

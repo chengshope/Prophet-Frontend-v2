@@ -49,6 +49,9 @@ export const baseQuery = async (args, api, extraOptions) => {
 
   // Success: unwrap "result" from API response
   if (res.data && typeof res.data === 'object' && 'result' in res.data) {
+    if (res.data.pagination) {
+      return { data: res.data };
+    }
     return { data: res.data.result };
   }
 

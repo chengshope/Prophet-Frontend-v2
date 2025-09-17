@@ -12,6 +12,8 @@ import {
   Tooltip,
   message,
   Flex,
+  Checkbox,
+  DatePicker,
 } from 'antd';
 import {
   EditOutlined,
@@ -22,20 +24,17 @@ import {
 import {
   useGetUnitTypesQuery,
   useUpdateUnitTypeMutation,
-  useUpdateUnitTypeStatsMutation,
 } from '@/api/streetRatesApi';
 import { formatCurrency } from '@/utils/formatters';
+import dayjs from 'dayjs';
+import { selectPmsType } from '@/features/auth/authSelector';
+import { useDispatch, useSelector } from 'react-redux';
+import { getSecondaryUnitTypeLabel } from '@/utils/unitHelpers';
+import { updateFacility } from '@/features/street/streetSlice';
 
 const { Text } = Typography;
-const { Option } = Select;
 
-const UnitTypeStatistics = ({
-  facilityId,
-  rows,
-  handleChange,
-  rateType = 'street_rate',
-  changedUnits = [],
-}) => {
+const UnitTypeStatistics = ({ facilityId, rows, rateType, changedUnits = [] }) => {
   const [editingUnit, setEditingUnit] = useState(null);
   const [linkOrAnchorModalOpen, setLinkOrAnchorModalOpen] = useState(false);
   const [linkModalOpen, setLinkModalOpen] = useState(false);
@@ -45,23 +44,19 @@ const UnitTypeStatistics = ({
   const [linkData, setLinkData] = useState({ unitTypeId: null, adjustmentPercentage: 0 });
   const [categoryData, setCategoryData] = useState({ guide: null, variance: 0 });
 
+  // Lock functionality state
+  const [lockScheduleConfirmModalOpen, setLockScheduleConfirmModalOpen] = useState(false);
+  const [lockScheduleModalOpen, setLockScheduleModalOpen] = useState(false);
+  const [lockExpirationDate, setLockExpirationDate] = useState(null);
+  const [unitToLock, setUnitToLock] = useState(null);
+
+  const dispatch = useDispatch();
+
+  const pmsType = useSelector(selectPmsType);
+
   // API hooks
   const { data: unitTypes } = useGetUnitTypesQuery(facilityId);
   const [updateUnitType] = useUpdateUnitTypeMutation();
-  const [updateUnitTypeStats] = useUpdateUnitTypeStatsMutation();
-
-  const getSecondaryUnitTypeLabel = (guide) => {
-    switch (guide) {
-      case 'drive_up':
-        return 'Drive Up';
-      case 'climate_controlled':
-        return 'Climate Controlled';
-      case 'parking':
-        return 'Parking';
-      default:
-        return '';
-    }
-  };
 
   // Handle rate input change
   const handleRateChange = (unit, newRate) => {
@@ -69,17 +64,7 @@ const UnitTypeStatistics = ({
       ...unit,
       [rateType === 'street_rate' ? 'new_std_rate' : 'new_web_rate']: newRate,
     };
-    handleChange(updatedUnit);
-  };
-
-  // Handle unit type linking
-  const handleUnitTypeLink = (unit) => {
-    setSelectedUnit(unit);
-    setLinkData({
-      unitTypeId: unit.master_unittype || null,
-      adjustmentPercentage: (unit.adjustment_percentage || 0) * 100,
-    });
-    setLinkModalOpen(true);
+    dispatch(updateFacility({ facilityId, unit: updatedUnit }));
   };
 
   const saveUnitTypeLink = async () => {
@@ -100,23 +85,13 @@ const UnitTypeStatistics = ({
         adjustment_percentage: linkData.adjustmentPercentage / 100,
       };
 
-      handleChange(updatedUnit);
+      dispatch(updateFacility({ facilityId, unit: updatedUnit }));
       setLinkModalOpen(false);
       setSelectedUnit(null);
       message.success('Unit type linked successfully');
     } catch (error) {
       message.error('Failed to link unit type');
     }
-  };
-
-  // Handle unit type category
-  const handleUnitTypeCategory = (unit) => {
-    setSelectedUnit(unit);
-    setCategoryData({
-      guide: unit.guide || null,
-      variance: (unit.variance || 0) * 100,
-    });
-    setCategoryModalOpen(true);
   };
 
   const saveUnitTypeCategory = async () => {
@@ -137,7 +112,8 @@ const UnitTypeStatistics = ({
         variance: categoryData.variance / 100,
       };
 
-      handleChange(updatedUnit);
+      dispatch(updateFacility({ facilityId, unit: updatedUnit }));
+
       setCategoryModalOpen(false);
       setSelectedUnit(null);
       message.success('Unit type category updated successfully');
@@ -170,7 +146,7 @@ const UnitTypeStatistics = ({
         adjustment_percentage: 0,
       };
 
-      handleChange(updatedUnit);
+      dispatch(updateFacility({ facilityId, unit: updatedUnit }));
       setRemoveConfirmModalOpen(false);
       setSelectedUnit(null);
       message.success('Unit type anchor/link removed successfully');
@@ -178,6 +154,49 @@ const UnitTypeStatistics = ({
       message.error('Failed to remove unit type anchor/link');
       setRemoveConfirmModalOpen(false);
       setSelectedUnit(null);
+    }
+  };
+
+  // Handle lock functionality
+  const handleLockToggle = (unit, checked) => {
+    if (checked) {
+      // When locking, ask if they want to schedule expiration
+      setUnitToLock(unit);
+      setLockScheduleConfirmModalOpen(true);
+    } else {
+      // When unlocking, just unlock immediately
+      handleLockUnitRate(unit, false);
+    }
+  };
+
+  const handleLockUnitRate = (unit, locked, expirationDate = null) => {
+    // Store lock changes locally (no immediate API call)
+    const updatedUnit = {
+      ...unit,
+      locked,
+      lock_expiration_date: expirationDate,
+    };
+
+    dispatch(updateFacility({ facilityId, unit: updatedUnit }));
+
+    // Reset modal states
+    setLockScheduleConfirmModalOpen(false);
+    setLockScheduleModalOpen(false);
+    setLockExpirationDate(null);
+    setUnitToLock(null);
+  };
+
+  const handleScheduleLock = () => {
+    setLockScheduleConfirmModalOpen(false);
+    setLockScheduleModalOpen(true);
+  };
+
+  const confirmScheduledLock = () => {
+    if (unitToLock) {
+      const expirationDate = lockExpirationDate
+        ? lockExpirationDate.format('YYYY-MM-DD HH:mm:ss')
+        : null;
+      handleLockUnitRate(unitToLock, true, expirationDate);
     }
   };
 
@@ -203,13 +222,13 @@ const UnitTypeStatistics = ({
       key: 'unit_type',
       width: 200,
       render: (unitType, record) => (
-        <Flex justify='space-between' gap={12}>
+        <Flex justify="space-between" gap={12}>
           <Flex vertical={true}>
             <Text>{unitType}</Text>
             {record.exception && (
               <>
                 {record.guide && (
-                  <Text style={{color: '#1890ff'}}>
+                  <Text style={{ color: '#1890ff' }}>
                     {getSecondaryUnitTypeLabel(record.guide)} $
                     {parseFloat(record?.variance) > 0
                       ? '+' + record.variance * 100
@@ -218,7 +237,7 @@ const UnitTypeStatistics = ({
                   </Text>
                 )}
                 {record?.master_unittype_name && (
-                  <Text style={{color: '#1890ff'}}>
+                  <Text style={{ color: '#1890ff' }}>
                     {record?.master_unittype_name}{' '}
                     {record?.adjustment_percentage !== 0
                       ? `+${record?.adjustment_percentage * 100}%`
@@ -305,7 +324,7 @@ const UnitTypeStatistics = ({
       render: (value) => value || 0,
     },
     {
-      title: "Today's Street Rate",
+      title: `Today's ${rateType === 'street_rate' ? 'Street' : pmsType == 'storedge' ? 'Managed' : 'Web'}`,
       dataIndex: rateType === 'street_rate' ? 'std_rate' : 'web_rate',
       key: 'current_rate',
       width: 100,
@@ -323,18 +342,14 @@ const UnitTypeStatistics = ({
     {
       title: 'Difference $',
       key: 'difference',
+      dataIndex: rateType === 'street_rate' ? 'difference_amount' : 'difference_amount_web',
       width: 100,
       align: 'right',
-      render: (_, record) => {
-        const current = record[rateType === 'street_rate' ? 'std_rate' : 'web_rate'] || 0;
-        const recommended =
-          record[rateType === 'street_rate' ? 'recommended_std_rate' : 'recommended_web_rate'] || 0;
-        const diff = recommended - current;
-
+      render: (value) => {
         return (
-          <Tag color={diff >= 0 ? 'green' : 'volcano'}>
-            {diff >= 0 ? '+' : ''}
-            {formatCurrency(diff)}
+          <Tag color={value >= 0 ? 'green' : 'volcano'}>
+            {value >= 0 ? '+' : ''}
+            {formatCurrency(value)}
           </Tag>
         );
       },
@@ -342,16 +357,10 @@ const UnitTypeStatistics = ({
     {
       title: 'Difference %',
       key: 'difference_percent',
+      dataIndex: rateType === 'street_rate' ? 'difference_percent' : 'difference_percent_web',
       width: 100,
       align: 'right',
-      render: (_, record) => {
-        const current = record[rateType === 'street_rate' ? 'std_rate' : 'web_rate'] || 0;
-        const recommended =
-          record[rateType === 'street_rate' ? 'recommended_std_rate' : 'recommended_web_rate'] || 0;
-        const diffPercent = current > 0 ? ((recommended - current) / current) * 100 : 0;
-
-        return `${diffPercent >= 0 ? '+' : ''}${diffPercent.toFixed(2)}%`;
-      },
+      render: (value) => `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`,
     },
     {
       title: 'New Rate',
@@ -360,11 +369,32 @@ const UnitTypeStatistics = ({
       align: 'right',
       render: (_, record) => {
         const isEditing = editingUnit === record.ut_id;
+        const isLocked = record.locked;
         const currentValue =
           record[rateType === 'street_rate' ? 'new_std_rate' : 'new_web_rate'] ||
           record[rateType === 'street_rate' ? 'recommended_std_rate' : 'recommended_web_rate'] ||
           0;
         const hasChanged = changedUnits.some((unit) => unit.ut_id === record.ut_id);
+
+        if (isLocked) {
+          return (
+            <div
+              style={{
+                width: '100%',
+                height: '32px',
+                backgroundColor: '#f5f5f5',
+                border: '1px solid #d9d9d9',
+                borderRadius: '6px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#8c8c8c',
+              }}
+            >
+              {formatCurrency(currentValue)}
+            </div>
+          );
+        }
 
         if (isEditing) {
           return (
@@ -399,6 +429,7 @@ const UnitTypeStatistics = ({
               icon={<EditOutlined />}
               onClick={() => setEditingUnit(record.ut_id)}
               style={{ padding: 0 }}
+              disabled={isLocked}
             />
           </Space>
         );
@@ -407,19 +438,35 @@ const UnitTypeStatistics = ({
     {
       title: 'Lock Rate',
       key: 'lock_rate',
-      width: 100,
+      width: 120,
       align: 'center',
       render: (_, record) => {
+        const isLocked = record.locked;
+        const hasExpiration = record.lock_expiration_date;
+
         return (
-          <Button
-            size="small"
-            onClick={() => {
-              // Handle lock rate functionality
-              message.info('Lock rate functionality to be implemented');
-            }}
-          >
-            Lock
-          </Button>
+          <Space>
+            <Checkbox
+              checked={isLocked}
+              onChange={(e) => handleLockToggle(record, e.target.checked)}
+            />
+            {isLocked && hasExpiration && (
+              <Tooltip title={`Expires: ${new Date(hasExpiration).toLocaleDateString()}`}>
+                <Button
+                  size="small"
+                  type="text"
+                  icon={<InfoCircleOutlined />}
+                  onClick={() => {
+                    setUnitToLock(record);
+                    setLockExpirationDate(
+                      record.lock_expiration_date ? dayjs(record.lock_expiration_date) : null
+                    );
+                    setLockScheduleModalOpen(true);
+                  }}
+                />
+              </Tooltip>
+            )}
+          </Space>
         );
       },
     },
@@ -623,10 +670,13 @@ const UnitTypeStatistics = ({
           setSelectedUnit(null);
         }}
         footer={[
-          <Button key="no" onClick={() => {
-            setRemoveConfirmModalOpen(false);
-            setSelectedUnit(null);
-          }}>
+          <Button
+            key="no"
+            onClick={() => {
+              setRemoveConfirmModalOpen(false);
+              setSelectedUnit(null);
+            }}
+          >
             NO
           </Button>,
           <Button
@@ -635,14 +685,77 @@ const UnitTypeStatistics = ({
             onClick={handleRemoveUnitType}
             style={{
               backgroundColor: '#ff4d4f',
-              borderColor: '#ff4d4f'
+              borderColor: '#ff4d4f',
             }}
           >
             YES
           </Button>,
         ]}
         centered
+      ></Modal>
+
+      {/* Lock Schedule Confirmation Modal */}
+      <Modal
+        title="Schedule expiration?"
+        open={lockScheduleConfirmModalOpen}
+        onCancel={() => {
+          setLockScheduleConfirmModalOpen(false);
+          setUnitToLock(null);
+        }}
+        footer={[
+          <Button
+            key="no"
+            onClick={() => {
+              if (unitToLock) {
+                handleLockUnitRate(unitToLock, true);
+              }
+            }}
+          >
+            NO
+          </Button>,
+          <Button key="yes" type="primary" onClick={handleScheduleLock}>
+            YES
+          </Button>,
+        ]}
+        centered
       >
+        <Text>Do you want to schedule an expiration date for this lock?</Text>
+      </Modal>
+
+      {/* Lock Schedule Date Modal */}
+      <Modal
+        title="Select expiration date"
+        open={lockScheduleModalOpen}
+        onCancel={() => {
+          setLockScheduleModalOpen(false);
+          setLockExpirationDate(null);
+          setUnitToLock(null);
+        }}
+        footer={[
+          <Button
+            key="cancel"
+            onClick={() => {
+              setLockScheduleModalOpen(false);
+              setLockExpirationDate(null);
+              setUnitToLock(null);
+            }}
+          >
+            CANCEL
+          </Button>,
+          <Button key="confirm" type="primary" onClick={confirmScheduledLock}>
+            CONFIRM
+          </Button>,
+        ]}
+        centered
+      >
+        <div style={{ marginTop: '20px', textAlign: 'center' }}>
+          <DatePicker
+            value={lockExpirationDate}
+            onChange={(date) => setLockExpirationDate(date)}
+            placeholder="Select expiration date"
+            style={{ width: '100%' }}
+          />
+        </div>
       </Modal>
     </>
   );

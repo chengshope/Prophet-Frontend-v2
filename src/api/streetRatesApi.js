@@ -78,7 +78,6 @@ export const streetRatesApi = createApi({
           changed_unit_statistics: changedUnitStatistics,
         },
       }),
-      invalidatesTags: ['StreetRates', 'FacilityRates'],
     }),
 
     // Run Python ML model to refresh rates
@@ -87,17 +86,15 @@ export const streetRatesApi = createApi({
         url: 'street_rates/run-python',
         method: 'POST',
       }),
-      invalidatesTags: ['StreetRates', 'FacilityRates', 'UnitTypes'],
     }),
 
     // Update unit type settings
     updateUnitType: builder.mutation({
-      query: ({ id, ...data }) => ({
+      query: ({ id, facilityId, ...data }) => ({
         url: `street_rates/unit-type/${id}`,
         method: 'PUT',
         body: data,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'UnitTypes', id }],
     }),
 
     // Update unit type statistics
@@ -107,7 +104,6 @@ export const streetRatesApi = createApi({
         method: 'PUT',
         body: data,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'UnitTypes', id }],
     }),
 
     // Export CSV

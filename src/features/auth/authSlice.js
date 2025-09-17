@@ -8,7 +8,7 @@ const initialState = {
   user: getAuthUser(),
 };
 
-const tokenSlice = createSlice({
+const authSlice = createSlice({
   name: 'apiToken',
   initialState,
   reducers: {
@@ -36,5 +36,5 @@ export const removeApiToken = () => (dispatch) => {
   dispatch(clearToken());
 };
 
-export const { clearToken } = tokenSlice.actions;
-export default tokenSlice.reducer;
+export const { clearToken } = authSlice.actions;
+export default authSlice.reducer;

@@ -74,11 +74,19 @@ export default [
       //     target: './src', from: './src', except: ['./*', './**/*'],
       //   },],
       // },],
-
+      'react/jsx-uses-react': 'off',       // not needed in React 17+
+      'react/react-in-jsx-scope': 'off',   // React 17+ doesn't need import React
+      'no-unused-vars': ['error', {
+        vars: 'all',
+        args: 'after-used',
+        ignoreRestSiblings: true,
+      }],
+      'react/jsx-uses-vars': 'error',
       // Formatting rules that align with Prettier
       'eol-last': ['error', 'always'], // require exactly one newline at EOF
       'no-multiple-empty-lines': ['error', { max: 1, maxEOF: 0, maxBOF: 0 }], // no multiple empty lines, no empty lines at end/beginning
       'no-trailing-spaces': 'error', // no trailing whitespace
+      'no-undef': 'error',
 
       // Additional formatting rules
       quotes: ['error', 'single', { avoidEscape: true }], // single quotes

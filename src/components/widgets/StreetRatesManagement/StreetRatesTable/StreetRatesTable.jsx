@@ -5,23 +5,32 @@ import { useSubmitIndividualRatesMutation, useSaveRateChangesMutation } from '@/
 import UnitTypeStatistics from '../UnitTypeStatistics';
 import { formatCurrency, formatPercent } from '@/utils/formatters';
 import './StreetRatesTable.less';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { getChangedUnits, getChangedUnitsByFacilityId, selectStreetFacilities } from '@/features/street/streetSelector';
+import { getRateType } from '@/utils/rateHelper';
+import { clearChangedUnitByFacilityId } from '@/features/street/streetSlice';
 
 const { Text } = Typography;
 
 const StreetRatesTable = ({
-  data,
   loading,
   sortColumn,
   sortDirection,
   onSortChanged,
-  onFacilitiesChanged,
   pagination,
-  changedUnits,
-  setChangedUnits,
+  portfolioSettings,
 }) => {
+  const facilities = useSelector(selectStreetFacilities);
+  const dispatch = useDispatch();
+
   const [expandedRowKeys, setExpandedRowKeys] = useState([]);
   const [publishModalOpen, setPublishModalOpen] = useState(false);
   const [selectedFacility, setSelectedFacility] = useState(null);
+  const navigate = useNavigate();
+
+  const rateChangedFacility = useSelector(getChangedUnitsByFacilityId);
+  const changedUnits = useSelector(getChangedUnits);
 
   const [submitIndividualRates, { isLoading: isSubmittingIndividual }] =
     useSubmitIndividualRatesMutation();
@@ -36,38 +45,26 @@ const StreetRatesTable = ({
     }
   };
 
-  // Handle unit rate changes
-  const handleUnitChange = async (facility, updatedUnit) => {
+  // Handle save changes for current facility
+  const handleSaveChanges = async (facility) => {
     try {
-      // Update the facility's units_statistics
-      const updatedFacility = {
-        ...facility,
-        units_statistics: facility.units_statistics.map((unit) =>
-          unit.ut_id === updatedUnit.ut_id ? updatedUnit : unit
-        ),
-      };
-
       // Save changes to backend
       await saveRateChanges({
         facilityId: facility.facility_id,
-        units: updatedFacility.units_statistics,
+        units: facility.units_statistics,
       }).unwrap();
 
-      // Update parent component
-      onFacilitiesChanged(updatedFacility);
-
-      // Update changed units tracking
-      const existingIndex = changedUnits.findIndex((unit) => unit.ut_id === updatedUnit.ut_id);
-      if (existingIndex >= 0) {
-        const newChangedUnits = [...changedUnits];
-        newChangedUnits[existingIndex] = updatedUnit;
-        setChangedUnits(newChangedUnits);
-      } else {
-        setChangedUnits([...changedUnits, updatedUnit]);
-      }
+      message.success('Changes saved successfully');
     } catch (error) {
+      console.error('Error saving rate changes:', error);
       message.error('Failed to save rate changes');
     }
+  };
+
+  // Handle cancel/close for current facility
+  const handleClose = (facility) => {
+    // Just close without saving
+    setExpandedRowKeys(expandedRowKeys.filter((key) => key !== facility.id));
   };
 
   // Handle individual facility publish
@@ -80,27 +77,22 @@ const StreetRatesTable = ({
     if (!selectedFacility) return;
 
     try {
-      const facilityChangedUnits = changedUnits.filter((unit) =>
-        selectedFacility.units_statistics?.some((facilityUnit) => facilityUnit.ut_id === unit.ut_id)
-      );
+      // Get only units with rate changes for this facility
+      const facilityRateChangedUnits = rateChangedFacility[selectedFacility.facility_id] || [];
 
       await submitIndividualRates({
         facilityId: selectedFacility.facility_id,
-        changedUnitStatistics: facilityChangedUnits,
+        changedUnitStatistics: facilityRateChangedUnits,
       }).unwrap();
 
       message.success(`Rates published successfully for ${selectedFacility.facility_name}`);
       setPublishModalOpen(false);
       setSelectedFacility(null);
 
-      // Remove published units from changed units
-      setChangedUnits(
-        changedUnits.filter(
-          (unit) =>
-            !facilityChangedUnits.some((publishedUnit) => publishedUnit.ut_id === unit.ut_id)
-        )
-      );
+      // Remove published units from rate changed units
+      dispatch(clearChangedUnitByFacilityId(selectedFacility.facility_id));
     } catch (error) {
+      console.log(error);
       message.error('Failed to publish rates');
     }
   };
@@ -204,17 +196,31 @@ const StreetRatesTable = ({
         return (
           <Flex vertical={true} gap={10} style={{ padding: '0 8px' }}>
             <Button
-              onClick={() => handleExpand(!isExpanded, record)}
+              onClick={() =>
+                isExpanded
+                  ? hasChanges
+                    ? handleSaveChanges(record)
+                    : handleClose(record)
+                  : handleExpand(true, record)
+              }
               variant={isExpanded ? 'solid' : 'outlined'}
               color={isExpanded ? 'danger' : 'default'}
               block
             >
-              {isExpanded ? 'Cancel' : hasChanges ? 'View Edits' : 'Unit Mix Detail'}
+              {isExpanded
+                ? hasChanges
+                  ? 'Save Changes'
+                  : 'Cancel'
+                : hasChanges
+                  ? 'View Edits'
+                  : 'Unit Mix Detail'}
             </Button>
             <Button
-              type="primary"
-              onClick={() => handlePublishIndividual(record)}
-              disabled={!hasChanges}
+              variant="outlined"
+              color="default"
+              onClick={() =>
+                isExpanded ? navigate(`/competitors/${record.id}`) : handlePublishIndividual(record)
+              }
               block
             >
               {isExpanded ? 'View Comps' : 'Publish Rates'}
@@ -237,7 +243,7 @@ const StreetRatesTable = ({
     <>
       <Table
         columns={columns}
-        dataSource={data}
+        dataSource={facilities}
         loading={loading}
         rowKey={(record) => record.id || record.facility_id}
         pagination={pagination}
@@ -253,9 +259,9 @@ const StreetRatesTable = ({
               <UnitTypeStatistics
                 facilityId={record.facility_id}
                 rows={record.units_statistics || []}
-                handleChange={(updatedUnit) => handleUnitChange(record, updatedUnit)}
-                rateType="street_rate"
+                rateType={getRateType(record, portfolioSettings)}
                 changedUnits={changedUnits}
+                streetRateSettings={portfolioSettings?.street_rate_settings}
               />
             </Card>
           ),
