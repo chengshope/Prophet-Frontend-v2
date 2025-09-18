@@ -1,59 +1,46 @@
-/* LinkOrAnchorModal Styles */
+/* LinkOrAnchorModal Styles - Clean Modern Design */
 
 .link-anchor-modal-content {
-  text-align: center;
-  padding: 20px 0;
+  padding: 8px 0 16px 0;
 }
 
 .link-anchor-modal-description {
-  margin-bottom: 24px;
+  margin-bottom: 0;
   font-size: 14px;
   color: #666;
+  line-height: 1.5;
 }
 
-.link-anchor-modal-buttons {
+.link-anchor-modal-footer {
   display: flex;
-  justify-content: center;
-  gap: 16px;
+  justify-content: flex-end;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
 }
 
-.link-anchor-modal-button {
-  min-width: 100px;
-  height: 40px;
-  font-weight: 600;
+.link-anchor-modal-footer .link-button {
   border-radius: 6px;
-  transition: all 0.3s ease;
-}
-
-.link-button {
-  border-color: #ff4d4f;
-  color: #ff4d4f;
-
-  &:hover {
-    border-color: #ff7875;
-    color: #ff7875;
-    background-color: #fff2f0;
-  }
-
-  &:focus {
-    border-color: #ff4d4f;
-    color: #ff4d4f;
-  }
-}
-
-.anchor-button {
-  border-color: #1890ff;
-  color: #1890ff;
+  font-weight: 400;
+  border: 1px solid #d9d9d9;
+  color: #000;
+  background: #fff;
 
   &:hover {
     border-color: #40a9ff;
     color: #40a9ff;
-    background-color: #f0f8ff;
   }
+}
 
-  &:focus {
-    border-color: #1890ff;
-    color: #1890ff;
+.link-anchor-modal-footer .anchor-button {
+  border-radius: 6px;
+  font-weight: 400;
+  background: #1677ff;
+  border-color: #1677ff;
+
+  &:hover {
+    background: #4096ff;
+    border-color: #4096ff;
   }
 }
 
@@ -63,11 +50,14 @@
     color: #a6a6a6;
   }
 
-  .link-button:hover {
-    background-color: #2a1215;
-  }
+  .link-anchor-modal-footer .link-button {
+    background: #141414;
+    border-color: #434343;
+    color: #fff;
 
-  .anchor-button:hover {
-    background-color: #111b26;
+    &:hover {
+      border-color: #4096ff;
+      color: #4096ff;
+    }
   }
 }

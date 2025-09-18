@@ -473,7 +473,7 @@ const UnitTypeStatistics = ({ facilityId, rows, rateType, changedUnits = [] }) =
         rowKey="ut_id"
         pagination={false}
         size="small"
-        scroll={{ x: 800 }}
+        scroll={{ x: 1200 }}
         locale={{
           emptyText: 'No unit types available for this facility',
         }}

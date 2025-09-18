@@ -7,7 +7,16 @@ const LinkOrAnchorModal = ({ open, onCancel, onLinkClick, onAnchorClick }) => {
       title="Link or Anchor Unit?"
       open={open}
       onCancel={onCancel}
-      footer={null}
+      footer={
+        <div className="link-anchor-modal-footer">
+          <Button onClick={onLinkClick} className="link-button">
+            Link
+          </Button>
+          <Button type="primary" onClick={onAnchorClick} className="anchor-button">
+            Anchor
+          </Button>
+        </div>
+      }
       centered
       width={400}
     >
@@ -15,24 +24,6 @@ const LinkOrAnchorModal = ({ open, onCancel, onLinkClick, onAnchorClick }) => {
         <p className="link-anchor-modal-description">
           Choose how you want to handle this unit type:
         </p>
-        <Space size="large" className="link-anchor-modal-buttons">
-          <Button
-            type="default"
-            size="large"
-            onClick={onLinkClick}
-            className="link-anchor-modal-button link-button"
-          >
-            LINK
-          </Button>
-          <Button
-            type="default"
-            size="large"
-            onClick={onAnchorClick}
-            className="link-anchor-modal-button anchor-button"
-          >
-            ANCHOR
-          </Button>
-        </Space>
       </div>
     </Modal>
   );
