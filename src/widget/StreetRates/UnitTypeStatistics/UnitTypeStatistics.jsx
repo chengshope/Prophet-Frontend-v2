@@ -25,12 +25,12 @@ import { selectPmsType } from '@/features/auth/authSelector';
 import { updateFacility } from '@/features/street/streetSlice';
 import { formatCurrency } from '@/utils/formatters';
 import { getSecondaryUnitTypeLabel } from '@/utils/unitHelpers';
-import LinkOrAnchorModal from './modals/LinkOrAnchorModal';
-import UnitTypeLinkingModal from './modals/UnitTypeLinkingModal';
-import UnitTypeCategoryModal from './modals/UnitTypeCategoryModal';
-import RemoveConfirmModal from './modals/RemoveConfirmModal';
-import LockScheduleConfirmModal from './modals/LockScheduleConfirmModal';
-import LockScheduleDateModal from './modals/LockScheduleDateModal';
+import LinkOrAnchorModal from '@/widget/Modal/LinkOrAnchorModal';
+import UnitTypeLinkingModal from '@/widget/Modal/UnitTypeLinkingModal';
+import UnitTypeCategoryModal from '@/widget/Modal/UnitTypeCategoryModal';
+import RemoveConfirmModal from '@/widget/Modal/RemoveConfirmModal';
+import LockScheduleConfirmModal from '@/widget/Modal/LockScheduleConfirmModal';
+import LockScheduleDateModal from '@/widget/Modal/LockScheduleDateModal';
 
 const { Text } = Typography;
 
