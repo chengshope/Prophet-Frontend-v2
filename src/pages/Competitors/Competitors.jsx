@@ -90,8 +90,8 @@ const Competitors = () => {
         comp_type: newType,
       }).unwrap();
       message.success('Competitor type updated successfully');
-    } catch (error) {
-      message.error('Failed to update competitor type');
+    } catch {
+      // automatically handled by RTK Query
     }
   };
 

@@ -109,7 +109,7 @@ const LineChart = ({
     <Card
       title={title}
       style={{ height: '100%', ...style }}
-      bodyStyle={{ padding: 16 }}
+      styles={{ padding: 16 }}
       {...props}
       className="line-chart-container"
     >

@@ -1,8 +1,12 @@
+/**
+ * Existing Rates component for Reporting widget
+ * Following Rule #4: components/widgets/Reporting/ExistingRates
+ */
+
 import { Space } from 'antd';
-import dayjs from 'dayjs';
 import { useDispatch, useSelector } from 'react-redux';
 import ReportingFilters from '@/components/common/ReportingFilters';
-import ExistingRatesTable from '../../Reporting/ExistingRates/ExistingRatesTable';
+import ExistingRatesTable from './ExistingRatesTable';
 import {
   setExistingRatesFilters,
   resetExistingRatesFilters,
@@ -12,7 +16,7 @@ import {
   selectExistingRatesApiParams,
 } from '@/features/reporting/reportingSelector';
 
-const ExistingRatesTab = () => {
+const ExistingRates = () => {
   const dispatch = useDispatch();
 
   // Get filters from Redux store
@@ -49,4 +53,4 @@ const ExistingRatesTab = () => {
   );
 };
 
-export default ExistingRatesTab;
+export default ExistingRates;

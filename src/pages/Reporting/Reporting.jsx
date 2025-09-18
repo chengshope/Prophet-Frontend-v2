@@ -1,10 +1,13 @@
 import PageFrame from '@/components/common/PageFrame';
 import { Segmented, Space } from 'antd';
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import ExecutiveSummaryTab from '@/components/widgets/ExecutiveSummary';
-import StreetRatesTab from '@/components/widgets/StreetRates';
-import ExistingRatesTab from '@/components/widgets/ExistingRates';
+import { useDispatch, useSelector } from 'react-redux';
+import ExecutiveSummaryTab from '@/components/widgets/Reporting/ExecutiveSummary';
+import StreetRatesTab from '@/components/widgets/Reporting/StreetRates';
+import ExistingRatesTab from '@/components/widgets/Reporting/ExistingRates';
+import { setActiveTab } from '@/features/reporting/reportingSlice';
+import { selectActiveTab } from '@/features/reporting/reportingSelector';
 
 const tabItems = [
   {
@@ -30,11 +33,22 @@ const tabItems = [
 const Reporting = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  // Get active tab from Redux store
+  const activeTabFromStore = useSelector(selectActiveTab);
 
   const currentKey = useMemo(
     () => tabItems.find((t) => location.pathname.startsWith(t.path))?.key ?? 'executive-summary',
     [location.pathname]
   );
+
+  // Sync URL with Redux store
+  useEffect(() => {
+    if (currentKey !== activeTabFromStore) {
+      dispatch(setActiveTab(currentKey));
+    }
+  }, [currentKey, activeTabFromStore, dispatch]);
 
   const CurrentComponent =
     tabItems.find((t) => t.key === currentKey)?.component ?? ExecutiveSummaryTab;
@@ -46,7 +60,12 @@ const Reporting = () => {
 
   const handleTabChange = (key) => {
     const tab = tabItems.find((t) => t.key === key);
-    if (tab) navigate(tab.path);
+    if (tab) {
+      // Update Redux store
+      dispatch(setActiveTab(key));
+      // Navigate to new route
+      navigate(tab.path);
+    }
   };
 
   return (

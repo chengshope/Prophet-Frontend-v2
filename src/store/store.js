@@ -8,6 +8,7 @@ import competitorsApi from '@/api/competitorsApi';
 import authReducer from '@/features/auth/authSlice';
 import streetReducer from '@/features/street/streetSlice';
 import existingCustomersReducer from '@/features/existingCustomers/existingCustomersSlice';
+import reportingReducer from '@/features/reporting/reportingSlice';
 
 export const store = configureStore({
   reducer: {
@@ -20,6 +21,7 @@ export const store = configureStore({
     auth: authReducer,
     street: streetReducer,
     existingCustomers: existingCustomersReducer,
+    reporting: reportingReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
