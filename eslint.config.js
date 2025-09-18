@@ -74,6 +74,7 @@ export default [
       //     target: './src', from: './src', except: ['./*', './**/*'],
       //   },],
       // },],
+      'react/jsx-no-undef': 'error',
       'react/jsx-uses-react': 'off',       // not needed in React 17+
       'react/react-in-jsx-scope': 'off',   // React 17+ doesn't need import React
       'no-unused-vars': ['error', {

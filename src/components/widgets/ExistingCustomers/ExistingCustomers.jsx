@@ -1,87 +1,81 @@
-import { useState, useEffect, useMemo } from 'react';
-import { Row, Col, Input, Button, Modal, message, Space, Card, Typography } from 'antd';
-import {
-  CloudUploadOutlined,
-  ReloadOutlined,
-  DownloadOutlined,
-  SearchOutlined,
-} from '@ant-design/icons';
+import { useState } from 'react';
+import { Row, Space, Col, Input, Button, Modal, message } from 'antd';
+import { CloudUploadOutlined, ReloadOutlined } from '@ant-design/icons';
 import {
   useGetExistingCustomersQuery,
-  useGetExistingCustomersSummaryQuery,
   usePublishAllRateChangesMutation,
-  useRunPythonModelMutation,
+  useRefreshModelMutation,
 } from '@/api/existingCustomersApi';
 import ExistingCustomersTable from './ExistingCustomersTable/ExistingCustomersTable';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
-import { getChangedEcriIDs, removeChangedEcriIDs } from '../../../utils/LegacyV1/localStorage';
 
-const { Title, Text } = Typography;
+import { removeSavedTenantChanges } from '../../../utils/localStorage';
+import {
+  selectExistingCustomersFacilities,
+  selectExistingCustomersTotal,
+  getSavedEcriIds,
+  getFacilitiesWithChangesCount,
+} from '@/features/existingCustomers/existingCustomersSelector';
+import { clearSavedTenantChanges } from '@/features/existingCustomers/existingCustomersSlice';
+
+const { Search } = Input;
 const PAGE_SIZE = 10;
 
 const ExistingCustomers = () => {
+  // internal ui state
   const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [sort, setSort] = useState('facility_name');
   const [orderby, setOrderby] = useState('asc');
-  const [publishModalOpen, setPublishModalOpen] = useState(false);
-  const [changedTenants, setChangedTenants] = useState([]);
   const [latestPublishedDate, setLatestPublishedDate] = useState('');
-  const [updatedFacilitiesCount, setUpdatedFacilitiesCount] = useState(0);
+  // modal state
+  const [publishModalOpen, setPublishModalOpen] = useState(false);
   const [errorLog, setErrorLog] = useState('');
   const [modalErrorIsOpen, setModalErrorIsOpen] = useState(false);
 
-  const portfolioSettings = useSelector((state) => state.portfolio.settings);
+  const dispatch = useDispatch();
+
+  // Redux selectors
+  const facilities = useSelector(selectExistingCustomersFacilities);
+  const totalFacilities = useSelector(selectExistingCustomersTotal);
+  const savedEcriIds = useSelector(getSavedEcriIds);
+  const facilitiesWithChangesCount = useSelector(getFacilitiesWithChangesCount);
 
   // API hooks
-  const { data, isLoading, isFetching, refetch } = useGetExistingCustomersQuery({
+  const { isLoading, isFetching, refetch } = useGetExistingCustomersQuery({
     page: currentPage,
     search,
     sort,
     orderby,
+    limit: PAGE_SIZE,
   });
 
-  const { data: summaryData } = useGetExistingCustomersSummaryQuery();
-
   const [publishAllRateChanges, { isLoading: isPublishing }] = usePublishAllRateChangesMutation();
-  const [runPythonModel, { isLoading: isRunningModel }] = useRunPythonModelMutation();
+  const [refreshModel, { isLoading: isRefreshingModel }] = useRefreshModelMutation();
 
-  // Handle search with debounce
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setCurrentPage(1);
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [search]);
+  // Handle search
+  const handleSearch = (value) => {
+    setSearch(value);
+    setCurrentPage(1);
+  };
 
   // Handle sorting
-  const handleSort = (column, direction) => {
-    setSort(column);
+  const handleSort = (field, direction) => {
+    setSort(field);
     setOrderby(direction);
     setCurrentPage(1);
   };
 
   // Handle pagination
-  const handlePagination = (page) => {
+  const handlePageChange = (page) => {
     setCurrentPage(page);
   };
 
-  // Handle facility changes
-  const handleFacilitiesChanged = (facilityId) => {
-    const changedIds = getChangedEcriIDs();
-    if (!changedIds.includes(facilityId)) {
-      setChangedTenants([...changedTenants, facilityId]);
-      setUpdatedFacilitiesCount((prev) => prev + 1);
-    }
-  };
-
-  // Handle publish all rates
-  const handlePublishAllRates = () => {
-    const changedIds = getChangedEcriIDs();
-    if (changedIds.length === 0) {
-      message.warning('No changes to publish');
+  // Handle publish all rates (using Redux state)
+  const handlePublishNewRates = () => {
+    if (savedEcriIds.length === 0) {
+      message.warning('No saved changes to publish. Please save changes first.');
       return;
     }
     setPublishModalOpen(true);
@@ -89,14 +83,15 @@ const ExistingCustomers = () => {
 
   const confirmPublishAllRates = async () => {
     try {
-      const changedIds = getChangedEcriIDs();
-      await publishAllRateChanges(changedIds).unwrap();
+      await publishAllRateChanges(savedEcriIds).unwrap();
       setLatestPublishedDate(moment(new Date()).format('MM/DD/YYYY, hh:mm A'));
       message.success('Rate changes published successfully');
       setPublishModalOpen(false);
-      removeChangedEcriIDs();
-      setChangedTenants([]);
-      setUpdatedFacilitiesCount(0);
+
+      // Clear saved changes from Redux and localStorage
+      dispatch(clearSavedTenantChanges());
+      removeSavedTenantChanges();
+
       refetch();
     } catch (error) {
       console.error('Error publishing rates:', error);
@@ -106,199 +101,86 @@ const ExistingCustomers = () => {
     }
   };
 
-  // Handle refresh model
+  // Handle refresh model (matching v1 functionality)
   const handleRefreshModel = async () => {
     try {
-      await runPythonModel().unwrap();
+      await refreshModel().unwrap();
       message.success('Model refreshed successfully');
-      refetch();
+      // Navigate to loading page like v1 does
+      window.location.href = '/loading?redirect=existing-customer-rate-increases';
     } catch (error) {
+      console.error('Error refreshing model:', error);
       message.error('Failed to refresh model');
     }
   };
 
-  // Handle CSV export
-  const handleExportCSV = () => {
-    if (!data?.data || data.data.length === 0) {
-      message.warning('No data to export');
-      return;
-    }
-
-    try {
-      const csvData = data.data.map((facility) => ({
-        'Facility Name': facility.facility_name,
-        Market: `${facility.city}, ${facility.state}`,
-        'Eligible Tenants': facility.tenant_total || 0,
-        'Average Rate Increase %': facility.avr_rate_increase_percent?.toFixed(1) || '0.0',
-        'Estimated Revenue Increase': facility.estimated_revenue_increase?.toFixed(2) || '0.00',
-        'Average Move-out Probability':
-          (facility.avr_moveout_probability * 100)?.toFixed(1) || '0.0',
-      }));
-
-      const csvContent = [
-        Object.keys(csvData[0]).join(','),
-        ...csvData.map((row) => Object.values(row).join(',')),
-      ].join('\n');
-
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
-      const url = URL.createObjectURL(blob);
-      link.setAttribute('href', url);
-      link.setAttribute('download', `existing_customers_${moment().format('YYYY-MM-DD')}.csv`);
-      link.style.visibility = 'hidden';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      message.success('CSV exported successfully');
-    } catch (error) {
-      console.error('Error exporting CSV:', error);
-      message.error('Failed to export CSV');
-    }
-  };
-
-  // Calculate summary data
-  const summaryStats = useMemo(() => {
-    if (!summaryData) return null;
-
-    return {
-      totalTenants: summaryData.sum_tenants || 0,
-      averageRateIncrease: summaryData.sum_avr_rate_inc || 0,
-      estimatedRevenueIncrease: summaryData.sum_rev_inc || 0,
-      averageMoveOutProbability: summaryData.sum_avr_mop || 0,
-    };
-  }, [summaryData]);
-
   return (
-    <div style={{ padding: '24px' }}>
-      {/* Header */}
-      <Row justify="space-between" align="middle" style={{ marginBottom: '24px' }}>
-        <Col>
-          <Title level={2} style={{ margin: 0 }}>
-            Existing Customers
-          </Title>
-        </Col>
-      </Row>
-
-      {/* Summary Cards */}
-      {summaryStats && (
-        <Row gutter={16} style={{ marginBottom: '24px' }}>
-          <Col xs={24} sm={12} md={6}>
-            <Card>
-              <Text type="secondary">Total Eligible Tenants</Text>
-              <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#1890ff' }}>
-                {summaryStats.totalTenants.toLocaleString()}
-              </div>
-            </Card>
-          </Col>
-          <Col xs={24} sm={12} md={6}>
-            <Card>
-              <Text type="secondary">Average Rate Increase %</Text>
-              <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#52c41a' }}>
-                {summaryStats.averageRateIncrease.toFixed(1)}%
-              </div>
-            </Card>
-          </Col>
-          <Col xs={24} sm={12} md={6}>
-            <Card>
-              <Text type="secondary">Estimated Revenue Increase</Text>
-              <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#faad14' }}>
-                ${summaryStats.estimatedRevenueIncrease.toLocaleString()}
-              </div>
-            </Card>
-          </Col>
-          <Col xs={24} sm={12} md={6}>
-            <Card>
-              <Text type="secondary">Average Move-out Probability</Text>
-              <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#f5222d' }}>
-                {summaryStats.averageMoveOutProbability.toFixed(1)}%
-              </div>
-            </Card>
-          </Col>
-        </Row>
-      )}
-
-      {/* Controls Row */}
+    <>
       <Row justify="space-between" align="middle" style={{ marginBottom: '16px' }}>
         <Col xs={24} md={12}>
-          <Input
+          <Search
             placeholder="Search facilities..."
-            prefix={<SearchOutlined />}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            style={{ maxWidth: '400px' }}
+            allowClear
+            onSearch={handleSearch}
+            style={{ width: '100%', maxWidth: '400px' }}
           />
         </Col>
         <Col xs={24} md={12} style={{ textAlign: 'right' }}>
           <Space>
             <Button
-              icon={<DownloadOutlined />}
-              onClick={handleExportCSV}
-              disabled={!data?.data || data.data.length === 0}
+              icon={<ReloadOutlined />}
+              onClick={handleRefreshModel}
+              loading={isRefreshingModel}
             >
-              Export CSV
-            </Button>
-            <Button icon={<ReloadOutlined />} onClick={handleRefreshModel} loading={isRunningModel}>
               Refresh Model
             </Button>
             <Button
               type="primary"
               icon={<CloudUploadOutlined />}
-              onClick={handlePublishAllRates}
+              onClick={handlePublishNewRates}
               loading={isPublishing}
-              danger={updatedFacilitiesCount > 0}
             >
-              {updatedFacilitiesCount > 0 ? 'Publish Changes' : 'Publish All Rates'}
+              Publish New Rates
             </Button>
           </Space>
         </Col>
       </Row>
 
-      {/* Status Information Row */}
       <Row justify="space-between" style={{ padding: '0 8px', fontSize: '14px', color: '#8c8c8c' }}>
         <Col>{latestPublishedDate && `Last Updated: ${latestPublishedDate}`}</Col>
         <Col>
-          {updatedFacilitiesCount > 0 &&
-            `${updatedFacilitiesCount} ${updatedFacilitiesCount === 1 ? 'Facility' : 'Facilities'} Edited`}
+          {facilitiesWithChangesCount > 0 &&
+            `${facilitiesWithChangesCount} ${facilitiesWithChangesCount === 1 ? 'Facility' : 'Facilities'} Edited`}
+          {savedEcriIds.length > 0 && ` | ${savedEcriIds.length} Saved Changes Ready to Publish`}
         </Col>
       </Row>
 
-      {/* Existing Customers Table */}
       <ExistingCustomersTable
-        data={data}
         loading={isLoading || isFetching}
         sortColumn={sort}
         sortDirection={orderby}
         onSortChanged={handleSort}
-        onFacilitiesChanged={handleFacilitiesChanged}
         pagination={{
           current: currentPage,
-          total: data?.pagination?.total || 0,
+          total: totalFacilities,
           pageSize: PAGE_SIZE,
-          onChange: handlePagination,
-          showSizeChanger: false,
-          showQuickJumper: true,
-          showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} facilities`,
+          onChange: handlePageChange,
         }}
-        portfolioSettings={portfolioSettings}
       />
 
-      {/* Publish Confirmation Modal */}
+      {/* Publish All Modal */}
       <Modal
-        title="Confirm Publish Rate Changes"
+        title="Publish All Rate Changes"
         open={publishModalOpen}
         onOk={confirmPublishAllRates}
         onCancel={() => setPublishModalOpen(false)}
         confirmLoading={isPublishing}
-        okText="Publish"
-        cancelText="Cancel"
       >
-        <p>Are you sure you want to publish all rate changes? This action cannot be undone.</p>
-        {updatedFacilitiesCount > 0 && (
-          <p>
-            <strong>{updatedFacilitiesCount} facilities</strong> have pending changes.
-          </p>
-        )}
+        <p>Are you sure you want to publish all saved rate changes?</p>
+        <p>
+          <strong>{savedEcriIds.length}</strong> saved changes will be published across{' '}
+          <strong>{facilitiesWithChangesCount}</strong> facilities.
+        </p>
       </Modal>
 
       {/* Error Modal */}
@@ -315,7 +197,7 @@ const ExistingCustomers = () => {
       >
         <p>{errorLog}</p>
       </Modal>
-    </div>
+    </>
   );
 };
 

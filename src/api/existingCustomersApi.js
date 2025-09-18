@@ -1,45 +1,40 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { baseQuery } from './baseQuery';
 
-const existingCustomersApi = createApi({
+export const existingCustomersApi = createApi({
   reducerPath: 'existingCustomersApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: '/api/ecri',
-    prepareHeaders: (headers, { getState }) => {
-      const token = getState().auth.token;
-      if (token) {
-        headers.set('authorization', `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
+  baseQuery,
   tagTypes: ['ExistingCustomers', 'Summary'],
   endpoints: (builder) => ({
-    // Get existing customers with pagination and search
+    // Get existing customers with pagination and search (matching v1 API)
     getExistingCustomers: builder.query({
-      query: ({ page = 1, search = '', sort = 'facility_name', orderby = 'asc' }) => ({
-        url: '/',
-        params: {
-          page,
-          search,
-          sort,
-          orderby,
-        },
-      }),
+      query: ({ page = 1, search = '', sort = 'facility_name', orderby = 'asc', limit = 10 }) => {
+        const searchParams = new URLSearchParams();
+
+        if (page) searchParams.append('page', page);
+        if (search) searchParams.append('search', search);
+        if (sort) searchParams.append('sort', sort);
+        if (orderby) searchParams.append('orderby', orderby);
+        if (limit) searchParams.append('limit', limit);
+        searchParams.append('status', 'enabled');
+
+        return `ecri?${searchParams.toString()}`;
+      },
       providesTags: ['ExistingCustomers'],
     }),
 
     // Get summary data
     getExistingCustomersSummary: builder.query({
-      query: () => '/summary',
+      query: () => 'ecri/summary',
       providesTags: ['Summary'],
     }),
 
-    // Bulk update tenants
+    // Bulk update tenants (matching v1 API format)
     bulkUpdateTenants: builder.mutation({
       query: (tenants) => ({
-        url: '/bulk-update',
+        url: 'ecri/bulk-update',
         method: 'POST',
-        body: { tenants },
+        body: tenants, // v1 sends array directly, not wrapped in object
       }),
       invalidatesTags: ['ExistingCustomers', 'Summary'],
     }),
@@ -47,7 +42,7 @@ const existingCustomersApi = createApi({
     // Publish all rate changes
     publishAllRateChanges: builder.mutation({
       query: (ecriIds) => ({
-        url: '/publish',
+        url: 'ecri/publish',
         method: 'POST',
         body: { ecri_ids: ecriIds },
       }),
@@ -57,7 +52,7 @@ const existingCustomersApi = createApi({
     // Publish individual facility rate changes
     publishIndividualRateChanges: builder.mutation({
       query: ({ facilityId, ecriIds }) => ({
-        url: '/publish-individual',
+        url: 'ecri/publish-individual',
         method: 'POST',
         body: {
           facility_id: facilityId,
@@ -67,10 +62,10 @@ const existingCustomersApi = createApi({
       invalidatesTags: ['ExistingCustomers', 'Summary'],
     }),
 
-    // Run Python model
-    runPythonModel: builder.mutation({
+    // Refresh model (matching v1 functionality)
+    refreshModel: builder.mutation({
       query: () => ({
-        url: '/run-python',
+        url: 'ecri/refresh',
         method: 'POST',
       }),
       invalidatesTags: ['ExistingCustomers', 'Summary'],
@@ -84,7 +79,7 @@ export const {
   useBulkUpdateTenantsMutation,
   usePublishAllRateChangesMutation,
   usePublishIndividualRateChangesMutation,
-  useRunPythonModelMutation,
+  useRefreshModelMutation,
 } = existingCustomersApi;
 
 export default existingCustomersApi;

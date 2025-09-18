@@ -21,10 +21,7 @@ import {
   PlusCircleOutlined,
   CloseCircleOutlined,
 } from '@ant-design/icons';
-import {
-  useGetUnitTypesQuery,
-  useUpdateUnitTypeMutation,
-} from '@/api/streetRatesApi';
+import { useGetUnitTypesQuery, useUpdateUnitTypeMutation } from '@/api/streetRatesApi';
 import { formatCurrency } from '@/utils/formatters';
 import dayjs from 'dayjs';
 import { selectPmsType } from '@/features/auth/authSelector';
@@ -90,8 +87,8 @@ const UnitTypeStatistics = ({ facilityId, rows, rateType, changedUnits = [] }) =
       setLinkModalOpen(false);
       setSelectedUnit(null);
       message.success('Unit type linked successfully');
-    } catch (error) {
-      message.error('Failed to link unit type');
+    } catch {
+      // automatically handled by RTK Query
     }
   };
 
@@ -118,8 +115,8 @@ const UnitTypeStatistics = ({ facilityId, rows, rateType, changedUnits = [] }) =
       setCategoryModalOpen(false);
       setSelectedUnit(null);
       message.success('Unit type category updated successfully');
-    } catch (error) {
-      message.error('Failed to update unit type category');
+    } catch {
+      // automatically handled by RTK Query
     }
   };
 
@@ -151,8 +148,8 @@ const UnitTypeStatistics = ({ facilityId, rows, rateType, changedUnits = [] }) =
       setRemoveConfirmModalOpen(false);
       setSelectedUnit(null);
       message.success('Unit type anchor/link removed successfully');
-    } catch (error) {
-      message.error('Failed to remove unit type anchor/link');
+    } catch {
+      // automatically handled by RTK Query
       setRemoveConfirmModalOpen(false);
       setSelectedUnit(null);
     }

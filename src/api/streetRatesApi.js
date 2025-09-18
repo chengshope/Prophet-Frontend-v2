@@ -108,7 +108,10 @@ export const streetRatesApi = createApi({
 
     // Export CSV
     exportCSV: builder.query({
-      query: () => 'street_rates/export-csv',
+      query: () => ({
+        url: 'street_rates/export-csv',
+        responseHandler: (response) => response.text(), // Handle CSV response as text
+      }),
     }),
   }),
 });

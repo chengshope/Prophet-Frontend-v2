@@ -11,12 +11,20 @@ import {
   getChangedUnits,
   getChangedUnitsByFacilityId,
   selectStreetFacilities,
-  getRateChangedUnits,
-  getRateChangedUnitsByFacility,
-  selectNewRateUnitKeys
+  selectNewRateUnits,
+  selectSavedRateUnits,
 } from '@/features/street/streetSelector';
 import { getRateType } from '@/utils/rateHelper';
-import { clearChangedUnitByFacilityId, clearRateChangedUnitsByFacility } from '@/features/street/streetSlice';
+import {
+  clearChangedUnitByFacilityId,
+  mergeToSavedRateChanges,
+  clearSavedRateChangesByIds,
+} from '@/features/street/streetSlice';
+import {
+  mergeSavedRateUnits,
+  removeSavedRateUnitsByIds,
+  setSavedRateUnits,
+} from '@/utils/localStorage';
 
 const { Text } = Typography;
 
@@ -38,8 +46,8 @@ const StreetRatesTable = ({
 
   const changedUnitsByFacility = useSelector(getChangedUnitsByFacilityId);
   const changedUnits = useSelector(getChangedUnits);
-  const rateChangedUnits = useSelector(getRateChangedUnits);
-  const newRateUnitKeys = useSelector(selectNewRateUnitKeys);
+  const newRateUnits = useSelector(selectNewRateUnits);
+  const savedRateUnits = useSelector(selectSavedRateUnits);
 
   const [submitIndividualRates, { isLoading: isSubmittingIndividual }] =
     useSubmitIndividualRatesMutation();
@@ -57,16 +65,37 @@ const StreetRatesTable = ({
   // Handle save changes for current facility
   const handleSaveChanges = async (facility) => {
     try {
-      // Save changes to backend
+      // Get all changed units for this facility
+      const facilityChangedUnits = changedUnitsByFacility[facility.facility_id] || [];
+
+      // Save ALL changes to backend (rates + locks + other changes)
       await saveRateChanges({
         facilityId: facility.facility_id,
-        units: facility.units_statistics,
+        units: facilityChangedUnits,
       }).unwrap();
+
+      // After successful save, move ONLY rate changes to saved state for publishing
+      const facilityRateChangedUnits = newRateUnits.filter(
+        (unit) => unit.facility_id === facility.facility_id
+      );
+
+      if (facilityRateChangedUnits.length > 0) {
+        // Merge rate changes to localStorage and RTK state
+        const updatedSavedUnits = mergeSavedRateUnits(facilityRateChangedUnits);
+        dispatch(mergeToSavedRateChanges(facilityRateChangedUnits));
+
+        // Update localStorage with the merged data
+        setSavedRateUnits(updatedSavedUnits);
+      }
+
+      // Clear all changes for this facility from RTK state
+      dispatch(clearChangedUnitByFacilityId(facility.facility_id));
 
       message.success('Changes saved successfully');
     } catch (error) {
       console.error('Error saving rate changes:', error);
       message.error('Failed to save rate changes');
+      // Keep unsaved changes in state for retry
     }
   };
 
@@ -86,14 +115,15 @@ const StreetRatesTable = ({
     if (!selectedFacility) return;
 
     try {
-      // Get only units with rate changes for this facility
-      const allChangedUnitsForFacility = changedUnitsByFacility[selectedFacility.facility_id] || [];
-      const facilityRateChangedUnits = allChangedUnitsForFacility.filter(unit =>
-        newRateUnitKeys.includes(unit.ut_id)
+      // Get only SAVED rate changes for this facility
+      const facilitySavedRateChangedUnits = savedRateUnits.filter(
+        (unit) => unit.facility_id === selectedFacility.facility_id
       );
 
-      if (facilityRateChangedUnits.length === 0) {
-        message.warning('No rate changes to publish for this facility');
+      if (facilitySavedRateChangedUnits.length === 0) {
+        message.warning(
+          'No saved rate changes to publish for this facility. Please save changes first.'
+        );
         setPublishModalOpen(false);
         setSelectedFacility(null);
         return;
@@ -101,16 +131,17 @@ const StreetRatesTable = ({
 
       await submitIndividualRates({
         facilityId: selectedFacility.facility_id,
-        changedUnitStatistics: facilityRateChangedUnits,
+        changedUnitStatistics: facilitySavedRateChangedUnits,
       }).unwrap();
 
       message.success(`Rates published successfully for ${selectedFacility.facility_name}`);
       setPublishModalOpen(false);
       setSelectedFacility(null);
 
-      // Remove published units from both changed units and rate changed units
-      dispatch(clearChangedUnitByFacilityId(selectedFacility.facility_id));
-      dispatch(clearRateChangedUnitsByFacility(selectedFacility.facility_id));
+      // Remove published units from saved rate changes (localStorage and RTK state)
+      const publishedUnitIds = facilitySavedRateChangedUnits.map((unit) => unit.ut_id);
+      removeSavedRateUnitsByIds(publishedUnitIds);
+      dispatch(clearSavedRateChangesByIds(publishedUnitIds));
     } catch (error) {
       console.log(error);
       message.error('Failed to publish rates');
@@ -212,6 +243,9 @@ const StreetRatesTable = ({
         const hasChanges = changedUnits.some((unit) =>
           record.units_statistics?.some((facilityUnit) => facilityUnit.ut_id === unit.ut_id)
         );
+        const hasSavedRateChanges = savedRateUnits.some(
+          (unit) => unit.facility_id === record.facility_id
+        );
 
         return (
           <Flex vertical={true} gap={10} style={{ padding: '0 8px' }}>
@@ -238,6 +272,7 @@ const StreetRatesTable = ({
             <Button
               variant="outlined"
               color="default"
+              disabled={!isExpanded && !hasSavedRateChanges}
               onClick={() =>
                 isExpanded ? navigate(`/competitors/${record.id}`) : handlePublishIndividual(record)
               }
@@ -339,11 +374,8 @@ const StreetRatesTable = ({
           <p>
             This will update rates for{' '}
             {
-              changedUnits.filter((unit) =>
-                selectedFacility.units_statistics?.some(
-                  (facilityUnit) => facilityUnit.ut_id === unit.ut_id
-                )
-              ).length
+              savedRateUnits.filter((unit) => unit.facility_id === selectedFacility.facility_id)
+                .length
             }{' '}
             unit types.
           </p>
