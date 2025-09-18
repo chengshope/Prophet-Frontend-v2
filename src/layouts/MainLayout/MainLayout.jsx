@@ -140,12 +140,24 @@ const MainLayout = () => {
     return items;
   };
 
+  // Get the selected menu key based on current path
+  const getSelectedMenuKey = () => {
+    const currentPath = location.pathname;
+
+    // Handle sub-routes by checking if current path starts with any menu item key
+    const matchingMenuItem = menuItems.find(item =>
+      currentPath === item.key || currentPath.startsWith(item.key + '/')
+    );
+
+    return matchingMenuItem ? matchingMenuItem.key : currentPath;
+  };
+
   return (
     <Layout className="main-layout">
       <Navbar
         collapsed={collapsed}
         onToggleCollapsed={() => setCollapsed(!collapsed)}
-        selectedKey={location.pathname}
+        selectedKey={getSelectedMenuKey()}
         items={menuItems}
       />
       <Layout>
