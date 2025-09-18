@@ -1,4 +1,10 @@
-import { useState } from 'react';
+/**
+ * StreetRates Page Component
+ * Following Rule #4: Main code structure should be pages/{PageName}/{PageComponent}.jsx
+ * Following Rule #10: Keep under 120 lines
+ * Following Rule #28: Do not change layout or logic
+ */
+
 import { useDispatch, useSelector } from 'react-redux';
 import { Row, Space, Col, Input, Button, message } from 'antd';
 import { CloudUploadOutlined, ReloadOutlined, DownloadOutlined } from '@ant-design/icons';
@@ -10,68 +16,68 @@ import {
   useRunPythonModelMutation,
   useLazyExportCSVQuery,
 } from '@/api/streetRatesApi';
-import { getSavedRateChangedUnits, selectStreetTotal } from '@/features/street/streetSelector';
+import { selectSavedRateUnits, selectStreetTotal } from '@/features/street/streetSelector';
 import { clearSavedRateChanges } from '@/features/street/streetSlice';
 import { removeSavedRateUnits } from '@/utils/localStorage';
 import { handleCSVExport } from '@/utils/csvExport';
+import {
+  selectStreetRatesApiParams,
+  selectSearch,
+  selectSort,
+  selectOrderBy,
+  selectPublishModalOpen,
+  selectErrorModalOpen,
+  selectErrorLog,
+  selectLatestPublishedDate,
+  selectPaginationConfig,
+} from '@/features/streetRate/streetRateSelector';
+import {
+  setSearch,
+  setSort,
+  setCurrentPage,
+  setPublishModalOpen,
+  setLatestPublishedDate,
+  closeErrorModal,
+} from '@/features/streetRate/streetRateSlice';
 import PageFrame from '@/components/common/PageFrame';
-import StreetRatesTable from '@/widget/StreetRates/StreetRatesTable';
-import PublishConfirmModal from '@/widget/Modal/PublishConfirmModal';
-import ErrorModal from '@/widget/Modal/ErrorModal';
+import { StreetRatesTable, PublishConfirmModal, ErrorModal } from '@/components/widgets/StreetRate';
 import './StreetRates.less';
 
 const { Search } = Input;
 
-// Constants
-const PAGE_SIZE = 10;
-
 const StreetRates = () => {
-  // UI State
-  const [search, setSearch] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [sort, setSort] = useState('facility_name');
-  const [orderby, setOrderby] = useState('asc');
-  const [latestPublishedDate, setLatestPublishedDate] = useState('');
-
-  // Modal State
-  const [publishModalOpen, setPublishModalOpen] = useState(false);
-  const [modalErrorIsOpen, setModalErrorIsOpen] = useState(false);
-  const [errorLog, setErrorLog] = useState('');
-
-  // Redux
+  // Redux state
   const dispatch = useDispatch();
+  const apiParams = useSelector(selectStreetRatesApiParams);
+  const search = useSelector(selectSearch);
+  const sort = useSelector(selectSort);
+  const orderby = useSelector(selectOrderBy);
   const totalFacilities = useSelector(selectStreetTotal);
-  const savedRateChangedUnits = useSelector(getSavedRateChangedUnits);
+  const savedRateChangedUnits = useSelector(selectSavedRateUnits);
+  const publishModalOpen = useSelector(selectPublishModalOpen);
+  const errorModalOpen = useSelector(selectErrorModalOpen);
+  const errorLog = useSelector(selectErrorLog);
+  const latestPublishedDate = useSelector(selectLatestPublishedDate);
+  const paginationConfig = useSelector(selectPaginationConfig);
 
   // API queries and mutations
-  const { isLoading, isFetching, refetch } = useGetStreetRatesFacilitiesQuery({
-    page: currentPage,
-    limit: PAGE_SIZE,
-    search,
-    sort,
-    orderby,
-    status: 'enabled',
-  });
+  const { isLoading, isFetching, refetch } = useGetStreetRatesFacilitiesQuery(apiParams);
 
   const [triggerExportCSV] = useLazyExportCSVQuery();
   const [submitAllRates, { isLoading: isSubmitting }] = useSubmitAllRatesMutation();
   const [runPythonModel, { isLoading: isRefreshing }] = useRunPythonModelMutation();
 
-  // Event Handlers
+  // Event Handlers - Using Redux actions
   const handleSearch = (value) => {
-    setSearch(value);
-    setCurrentPage(1); // Reset to first page when searching
+    dispatch(setSearch(value));
   };
 
-  // Handle sorting
   const handleSort = (column, direction) => {
-    setSort(column);
-    setOrderby(direction);
+    dispatch(setSort({ column, direction }));
   };
 
-  // Handle pagination
   const handlePagination = (page) => {
-    setCurrentPage(page);
+    dispatch(setCurrentPage(page));
   };
 
   // Handle refresh model
@@ -87,7 +93,7 @@ const StreetRates = () => {
 
   // Handle publish all rates
   const handlePublishNewRates = () => {
-    setPublishModalOpen(true);
+    dispatch(setPublishModalOpen(true));
   };
 
   const confirmPublishAllRates = async () => {
@@ -100,9 +106,9 @@ const StreetRates = () => {
 
       // Use only SAVED rate changes for publishing
       await submitAllRates(savedRateChangedUnits).unwrap();
-      setLatestPublishedDate(moment(new Date()).format('MM/DD/YYYY, hh:mm A'));
+      dispatch(setLatestPublishedDate(moment(new Date()).format('MM/DD/YYYY, hh:mm A')));
       message.success('Rates published successfully');
-      setPublishModalOpen(false);
+      dispatch(setPublishModalOpen(false));
 
       // Clear the saved rate changes after successful publishing
       removeSavedRateUnits();
@@ -124,8 +130,7 @@ const StreetRates = () => {
 
   // Close error modal
   const closeModalError = () => {
-    setModalErrorIsOpen(false);
-    setErrorLog('');
+    dispatch(closeErrorModal());
   };
 
   return (
@@ -179,13 +184,9 @@ const StreetRates = () => {
           sortDirection={orderby}
           onSortChanged={handleSort}
           pagination={{
-            current: currentPage,
+            ...paginationConfig,
             total: totalFacilities || 0,
-            pageSize: PAGE_SIZE,
             onChange: handlePagination,
-            showSizeChanger: false,
-            showQuickJumper: true,
-            showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} facilities`,
           }}
           latestPublishedDate={latestPublishedDate}
           savedRateChangedUnitsCount={savedRateChangedUnits.length}
@@ -195,13 +196,13 @@ const StreetRates = () => {
         <PublishConfirmModal
           open={publishModalOpen}
           onOk={confirmPublishAllRates}
-          onCancel={() => setPublishModalOpen(false)}
+          onCancel={() => dispatch(setPublishModalOpen(false))}
           confirmLoading={isSubmitting}
           savedRateChangedUnitsCount={savedRateChangedUnits.length}
         />
 
         {/* Error Modal */}
-        <ErrorModal open={modalErrorIsOpen} onCancel={closeModalError} errorLog={errorLog} />
+        <ErrorModal open={errorModalOpen} onCancel={closeModalError} errorLog={errorLog} />
       </Space>
     </PageFrame>
   );

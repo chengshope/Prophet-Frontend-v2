@@ -25,12 +25,14 @@ import { selectPmsType } from '@/features/auth/authSelector';
 import { updateFacility } from '@/features/street/streetSlice';
 import { formatCurrency } from '@/utils/formatters';
 import { getSecondaryUnitTypeLabel } from '@/utils/unitHelpers';
-import LinkOrAnchorModal from '@/widget/Modal/LinkOrAnchorModal';
-import UnitTypeLinkingModal from '@/widget/Modal/UnitTypeLinkingModal';
-import UnitTypeCategoryModal from '@/widget/Modal/UnitTypeCategoryModal';
-import RemoveConfirmModal from '@/widget/Modal/RemoveConfirmModal';
-import LockScheduleConfirmModal from '@/widget/Modal/LockScheduleConfirmModal';
-import LockScheduleDateModal from '@/widget/Modal/LockScheduleDateModal';
+import {
+  LinkOrAnchorModal,
+  UnitTypeLinkingModal,
+  UnitTypeCategoryModal,
+  RemoveConfirmModal,
+  LockScheduleConfirmModal,
+  LockScheduleDateModal,
+} from '../Modal';
 
 const { Text } = Typography;
 

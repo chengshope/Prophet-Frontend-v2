@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Table, Button, Space, Tag, Modal, message, Flex, Typography } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
@@ -10,10 +10,10 @@ import {
 import { getMoveOutProbabilityColor } from '../../../../utils/config';
 import {
   selectExistingCustomersFacilities,
-  getSavedTenantChangesByFacility,
+  selectSavedTenantChanges,
   getFacilityHasSavedChanges,
   getChangedTenantsByFacilityId,
-  getNewTenantChanges,
+  selectNewTenantChanges,
 } from '@/features/existingCustomers/existingCustomersSelector';
 import {
   clearSavedTenantChangesByIds,
@@ -41,7 +41,7 @@ const ExistingCustomersTable = ({ loading, onSortChanged, pagination }) => {
   // reducer selectors
   const facilities = useSelector(selectExistingCustomersFacilities);
   const changedTenantsByFacility = useSelector(getChangedTenantsByFacilityId);
-  const newTenantChanges = useSelector(getNewTenantChanges);
+  const newTenantChanges = useSelector(selectNewTenantChanges);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -115,10 +115,14 @@ const ExistingCustomersTable = ({ loading, onSortChanged, pagination }) => {
     setPublishModalOpen(true);
   };
 
-  // Get saved tenant changes for selected facility
-  const savedTenantChangesForFacility = useSelector((state) =>
-    selectedFacility ? getSavedTenantChangesByFacility(state, selectedFacility.facility_id) : []
-  );
+  // Get saved tenant changes for selected facility using memoized selector
+  const savedTenantChanges = useSelector(selectSavedTenantChanges);
+  const savedTenantChangesForFacility = useMemo(() => {
+    if (!selectedFacility) return [];
+    return savedTenantChanges.filter(
+      (tenant) => tenant.facility_id === selectedFacility.facility_id
+    );
+  }, [savedTenantChanges, selectedFacility]);
 
   const confirmPublishIndividual = async () => {
     if (!selectedFacility) return;
@@ -371,7 +375,7 @@ const ExistingCustomersTable = ({ loading, onSortChanged, pagination }) => {
 
 // Separate component for facility actions to use hooks properly
 const FacilityActions = ({ facility, isExpanded, onExpand, onClose, onSaveChanges, onPublish }) => {
-  const newTenantChanges = useSelector(getNewTenantChanges);
+  const newTenantChanges = useSelector(selectNewTenantChanges);
   const hasChanges = newTenantChanges.some((tenant) =>
     facility.tenants?.some((facilityTenant) => facilityTenant.ecri_id === tenant.ecri_id)
   );

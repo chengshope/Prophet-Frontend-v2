@@ -34,6 +34,7 @@ export const getAuthUser = () => {
         JSON.parse(localStorage.getItem(USER_KEY)) || JSON.parse(sessionStorage.getItem(USER_KEY))
       );
     } catch (e) {
+      console.log(e);
       return null;
     }
   }

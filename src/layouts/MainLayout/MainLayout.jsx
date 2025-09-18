@@ -37,7 +37,7 @@ const MainLayout = () => {
   const handleLogout = async () => {
     try {
       await logoutApi().unwrap();
-    } catch (e) {
+    } catch {
       // ignore API failure and still clear local state
     } finally {
       dispatch(clearToken());

@@ -23,7 +23,7 @@ const ResetPassword = () => {
         confirmPassword: values.confirmPassword,
       }).unwrap();
       setDone(true);
-    } catch (err) {
+    } catch {
       // errors are handled globally by baseQuery
     }
   };

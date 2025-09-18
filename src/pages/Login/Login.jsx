@@ -17,7 +17,7 @@ const Login = () => {
         password: values.password,
         remember: !!values.remember,
       }).unwrap();
-    } catch (error) {
+    } catch {
       // Auto
     }
   };

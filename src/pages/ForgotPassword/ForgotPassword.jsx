@@ -14,7 +14,7 @@ const ForgotPassword = () => {
     try {
       await forgotPassword({ email: values.email }).unwrap();
       setEmailSent(true);
-    } catch (err) {
+    } catch {
       // baseQuery already shows error messages; keep a fallback just in case
     }
   };
