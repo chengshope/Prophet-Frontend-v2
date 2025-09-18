@@ -18,7 +18,7 @@ const PublishConfirmModal = ({
       cancelText="Cancel"
       centered
     >
-      <p>Are you sure you want to publish the new street rates?</p>
+      <p>Are you sure you want to publish the new rates?</p>
       <p>
         This will update rates for {savedRateChangedUnitsCount} saved unit types across all
         facilities.

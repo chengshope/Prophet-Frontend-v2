@@ -1,6 +1,6 @@
 import { Modal, Button } from 'antd';
 
-const RemoveConfirmModal = ({ open, onCancel, onConfirm, selectedUnit }) => {
+const RemoveConfirmModal = ({ open, onCancel, onConfirm, selectedUnit, loading = false }) => {
   return (
     <Modal
       title="Remove Unit Type Anchor"
@@ -10,7 +10,7 @@ const RemoveConfirmModal = ({ open, onCancel, onConfirm, selectedUnit }) => {
         <Button key="no" onClick={onCancel}>
           Cancel
         </Button>,
-        <Button key="yes" type="primary" danger onClick={onConfirm}>
+        <Button key="yes" type="primary" danger onClick={onConfirm} loading={loading}>
           Remove
         </Button>,
       ]}

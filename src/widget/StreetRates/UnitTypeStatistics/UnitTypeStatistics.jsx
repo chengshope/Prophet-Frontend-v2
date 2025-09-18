@@ -55,8 +55,8 @@ const UnitTypeStatistics = ({ facilityId, rows, rateType, changedUnits = [] }) =
   const pmsType = useSelector(selectPmsType);
 
   // API hooks
-  const { data: unitTypes } = useGetUnitTypesQuery(facilityId);
-  const [updateUnitType] = useUpdateUnitTypeMutation();
+  const { data: unitTypes, isLoading: unitTypesLoading } = useGetUnitTypesQuery(facilityId);
+  const [updateUnitType, { isLoading: isUpdatingUnitType }] = useUpdateUnitTypeMutation();
 
   // Handle rate input change
   const handleRateChange = (unit, newRate) => {
@@ -512,6 +512,8 @@ const UnitTypeStatistics = ({ facilityId, rows, rateType, changedUnits = [] }) =
         onLinkDataChange={setLinkData}
         selectedUnit={selectedUnit}
         unitTypes={unitTypes}
+        loading={isUpdatingUnitType}
+        unitTypesLoading={unitTypesLoading}
       />
 
       {/* Unit Type Category (Anchor) Modal */}
@@ -525,6 +527,7 @@ const UnitTypeStatistics = ({ facilityId, rows, rateType, changedUnits = [] }) =
         categoryData={categoryData}
         onCategoryDataChange={setCategoryData}
         selectedUnit={selectedUnit}
+        loading={isUpdatingUnitType}
       />
 
       {/* Remove Confirmation Modal */}
@@ -536,6 +539,7 @@ const UnitTypeStatistics = ({ facilityId, rows, rateType, changedUnits = [] }) =
         }}
         onConfirm={handleRemoveUnitType}
         selectedUnit={selectedUnit}
+        loading={isUpdatingUnitType}
       />
 
       {/* Lock Schedule Confirmation Modal */}

@@ -1,4 +1,4 @@
-import { Modal, Button, Select, InputNumber, Space } from 'antd';
+import { Modal, Button, Select, InputNumber, Space, Spin } from 'antd';
 import './UnitTypeLinkingModal.less';
 
 const UnitTypeLinkingModal = ({
@@ -7,7 +7,9 @@ const UnitTypeLinkingModal = ({
   onConfirm,
   linkData,
   onLinkDataChange,
-  unitTypes
+  unitTypes,
+  loading = false,
+  unitTypesLoading = false,
 }) => {
   const handleConfirm = () => {
     onConfirm();
@@ -27,6 +29,7 @@ const UnitTypeLinkingModal = ({
           type="primary"
           onClick={handleConfirm}
           disabled={!linkData.unitTypeId}
+          loading={loading}
         >
           Confirm
         </Button>,
@@ -47,6 +50,7 @@ const UnitTypeLinkingModal = ({
               placeholder="Select unit type"
               value={linkData.unitTypeId}
               onChange={(value) => onLinkDataChange({ ...linkData, unitTypeId: value })}
+              loading={unitTypesLoading}
               options={unitTypes?.map((ut) => ({
                 value: ut.id,
                 label: `${ut.unit_type} - Floor number: ${ut.floor !== null ? ut.floor : '---'} (${ut.area || 0} sqft)`,

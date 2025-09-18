@@ -65,7 +65,6 @@ export const streetRatesApi = createApi({
           changed_unit_statistics: changedUnitStatistics,
         },
       }),
-      invalidatesTags: ['StreetRates', 'FacilityRates'],
     }),
 
     // Submit/publish rates for individual facility

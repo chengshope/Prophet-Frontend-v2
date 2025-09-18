@@ -9,7 +9,7 @@ const UnitTypeCategoryModal = ({
   onConfirm,
   categoryData,
   onCategoryDataChange,
-  selectedUnit,
+  loading = false,
 }) => {
   const handleConfirm = () => {
     onConfirm();
@@ -24,7 +24,7 @@ const UnitTypeCategoryModal = ({
         <Button key="cancel" onClick={onCancel}>
           Cancel
         </Button>,
-        <Button key="save" type="primary" onClick={handleConfirm} disabled={!categoryData.guide}>
+        <Button key="save" type="primary" onClick={handleConfirm} disabled={!categoryData.guide} loading={loading}>
           Save
         </Button>,
       ]}
