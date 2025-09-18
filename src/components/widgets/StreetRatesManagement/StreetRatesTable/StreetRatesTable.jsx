@@ -1,12 +1,10 @@
 import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { Table, Button, Space, Typography, Card, Modal, message, Flex } from 'antd';
 import { DollarOutlined } from '@ant-design/icons';
+
 import { useSubmitIndividualRatesMutation, useSaveRateChangesMutation } from '@/api/streetRatesApi';
-import UnitTypeStatistics from '../UnitTypeStatistics';
-import { formatCurrency, formatPercent } from '@/utils/formatters';
-import './StreetRatesTable.less';
-import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
 import {
   getChangedUnits,
   getChangedUnitsByFacilityId,
@@ -14,7 +12,6 @@ import {
   selectNewRateUnits,
   selectSavedRateUnits,
 } from '@/features/street/streetSelector';
-import { getRateType } from '@/utils/rateHelper';
 import {
   clearChangedUnitByFacilityId,
   mergeToSavedRateChanges,
@@ -25,6 +22,10 @@ import {
   removeSavedRateUnitsByIds,
   setSavedRateUnits,
 } from '@/utils/localStorage';
+import { formatCurrency, formatPercent } from '@/utils/formatters';
+import { getRateType } from '@/utils/rateHelper';
+import UnitTypeStatistics from '../UnitTypeStatistics';
+import './StreetRatesTable.less';
 
 const { Text } = Typography;
 
@@ -287,7 +288,7 @@ const StreetRatesTable = ({
   ];
 
   // Handle table sorting
-  const handleTableChange = (pagination, filters, sorter) => {
+  const handleTableChange = (_, __, sorter) => {
     if (sorter && sorter.field) {
       const direction = sorter.order === 'ascend' ? 'asc' : 'desc';
       onSortChanged(sorter.field, direction);

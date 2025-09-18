@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Table,
   Input,
@@ -6,14 +7,10 @@ import {
   Space,
   Typography,
   Tag,
-  Modal,
-  Select,
-  InputNumber,
   Tooltip,
   message,
   Flex,
   Checkbox,
-  DatePicker,
 } from 'antd';
 import {
   EditOutlined,
@@ -21,13 +18,19 @@ import {
   PlusCircleOutlined,
   CloseCircleOutlined,
 } from '@ant-design/icons';
-import { useGetUnitTypesQuery, useUpdateUnitTypeMutation } from '@/api/streetRatesApi';
-import { formatCurrency } from '@/utils/formatters';
 import dayjs from 'dayjs';
+
+import { useGetUnitTypesQuery, useUpdateUnitTypeMutation } from '@/api/streetRatesApi';
 import { selectPmsType } from '@/features/auth/authSelector';
-import { useDispatch, useSelector } from 'react-redux';
-import { getSecondaryUnitTypeLabel } from '@/utils/unitHelpers';
 import { updateFacility } from '@/features/street/streetSlice';
+import { formatCurrency } from '@/utils/formatters';
+import { getSecondaryUnitTypeLabel } from '@/utils/unitHelpers';
+import LinkOrAnchorModal from './modals/LinkOrAnchorModal';
+import UnitTypeLinkingModal from './modals/UnitTypeLinkingModal';
+import UnitTypeCategoryModal from './modals/UnitTypeCategoryModal';
+import RemoveConfirmModal from './modals/RemoveConfirmModal';
+import LockScheduleConfirmModal from './modals/LockScheduleConfirmModal';
+import LockScheduleDateModal from './modals/LockScheduleDateModal';
 
 const { Text } = Typography;
 
@@ -197,14 +200,6 @@ const UnitTypeStatistics = ({ facilityId, rows, rateType, changedUnits = [] }) =
       handleLockUnitRate(unitToLock, true, expirationDate);
     }
   };
-
-  // Unit type options for linking
-  const unitTypeOptions = useMemo(() => {
-    return (unitTypes || []).map((unitType) => ({
-      value: unitType.id,
-      label: `${unitType.unit_type} - Floor: ${unitType.floor || 'N/A'}`,
-    }));
-  }, [unitTypes]);
 
   const columns = [
     {
@@ -485,276 +480,88 @@ const UnitTypeStatistics = ({ facilityId, rows, rateType, changedUnits = [] }) =
       />
 
       {/* Initial Link or Anchor Modal */}
-      <Modal
-        title="Link or Anchor Unit?"
+      <LinkOrAnchorModal
         open={linkOrAnchorModalOpen}
         onCancel={() => {
           setLinkOrAnchorModalOpen(false);
           setSelectedUnit(null);
         }}
-        footer={null}
-        centered
-      >
-        <div style={{ textAlign: 'center', padding: '20px 0' }}>
-          <Space size="large">
-            <Button
-              type="default"
-              size="large"
-              onClick={() => {
-                setLinkOrAnchorModalOpen(false);
-                setLinkModalOpen(true);
-              }}
-              style={{
-                minWidth: '100px',
-                borderColor: '#ff4d4f',
-                color: '#ff4d4f',
-              }}
-            >
-              LINK
-            </Button>
-            <Button
-              type="default"
-              size="large"
-              onClick={() => {
-                setLinkOrAnchorModalOpen(false);
-                setCategoryModalOpen(true);
-              }}
-              style={{
-                minWidth: '100px',
-                borderColor: '#ff4d4f',
-                color: '#ff4d4f',
-              }}
-            >
-              ANCHOR
-            </Button>
-          </Space>
-        </div>
-      </Modal>
+        onLinkClick={() => {
+          setLinkOrAnchorModalOpen(false);
+          setLinkModalOpen(true);
+        }}
+        onAnchorClick={() => {
+          setLinkOrAnchorModalOpen(false);
+          setCategoryModalOpen(true);
+        }}
+      />
 
       {/* Unit Type Linking Modal */}
-      <Modal
-        title="Select the unit type to link:"
+      <UnitTypeLinkingModal
         open={linkModalOpen}
         onCancel={() => {
           setLinkModalOpen(false);
           setSelectedUnit(null);
         }}
-        footer={[
-          <Button
-            key="cancel"
-            onClick={() => {
-              setLinkModalOpen(false);
-              setSelectedUnit(null);
-            }}
-          >
-            CANCEL
-          </Button>,
-          <Button
-            key="save"
-            type="primary"
-            onClick={saveUnitTypeLink}
-            style={{
-              backgroundColor: '#ff4d4f',
-              borderColor: '#ff4d4f',
-            }}
-          >
-            SAVE
-          </Button>,
-        ]}
-        centered
-      >
-        <Space direction="vertical" style={{ width: '100%' }}>
-          <Select
-            style={{ width: '100%' }}
-            placeholder="Select unit type"
-            value={linkData.unitTypeId}
-            onChange={(value) => setLinkData({ ...linkData, unitTypeId: value })}
-          >
-            {unitTypeOptions.map((option) => (
-              <Option key={option.value} value={option.value}>
-                {option.label}
-              </Option>
-            ))}
-          </Select>
-
-          <div style={{ marginTop: '20px' }}>
-            <Text strong>Input your adjustment percentage (optional):</Text>
-            <InputNumber
-              style={{ width: '100%', marginTop: 8 }}
-              placeholder="0%"
-              value={linkData.adjustmentPercentage}
-              onChange={(value) => setLinkData({ ...linkData, adjustmentPercentage: value || 0 })}
-              formatter={(value) => `${value}%`}
-              parser={(value) => value.replace('%', '')}
-            />
-          </div>
-        </Space>
-      </Modal>
+        onConfirm={saveUnitTypeLink}
+        linkData={linkData}
+        onLinkDataChange={setLinkData}
+        selectedUnit={selectedUnit}
+      />
 
       {/* Unit Type Category (Anchor) Modal */}
-      <Modal
-        title="Please select the unit category you'd like to anchor this unit type to:"
+      <UnitTypeCategoryModal
         open={categoryModalOpen}
         onCancel={() => {
           setCategoryModalOpen(false);
           setSelectedUnit(null);
         }}
-        footer={[
-          <Button
-            key="cancel"
-            onClick={() => {
-              setCategoryModalOpen(false);
-              setSelectedUnit(null);
-            }}
-          >
-            CANCEL
-          </Button>,
-          <Button
-            key="save"
-            type="primary"
-            onClick={saveUnitTypeCategory}
-            style={{
-              backgroundColor: '#ff4d4f',
-              borderColor: '#ff4d4f',
-            }}
-          >
-            SAVE
-          </Button>,
-        ]}
-        centered
-      >
-        <Space direction="vertical" style={{ width: '100%' }}>
-          <Space wrap>
-            <Button
-              type={categoryData.guide === 'Drive Up' ? 'primary' : 'default'}
-              onClick={() => setCategoryData({ ...categoryData, guide: 'Drive Up' })}
-            >
-              Drive Up
-            </Button>
-            <Button
-              type={categoryData.guide === 'Climate Controlled' ? 'primary' : 'default'}
-              onClick={() => setCategoryData({ ...categoryData, guide: 'Climate Controlled' })}
-            >
-              Climate Controlled
-            </Button>
-            <Button
-              type={categoryData.guide === 'Parking' ? 'primary' : 'default'}
-              onClick={() => setCategoryData({ ...categoryData, guide: 'Parking' })}
-            >
-              Parking
-            </Button>
-          </Space>
-
-          <div style={{ marginTop: '20px' }}>
-            <Text strong>Input your adjustment percentage:</Text>
-            <InputNumber
-              style={{ width: '100%', marginTop: 8 }}
-              placeholder="5%"
-              value={categoryData.variance}
-              onChange={(value) => setCategoryData({ ...categoryData, variance: value || 0 })}
-              formatter={(value) => `${value}%`}
-              parser={(value) => value.replace('%', '')}
-            />
-          </div>
-        </Space>
-      </Modal>
+        onConfirm={saveUnitTypeCategory}
+        categoryData={categoryData}
+        onCategoryDataChange={setCategoryData}
+        selectedUnit={selectedUnit}
+      />
 
       {/* Remove Confirmation Modal */}
-      <Modal
-        title="Are you sure you want to remove this unit type anchor?"
+      <RemoveConfirmModal
         open={removeConfirmModalOpen}
         onCancel={() => {
           setRemoveConfirmModalOpen(false);
           setSelectedUnit(null);
         }}
-        footer={[
-          <Button
-            key="no"
-            onClick={() => {
-              setRemoveConfirmModalOpen(false);
-              setSelectedUnit(null);
-            }}
-          >
-            NO
-          </Button>,
-          <Button
-            key="yes"
-            type="primary"
-            onClick={handleRemoveUnitType}
-            style={{
-              backgroundColor: '#ff4d4f',
-              borderColor: '#ff4d4f',
-            }}
-          >
-            YES
-          </Button>,
-        ]}
-        centered
-      ></Modal>
+        onConfirm={handleRemoveUnitType}
+        selectedUnit={selectedUnit}
+      />
 
       {/* Lock Schedule Confirmation Modal */}
-      <Modal
-        title="Schedule expiration?"
+      <LockScheduleConfirmModal
         open={lockScheduleConfirmModalOpen}
         onCancel={() => {
           setLockScheduleConfirmModalOpen(false);
           setUnitToLock(null);
         }}
-        footer={[
-          <Button
-            key="no"
-            onClick={() => {
-              if (unitToLock) {
-                handleLockUnitRate(unitToLock, true);
-              }
-            }}
-          >
-            NO
-          </Button>,
-          <Button key="yes" type="primary" onClick={handleScheduleLock}>
-            YES
-          </Button>,
-        ]}
-        centered
-      >
-        <Text>Do you want to schedule an expiration date for this lock?</Text>
-      </Modal>
+        onLockNow={() => {
+          if (unitToLock) {
+            handleLockUnitRate(unitToLock, true);
+          }
+        }}
+        onSchedule={handleScheduleLock}
+        unitToLock={unitToLock}
+      />
 
       {/* Lock Schedule Date Modal */}
-      <Modal
-        title="Select expiration date"
+      <LockScheduleDateModal
         open={lockScheduleModalOpen}
         onCancel={() => {
           setLockScheduleModalOpen(false);
           setLockExpirationDate(null);
           setUnitToLock(null);
         }}
-        footer={[
-          <Button
-            key="cancel"
-            onClick={() => {
-              setLockScheduleModalOpen(false);
-              setLockExpirationDate(null);
-              setUnitToLock(null);
-            }}
-          >
-            CANCEL
-          </Button>,
-          <Button key="confirm" type="primary" onClick={confirmScheduledLock}>
-            CONFIRM
-          </Button>,
-        ]}
-        centered
-      >
-        <div style={{ marginTop: '20px', textAlign: 'center' }}>
-          <DatePicker
-            value={lockExpirationDate}
-            onChange={(date) => setLockExpirationDate(date)}
-            placeholder="Select expiration date"
-            style={{ width: '100%' }}
-          />
-        </div>
-      </Modal>
+        onConfirm={confirmScheduledLock}
+        lockExpirationDate={lockExpirationDate}
+        onDateChange={(date) => setLockExpirationDate(date)}
+        unitToLock={unitToLock}
+      />
     </>
   );
 };

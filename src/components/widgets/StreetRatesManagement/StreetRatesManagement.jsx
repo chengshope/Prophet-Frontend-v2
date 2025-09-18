@@ -1,55 +1,47 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Row, Space, Col, Input, Button, Modal, message } from 'antd';
 import { CloudUploadOutlined, ReloadOutlined, DownloadOutlined } from '@ant-design/icons';
+import moment from 'moment';
+
 import {
   useGetStreetRatesFacilitiesQuery,
   useSubmitAllRatesMutation,
   useRunPythonModelMutation,
   useLazyExportCSVQuery,
 } from '@/api/streetRatesApi';
-import StreetRatesTable from './StreetRatesTable';
-import { useSelector } from 'react-redux';
-import dayjs from 'dayjs';
-import moment from 'moment';
-// Removed legacy v1 imports
-import { selectPortfolioId } from '@/features/auth/authSelector';
-import {
-  getSavedRateChangedUnits,
-  selectStreetTotal,
-  selectChangedFacilities,
-} from '@/features/street/streetSelector';
+import { getSavedRateChangedUnits, selectStreetTotal } from '@/features/street/streetSelector';
 import { clearSavedRateChanges } from '@/features/street/streetSlice';
-import { useDispatch } from 'react-redux';
 import { removeSavedRateUnits } from '@/utils/localStorage';
+import { handleCSVExport } from '@/utils/csvExport';
+import StreetRatesTable from './StreetRatesTable';
+import './StreetRatesManagement.less';
 
 const { Search } = Input;
+
+// Constants
 const PAGE_SIZE = 10;
 
 const StreetRatesManagement = () => {
+  // UI State
   const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [sort, setSort] = useState('facility_name');
   const [orderby, setOrderby] = useState('asc');
+  const [latestPublishedDate, setLatestPublishedDate] = useState('');
 
+  // Modal State
   const [publishModalOpen, setPublishModalOpen] = useState(false);
   const [modalErrorIsOpen, setModalErrorIsOpen] = useState(false);
   const [errorLog, setErrorLog] = useState('');
 
-  const [latestPublishedDate, setLatestPublishedDate] = useState('');
-  const [updatedFacilitiesCount, setUpdatedFacilitiesCount] = useState(0);
-  const [portfolioSettings, setPortfolioSettings] = useState();
-
-  const [changedFacilities, setChangedFacilities] = useState(null);
-
-  // Get user info from Redux store
+  // Redux
   const dispatch = useDispatch();
-  const portfolio_id = useSelector(selectPortfolioId);
   const totalFacilities = useSelector(selectStreetTotal);
-  const savedRateChangedUnits = useSelector(getSavedRateChangedUnits); // Saved rate changes (ready for publishing)
-  const changedFacilitiesFromStore = useSelector(selectChangedFacilities);
+  const savedRateChangedUnits = useSelector(getSavedRateChangedUnits);
 
   // API queries and mutations
-  const { data, isLoading, isFetching, refetch } = useGetStreetRatesFacilitiesQuery({
+  const { isLoading, isFetching, refetch } = useGetStreetRatesFacilitiesQuery({
     page: currentPage,
     limit: PAGE_SIZE,
     search,
@@ -59,32 +51,10 @@ const StreetRatesManagement = () => {
   });
 
   const [triggerExportCSV] = useLazyExportCSVQuery();
-
   const [submitAllRates, { isLoading: isSubmitting }] = useSubmitAllRatesMutation();
   const [runPythonModel, { isLoading: isRefreshing }] = useRunPythonModelMutation();
 
-  useEffect(() => {
-    const getPortfolioSettings = async () => {
-      if (portfolio_id) {
-        try {
-          // Portfolio settings would be fetched from the appropriate API
-          // For now, set empty object to prevent errors
-          setPortfolioSettings({});
-        } catch (error) {
-          console.error('Error fetching portfolio settings:', error);
-          setPortfolioSettings({});
-        }
-      }
-    };
-    getPortfolioSettings();
-  }, [portfolio_id]);
-
-  // Track updated facilities count
-  useEffect(() => {
-    setUpdatedFacilitiesCount(changedFacilitiesFromStore.length);
-  }, [changedFacilitiesFromStore]);
-
-  // Handle search with debouncing
+  // Event Handlers
   const handleSearch = (value) => {
     setSearch(value);
     setCurrentPage(1); // Reset to first page when searching
@@ -140,27 +110,13 @@ const StreetRatesManagement = () => {
   };
 
   // CSV Export functionality (matching v1 - uses API endpoint)
-  const exportCSV = async () => {
-    try {
-      const response = await triggerExportCSV().unwrap();
-
-      // The API returns CSV content directly
-      const blob = new Blob([response], { type: 'text/csv' });
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      const formattedDate = dayjs().format('YYYY_MM_DD');
-      link.setAttribute('download', `${formattedDate}_street_rates.csv`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-
-      message.success('CSV exported successfully');
-    } catch (error) {
-      console.error('Error exporting CSV:', error);
-      message.error('Failed to export CSV');
-    }
+  const exportCSV = () => {
+    handleCSVExport(
+      () => triggerExportCSV().unwrap(),
+      'street_rates',
+      (msg) => message.success(msg),
+      (msg) => message.error(msg)
+    );
   };
 
   // Close error modal
@@ -170,7 +126,7 @@ const StreetRatesManagement = () => {
   };
 
   return (
-    <Space direction="vertical" size="large" style={{ width: '100%' }}>
+    <Space direction="vertical" size="large" className="street-rates-management">
       {/* Header Controls */}
       <Row gutter={[16, 8]} align="middle" justify="space-between">
         <Col xs={24} md={12}>
@@ -181,7 +137,7 @@ const StreetRatesManagement = () => {
             allowClear
           />
         </Col>
-        <Col xs={24} md={12} style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
+        <Col xs={24} md={12} className="street-rates-header-controls">
           <Button icon={<DownloadOutlined />} onClick={exportCSV}>
             Export CSV
           </Button>
@@ -207,11 +163,11 @@ const StreetRatesManagement = () => {
       </Row>
 
       {/* Status Information Row */}
-      <Row justify="space-between" style={{ padding: '0 8px', fontSize: '14px', color: '#8c8c8c' }}>
+      <Row justify="space-between" className="street-rates-status-row">
         <Col>{latestPublishedDate && `Last Updated: ${latestPublishedDate}`}</Col>
         <Col>
-          {updatedFacilitiesCount > 0 &&
-            `${updatedFacilitiesCount} ${updatedFacilitiesCount === 1 ? 'Facility' : 'Facilities'} Edited`}
+          {savedRateChangedUnits.length > 0 &&
+            `${savedRateChangedUnits.length} Rate Changes Ready to Publish`}
         </Col>
       </Row>
 
@@ -221,8 +177,6 @@ const StreetRatesManagement = () => {
         sortColumn={sort}
         sortDirection={orderby}
         onSortChanged={handleSort}
-        changedFacilities={changedFacilities}
-        setChangedFacilities={setChangedFacilities}
         pagination={{
           current: currentPage,
           total: totalFacilities || 0,
@@ -232,7 +186,6 @@ const StreetRatesManagement = () => {
           showQuickJumper: true,
           showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} facilities`,
         }}
-        portfolioSettings={portfolioSettings}
       />
 
       {/* Publish Confirmation Modal */}
@@ -263,15 +216,11 @@ const StreetRatesManagement = () => {
           </Button>,
         ]}
       >
-        <div style={{ color: '#ff4d4f', marginBottom: '16px' }}>
+        <div className="street-rates-error-message">
           There was an error publishing your rates. Please try again later or reach out to our
           Customer Success team for more information.
         </div>
-        {errorLog && (
-          <div style={{ whiteSpace: 'pre-wrap', fontSize: '12px', color: '#8c8c8c' }}>
-            {errorLog}
-          </div>
-        )}
+        {errorLog && <div className="street-rates-error-log">{errorLog}</div>}
       </Modal>
     </Space>
   );

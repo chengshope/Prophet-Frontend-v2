@@ -4,17 +4,17 @@ import { Navigate } from 'react-router-dom';
 import ProtectedRoute from './guards/ProtectedRoute';
 import PublicRoute from './guards/PublicRoute';
 
-import CompetitorsPage from '@/pages/CompetitorsPage';
-import ExistingCustomersPage from '@/pages/ExistingCustomersPage';
-import ForgotPasswordPage from '@/pages/ForgotPasswordPage';
-import LoginPage from '@/pages/LoginPage';
-import NotFoundPage from '@/pages/NotFoundPage';
-import PortfolioPage from '@/pages/PortfolioPage';
-import ProfilePage from '@/pages/ProfilePage';
-import ReportingPage from '@/pages/ReportingPage';
-import ResetPasswordPage from '@/pages/ResetPasswordPage';
-import SettingsPage from '@/pages/SettingsPage';
-import StreetRatesPage from '@/pages/StreetRatesPage';
+import Competitors from '@/pages/Competitors';
+import ExistingCustomers from '@/pages/ExistingCustomers';
+import ForgotPassword from '@/pages/ForgotPassword';
+import Login from '@/pages/Login';
+import NotFound from '@/pages/NotFound';
+import Portfolio from '@/pages/Portfolio';
+import Profile from '@/pages/Profile';
+import Reporting from '@/pages/Reporting';
+import ResetPassword from '@/pages/ResetPassword';
+import Settings from '@/pages/Settings';
+import StreetRates from '@/pages/StreetRates';
 
 export const routeConfig = [
   { path: '/', element: <Navigate to="/login" replace /> },
@@ -26,9 +26,9 @@ export const routeConfig = [
       </PublicRoute>
     ),
     children: [
-      { path: 'login', element: <LoginPage /> },
-      { path: 'forgot-password', element: <ForgotPasswordPage /> },
-      { path: 'reset-password', element: <ResetPasswordPage /> },
+      { path: 'login', element: <Login /> },
+      { path: 'forgot-password', element: <ForgotPassword /> },
+      { path: 'reset-password', element: <ResetPassword /> },
     ],
   },
   {
@@ -39,25 +39,25 @@ export const routeConfig = [
       </ProtectedRoute>
     ),
     children: [
-      { index: true, element: <StreetRatesPage /> },
-      { path: 'street-rates', element: <StreetRatesPage /> },
-      { path: 'existing-customer-rate-increases', element: <ExistingCustomersPage /> },
-      { path: 'competitors', element: <CompetitorsPage /> },
-      { path: 'competitors/:id', element: <CompetitorsPage /> },
-      { path: 'reporting/*', element: <ReportingPage /> },
-      { path: 'settings', element: <SettingsPage /> },
-      { path: 'portfolio', element: <PortfolioPage /> },
-      { path: 'portfolio/:id', element: <PortfolioPage /> },
+      { index: true, element: <StreetRates /> },
+      { path: 'street-rates', element: <StreetRates /> },
+      { path: 'existing-customer-rate-increases', element: <ExistingCustomers /> },
+      { path: 'competitors', element: <Competitors /> },
+      { path: 'competitors/:id', element: <Competitors /> },
+      { path: 'reporting/*', element: <Reporting /> },
+      { path: 'settings', element: <Settings /> },
+      { path: 'portfolio', element: <Portfolio /> },
+      { path: 'portfolio/:id', element: <Portfolio /> },
 
       {
         path: 'profile',
         children: [
-          { index: true, element: <ProfilePage /> },
-          { path: 'settings', element: <SettingsPage /> },
+          { index: true, element: <Profile /> },
+          { path: 'settings', element: <Settings /> },
         ],
       },
     ],
   },
-  { path: '404', element: <NotFoundPage /> },
-  { path: '*', element: <NotFoundPage /> },
+  { path: '404', element: <NotFound /> },
+  { path: '*', element: <NotFound /> },
 ];
