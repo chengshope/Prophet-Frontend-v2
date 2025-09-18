@@ -9,7 +9,7 @@ import {
   useUpdateFacilityMutation,
 } from '@/api/competitorsApi';
 import { STRATEGY_OPTIONS } from '../../utils/config';
-import CompetitorMap from '@/components/widgets/Competitors/CompetitorMap/CompetitorMap';
+import CompetitorMap from '@/components/widgets/Competitors/CompetitorMap';
 import './Competitors.less';
 
 const { Search } = Input;

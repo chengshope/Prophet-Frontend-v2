@@ -129,11 +129,26 @@ const StreetRates = () => {
   };
 
   return (
-    <PageFrame title="Street Rates">
+    <PageFrame title="Street Rates" extra={[
+      <Space>
+        <Button color="primary" variant="filled" icon={<DownloadOutlined />} onClick={exportCSV}>
+          Export CSV
+        </Button>
+        <Button
+          color="danger"
+          variant="filled"
+          icon={<ReloadOutlined />}
+          loading={isRefreshing}
+          onClick={handleRefreshModel}
+        >
+          Refresh Model
+        </Button>
+      </Space>
+    ]}>
       <Space direction="vertical" size="large" className="street-rates-management">
         {/* Header Controls */}
         <Row gutter={[16, 8]} align="middle" justify="space-between">
-          <Col xs={24} md={12}>
+          <Col xs={24} md={8}>
             <Search
               placeholder="Search or filter..."
               value={search}
@@ -142,23 +157,11 @@ const StreetRates = () => {
             />
           </Col>
           <Col xs={24} md={12} className="street-rates-header-controls">
-            <Button icon={<DownloadOutlined />} onClick={exportCSV}>
-              Export CSV
-            </Button>
             <Button
-              color="danger"
-              variant="filled"
-              icon={<ReloadOutlined />}
-              loading={isRefreshing}
-              onClick={handleRefreshModel}
-            >
-              Refresh Model
-            </Button>
-            <Button
-              type="primary"
+              color="green"
+              variant='solid'
               icon={<CloudUploadOutlined />}
               loading={isSubmitting}
-              disabled={savedRateChangedUnits.length === 0}
               onClick={handlePublishNewRates}
             >
               Publish New Rates
@@ -166,7 +169,6 @@ const StreetRates = () => {
           </Col>
         </Row>
 
-        {/* Status Information Row */}
         <Row justify="space-between" className="street-rates-status-row">
           <Col>{latestPublishedDate && `Last Updated: ${latestPublishedDate}`}</Col>
           <Col>

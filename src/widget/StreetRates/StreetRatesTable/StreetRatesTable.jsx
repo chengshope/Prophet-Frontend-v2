@@ -251,6 +251,7 @@ const StreetRatesTable = ({
         return (
           <Flex vertical={true} gap={10} style={{ padding: '0 8px' }}>
             <Button
+              size="small"
               onClick={() =>
                 isExpanded
                   ? hasChanges
@@ -271,6 +272,7 @@ const StreetRatesTable = ({
                   : 'Unit Mix Detail'}
             </Button>
             <Button
+              size="small"
               variant="outlined"
               color="default"
               disabled={!isExpanded && !hasSavedRateChanges}
