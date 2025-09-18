@@ -1,11 +1,118 @@
 import { createSelector } from '@reduxjs/toolkit';
 
-// Basic selectors
+// Base selector
+export const selectExistingCustomersState = (state) => state.existingCustomers;
+
+// Data selectors
 export const selectExistingCustomersFacilities = (state) => state.existingCustomers.facilities;
 export const selectExistingCustomersTotal = (state) => state.existingCustomers.total;
 export const selectChangedFacilities = (state) => state.existingCustomers.changedFacilities;
 export const selectSummaryData = (state) => state.existingCustomers.summaryData;
-export const selectPagination = (state) => state.existingCustomers.pagination;
+
+// Filter selectors
+export const selectExistingCustomersFilters = (state) => state.existingCustomers.filters;
+export const selectSearch = createSelector(
+  [selectExistingCustomersFilters],
+  (filters) => filters.search
+);
+export const selectSort = createSelector(
+  [selectExistingCustomersFilters],
+  (filters) => filters.sort
+);
+export const selectOrderBy = createSelector(
+  [selectExistingCustomersFilters],
+  (filters) => filters.orderby
+);
+
+// Pagination selectors
+export const selectExistingCustomersPagination = (state) => state.existingCustomers.pagination;
+export const selectCurrentPage = createSelector(
+  [selectExistingCustomersPagination],
+  (pagination) => pagination.currentPage
+);
+export const selectPageSize = createSelector(
+  [selectExistingCustomersPagination],
+  (pagination) => pagination.pageSize
+);
+
+// UI selectors
+export const selectExistingCustomersUI = (state) => state.existingCustomers.ui;
+export const selectPublishModalOpen = createSelector(
+  [selectExistingCustomersUI],
+  (ui) => ui.publishModalOpen
+);
+export const selectErrorModalOpen = createSelector(
+  [selectExistingCustomersUI],
+  (ui) => ui.errorModalOpen
+);
+export const selectErrorLog = createSelector([selectExistingCustomersUI], (ui) => ui.errorLog);
+export const selectLatestPublishedDate = createSelector(
+  [selectExistingCustomersUI],
+  (ui) => ui.latestPublishedDate
+);
+export const selectExpandedRowKeys = createSelector(
+  [selectExistingCustomersUI],
+  (ui) => ui.expandedRowKeys
+);
+export const selectSelectedFacility = createSelector(
+  [selectExistingCustomersUI],
+  (ui) => ui.selectedFacility
+);
+
+// Loading selectors
+export const selectExistingCustomersLoading = (state) => state.existingCustomers.loading;
+export const selectPublishingLoading = createSelector(
+  [selectExistingCustomersLoading],
+  (loading) => loading.publishing
+);
+export const selectRefreshingLoading = createSelector(
+  [selectExistingCustomersLoading],
+  (loading) => loading.refreshing
+);
+export const selectExportingLoading = createSelector(
+  [selectExistingCustomersLoading],
+  (loading) => loading.exporting
+);
+
+// Error selectors
+export const selectExistingCustomersErrors = (state) => state.existingCustomers.errors;
+export const selectPublishError = createSelector(
+  [selectExistingCustomersErrors],
+  (errors) => errors.publish
+);
+export const selectRefreshError = createSelector(
+  [selectExistingCustomersErrors],
+  (errors) => errors.refresh
+);
+export const selectExportError = createSelector(
+  [selectExistingCustomersErrors],
+  (errors) => errors.export
+);
+
+// API Parameters selector (for RTK Query)
+export const selectExistingCustomersApiParams = createSelector(
+  [selectExistingCustomersFilters, selectExistingCustomersPagination],
+  (filters, pagination) => ({
+    page: pagination.currentPage,
+    search: filters.search,
+    sort: filters.sort,
+    orderby: filters.orderby,
+    limit: pagination.pageSize,
+  })
+);
+
+// Pagination configuration for Ant Design Table
+export const selectPaginationConfig = createSelector(
+  [selectExistingCustomersPagination, selectExistingCustomersTotal],
+  (pagination, total) => ({
+    current: pagination.currentPage,
+    total: total,
+    pageSize: pagination.pageSize,
+    showSizeChanger: true,
+    showQuickJumper: true,
+    showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+  })
+);
 
 // Select tenant changes
 export const selectNewTenantChanges = (state) => state.existingCustomers.newTenantChanges;

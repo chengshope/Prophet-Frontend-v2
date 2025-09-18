@@ -12,6 +12,7 @@ const loadSavedTenantChangesFromStorage = () => {
 };
 
 const initialState = {
+  // Data
   total: 0,
   facilities: [],
   changedFacilities: [],
@@ -23,13 +24,130 @@ const initialState = {
     estimatedRevenueIncrease: 0,
     averageMoveOutProbability: 0,
   },
-  total: 0,
+
+  // Filters and Search
+  filters: {
+    search: '',
+    sort: 'facility_name',
+    orderby: 'asc',
+  },
+
+  // Pagination
+  pagination: {
+    currentPage: 1,
+    pageSize: 10,
+  },
+
+  // UI State
+  ui: {
+    publishModalOpen: false,
+    errorModalOpen: false,
+    errorLog: '',
+    latestPublishedDate: '',
+    expandedRowKeys: [],
+    selectedFacility: null,
+  },
+
+  // Loading States
+  loading: {
+    publishing: false,
+    refreshing: false,
+    exporting: false,
+  },
+
+  // Error States
+  errors: {
+    publish: null,
+    refresh: null,
+    export: null,
+  },
 };
 
 const existingCustomersSlice = createSlice({
   name: 'existingCustomers',
   initialState,
   reducers: {
+    // Filter and Search Actions
+    setSearch: (state, action) => {
+      state.filters.search = action.payload;
+      state.pagination.currentPage = 1; // Reset to first page on search
+    },
+
+    setSort: (state, action) => {
+      const { field, direction } = action.payload;
+      state.filters.sort = field;
+      state.filters.orderby = direction;
+    },
+
+    // Pagination Actions
+    setCurrentPage: (state, action) => {
+      state.pagination.currentPage = action.payload;
+    },
+
+    setPageSize: (state, action) => {
+      state.pagination.pageSize = action.payload;
+      state.pagination.currentPage = 1; // Reset to first page on page size change
+    },
+
+    // UI State Actions
+    setPublishModalOpen: (state, action) => {
+      state.ui.publishModalOpen = action.payload;
+    },
+
+    setErrorModalOpen: (state, action) => {
+      state.ui.errorModalOpen = action.payload;
+    },
+
+    setErrorLog: (state, action) => {
+      state.ui.errorLog = action.payload;
+    },
+
+    setLatestPublishedDate: (state, action) => {
+      state.ui.latestPublishedDate = action.payload;
+    },
+
+    setExpandedRowKeys: (state, action) => {
+      state.ui.expandedRowKeys = action.payload;
+    },
+
+    setSelectedFacility: (state, action) => {
+      state.ui.selectedFacility = action.payload;
+    },
+
+    // Loading State Actions
+    setPublishingLoading: (state, action) => {
+      state.loading.publishing = action.payload;
+    },
+
+    setRefreshingLoading: (state, action) => {
+      state.loading.refreshing = action.payload;
+    },
+
+    setExportingLoading: (state, action) => {
+      state.loading.exporting = action.payload;
+    },
+
+    // Error State Actions
+    setPublishError: (state, action) => {
+      state.errors.publish = action.payload;
+    },
+
+    setRefreshError: (state, action) => {
+      state.errors.refresh = action.payload;
+    },
+
+    setExportError: (state, action) => {
+      state.errors.export = action.payload;
+    },
+
+    // Clear all errors
+    clearErrors: (state) => {
+      state.errors = {
+        publish: null,
+        refresh: null,
+        export: null,
+      };
+    },
     // Update tenant data (similar to updateFacility in street rates)
     updateTenant: (state, action) => {
       const { facilityId, tenant, hasChanges = false } = action.payload;
@@ -192,6 +310,34 @@ const existingCustomersSlice = createSlice({
 });
 
 export const {
+  // Filter and Search Actions
+  setSearch,
+  setSort,
+
+  // Pagination Actions
+  setCurrentPage,
+  setPageSize,
+
+  // UI State Actions
+  setPublishModalOpen,
+  setErrorModalOpen,
+  setErrorLog,
+  setLatestPublishedDate,
+  setExpandedRowKeys,
+  setSelectedFacility,
+
+  // Loading State Actions
+  setPublishingLoading,
+  setRefreshingLoading,
+  setExportingLoading,
+
+  // Error State Actions
+  setPublishError,
+  setRefreshError,
+  setExportError,
+  clearErrors,
+
+  // Existing Tenant Actions
   updateTenant,
   clearChangedTenantsByFacilityId,
   addChangedTenant,
