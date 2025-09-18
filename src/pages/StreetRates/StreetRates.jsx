@@ -169,14 +169,6 @@ const StreetRates = () => {
           </Col>
         </Row>
 
-        <Row justify="space-between" className="street-rates-status-row">
-          <Col>{latestPublishedDate && `Last Updated: ${latestPublishedDate}`}</Col>
-          <Col>
-            {savedRateChangedUnits.length > 0 &&
-              `${savedRateChangedUnits.length} Rate Changes Ready to Publish`}
-          </Col>
-        </Row>
-
         {/* Street Rates Table */}
         <StreetRatesTable
           loading={isLoading || isFetching}
@@ -192,6 +184,8 @@ const StreetRates = () => {
             showQuickJumper: true,
             showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} facilities`,
           }}
+          latestPublishedDate={latestPublishedDate}
+          savedRateChangedUnitsCount={savedRateChangedUnits.length}
         />
 
         {/* Publish Confirmation Modal */}

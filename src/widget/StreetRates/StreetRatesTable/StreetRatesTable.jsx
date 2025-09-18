@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Table, Button, Space, Typography, Card, Modal, message, Flex } from 'antd';
+import { Table, Button, Space, Typography, Card, Modal, message, Flex, Row, Col } from 'antd';
 import { DollarOutlined } from '@ant-design/icons';
 
 import { useSubmitIndividualRatesMutation, useSaveRateChangesMutation } from '@/api/streetRatesApi';
@@ -36,6 +36,8 @@ const StreetRatesTable = ({
   onSortChanged,
   pagination,
   portfolioSettings,
+  latestPublishedDate,
+  savedRateChangedUnitsCount,
 }) => {
   const facilities = useSelector(selectStreetFacilities);
   const dispatch = useDispatch();
@@ -309,6 +311,14 @@ const StreetRatesTable = ({
         bordered
         onChange={handleTableChange}
         className="street-rates-table"
+        title={() => (
+          <Row justify="space-between" className="street-rates-status-row">
+            <Col>{`Last Updated: ${latestPublishedDate}`}</Col>
+            <Col>
+                Rate Changes Ready to Publish: {savedRateChangedUnitsCount}
+            </Col>
+          </Row>
+        )}
         expandable={{
           expandedRowKeys,
           onExpand: handleExpand,
