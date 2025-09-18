@@ -79,10 +79,14 @@ const UnitTypeStatistics = ({ facilityId, rows, rateType, changedUnits = [] }) =
         adjustment_percentage: linkData.adjustmentPercentage / 100,
       }).unwrap();
 
+      // Find the selected unit type to get its name
+      const selectedUnitType = unitTypes?.find(ut => ut.id === linkData.unitTypeId);
+
       const updatedUnit = {
         ...selectedUnit,
         exception: true,
         master_unittype: linkData.unitTypeId,
+        master_unittype_name: selectedUnitType?.unit_type || '',
         adjustment_percentage: linkData.adjustmentPercentage / 100,
       };
 
@@ -507,6 +511,7 @@ const UnitTypeStatistics = ({ facilityId, rows, rateType, changedUnits = [] }) =
         linkData={linkData}
         onLinkDataChange={setLinkData}
         selectedUnit={selectedUnit}
+        unitTypes={unitTypes}
       />
 
       {/* Unit Type Category (Anchor) Modal */}

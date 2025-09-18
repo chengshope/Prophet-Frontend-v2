@@ -1,5 +1,4 @@
 import { Modal, Button, Select, InputNumber, Space } from 'antd';
-import { useGetUnitTypesQuery } from '@/api/streetRatesApi';
 import './UnitTypeLinkingModal.less';
 
 const UnitTypeLinkingModal = ({
@@ -8,10 +7,8 @@ const UnitTypeLinkingModal = ({
   onConfirm,
   linkData,
   onLinkDataChange,
-  selectedUnit,
+  unitTypes
 }) => {
-  const { data: unitTypes } = useGetUnitTypesQuery();
-
   const handleConfirm = () => {
     onConfirm();
   };
@@ -51,8 +48,8 @@ const UnitTypeLinkingModal = ({
               value={linkData.unitTypeId}
               onChange={(value) => onLinkDataChange({ ...linkData, unitTypeId: value })}
               options={unitTypes?.map((ut) => ({
-                value: ut.ut_id,
-                label: `${ut.ut_name} (${ut.ut_sqft} sqft)`,
+                value: ut.id,
+                label: `${ut.unit_type} - Floor number: ${ut.floor !== null ? ut.floor : '---'} (${ut.area || 0} sqft)`,
               }))}
             />
           </div>
