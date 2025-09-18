@@ -54,7 +54,7 @@ const StreetRatesTable = ({
 
   const [submitIndividualRates, { isLoading: isSubmittingIndividual }] =
     useSubmitIndividualRatesMutation();
-  const [saveRateChanges] = useSaveRateChangesMutation();
+  const [saveRateChanges, { isLoading: isSavingChanges }] = useSaveRateChangesMutation();
 
   // Handle row expansion
   const handleExpand = (expanded, record) => {
@@ -263,6 +263,8 @@ const StreetRatesTable = ({
               }
               variant={isExpanded ? 'solid' : 'outlined'}
               color={isExpanded ? 'danger' : 'default'}
+              loading={isExpanded && hasChanges && isSavingChanges}
+              disabled={isExpanded && hasChanges && isSavingChanges}
               block
             >
               {isExpanded
@@ -314,9 +316,7 @@ const StreetRatesTable = ({
         title={() => (
           <Row justify="space-between" className="street-rates-status-row">
             <Col>{`Last Updated: ${latestPublishedDate}`}</Col>
-            <Col>
-                Rate Changes Ready to Publish: {savedRateChangedUnitsCount}
-            </Col>
+            <Col>Rate Changes Ready to Publish: {savedRateChangedUnitsCount}</Col>
           </Row>
         )}
         expandable={{

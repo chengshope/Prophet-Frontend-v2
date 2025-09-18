@@ -129,22 +129,25 @@ const StreetRates = () => {
   };
 
   return (
-    <PageFrame title="Street Rates" extra={[
-      <Space>
-        <Button color="primary" variant="filled" icon={<DownloadOutlined />} onClick={exportCSV}>
-          Export CSV
-        </Button>
-        <Button
-          color="danger"
-          variant="filled"
-          icon={<ReloadOutlined />}
-          loading={isRefreshing}
-          onClick={handleRefreshModel}
-        >
-          Refresh Model
-        </Button>
-      </Space>
-    ]}>
+    <PageFrame
+      title="Street Rates"
+      extra={[
+        <Space>
+          <Button color="primary" variant="filled" icon={<DownloadOutlined />} onClick={exportCSV}>
+            Export CSV
+          </Button>
+          <Button
+            color="danger"
+            variant="filled"
+            icon={<ReloadOutlined />}
+            loading={isRefreshing}
+            onClick={handleRefreshModel}
+          >
+            Refresh Model
+          </Button>
+        </Space>,
+      ]}
+    >
       <Space direction="vertical" size="large" className="street-rates-management">
         {/* Header Controls */}
         <Row gutter={[16, 8]} align="middle" justify="space-between">
@@ -159,7 +162,7 @@ const StreetRates = () => {
           <Col xs={24} md={12} className="street-rates-header-controls">
             <Button
               color="green"
-              variant='solid'
+              variant="solid"
               icon={<CloudUploadOutlined />}
               loading={isSubmitting}
               onClick={handlePublishNewRates}

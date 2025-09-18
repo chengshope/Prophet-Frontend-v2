@@ -80,7 +80,7 @@ const UnitTypeStatistics = ({ facilityId, rows, rateType, changedUnits = [] }) =
       }).unwrap();
 
       // Find the selected unit type to get its name
-      const selectedUnitType = unitTypes?.find(ut => ut.id === linkData.unitTypeId);
+      const selectedUnitType = unitTypes?.find((ut) => ut.id === linkData.unitTypeId);
 
       const updatedUnit = {
         ...selectedUnit,
