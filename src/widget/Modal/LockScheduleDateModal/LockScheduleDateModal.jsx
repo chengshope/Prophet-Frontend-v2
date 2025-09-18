@@ -1,4 +1,5 @@
 import { Modal, Button, DatePicker } from 'antd';
+import './LockScheduleDateModal.less';
 
 const LockScheduleDateModal = ({
   open,
@@ -14,25 +15,27 @@ const LockScheduleDateModal = ({
 
   return (
     <Modal
-      title="Select expiration date"
+      title="Select Expiration Date"
       open={open}
       onCancel={onCancel}
       footer={[
         <Button key="cancel" onClick={onCancel}>
-          CANCEL
+          Cancel
         </Button>,
         <Button key="confirm" type="primary" onClick={handleConfirm}>
-          CONFIRM
+          Confirm
         </Button>,
       ]}
       centered
+      width={400}
     >
-      <div style={{ marginTop: '20px', textAlign: 'center' }}>
+      <div className="lock-date-modal-content">
+        <p className="lock-date-modal-description">Choose when this lock should expire:</p>
         <DatePicker
           value={lockExpirationDate}
           onChange={onDateChange}
           placeholder="Select expiration date"
-          style={{ width: '100%' }}
+          className="lock-date-picker"
         />
       </div>
     </Modal>

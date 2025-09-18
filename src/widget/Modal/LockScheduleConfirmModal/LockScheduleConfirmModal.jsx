@@ -1,24 +1,22 @@
-import { Modal, Button, Typography } from 'antd';
-
-const { Text } = Typography;
+import { Modal, Button } from 'antd';
 
 const LockScheduleConfirmModal = ({ open, onCancel, onSchedule, onLockNow, unitToLock }) => {
   return (
     <Modal
-      title="Schedule expiration?"
+      title="Schedule Expiration"
       open={open}
       onCancel={onCancel}
       footer={[
         <Button key="no" onClick={onLockNow}>
-          NO
+          Lock Now
         </Button>,
         <Button key="yes" type="primary" onClick={onSchedule}>
-          YES
+          Schedule
         </Button>,
       ]}
       centered
     >
-      <Text>Do you want to schedule an expiration date for this lock?</Text>
+      <p>Do you want to schedule an expiration date for this lock?</p>
     </Modal>
   );
 };

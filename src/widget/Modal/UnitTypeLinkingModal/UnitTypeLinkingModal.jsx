@@ -1,5 +1,6 @@
 import { Modal, Button, Select, InputNumber, Space } from 'antd';
 import { useGetUnitTypesQuery } from '@/api/streetRatesApi';
+import './UnitTypeLinkingModal.less';
 
 const UnitTypeLinkingModal = ({
   open,
@@ -17,12 +18,12 @@ const UnitTypeLinkingModal = ({
 
   return (
     <Modal
-      title="Select the unit type to link:"
+      title="Link Unit Type"
       open={open}
       onCancel={onCancel}
       footer={[
         <Button key="cancel" onClick={onCancel}>
-          CANCEL
+          Cancel
         </Button>,
         <Button
           key="confirm"
@@ -30,44 +31,47 @@ const UnitTypeLinkingModal = ({
           onClick={handleConfirm}
           disabled={!linkData.unitTypeId}
         >
-          CONFIRM
+          Confirm
         </Button>,
       ]}
       centered
+      width={500}
     >
-      <Space direction="vertical" style={{ width: '100%' }} size="large">
-        <div>
-          <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
-            Unit Type:
-          </label>
-          <Select
-            style={{ width: '100%' }}
-            placeholder="Select unit type"
-            value={linkData.unitTypeId}
-            onChange={(value) => onLinkDataChange({ ...linkData, unitTypeId: value })}
-            options={unitTypes?.map((ut) => ({
-              value: ut.ut_id,
-              label: `${ut.ut_name} (${ut.ut_sqft} sqft)`,
-            }))}
-          />
-        </div>
-        <div>
-          <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
-            Adjustment Percentage:
-          </label>
-          <InputNumber
-            style={{ width: '100%' }}
-            placeholder="Enter adjustment percentage"
-            value={linkData.adjustmentPercentage}
-            onChange={(value) =>
-              onLinkDataChange({ ...linkData, adjustmentPercentage: value || 0 })
-            }
-            formatter={(value) => `${value}%`}
-            parser={(value) => value.replace('%', '')}
-            step={0.1}
-          />
-        </div>
-      </Space>
+      <div className="unit-linking-modal-content">
+        <p className="unit-linking-modal-description">
+          Select the unit type to link and set an adjustment percentage:
+        </p>
+
+        <Space direction="vertical" className="unit-linking-form" size="large">
+          <div className="form-field">
+            <label className="form-label">Unit Type:</label>
+            <Select
+              className="form-select"
+              placeholder="Select unit type"
+              value={linkData.unitTypeId}
+              onChange={(value) => onLinkDataChange({ ...linkData, unitTypeId: value })}
+              options={unitTypes?.map((ut) => ({
+                value: ut.ut_id,
+                label: `${ut.ut_name} (${ut.ut_sqft} sqft)`,
+              }))}
+            />
+          </div>
+          <div className="form-field">
+            <label className="form-label">Adjustment Percentage:</label>
+            <InputNumber
+              className="form-input"
+              placeholder="Enter adjustment percentage"
+              value={linkData.adjustmentPercentage}
+              onChange={(value) =>
+                onLinkDataChange({ ...linkData, adjustmentPercentage: value || 0 })
+              }
+              formatter={(value) => `${value}%`}
+              parser={(value) => value.replace('%', '')}
+              step={0.1}
+            />
+          </div>
+        </Space>
+      </div>
     </Modal>
   );
 };

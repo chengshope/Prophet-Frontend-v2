@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Row, Space, Col, Input, Button, Modal, message } from 'antd';
+import { Row, Space, Col, Input, Button, message } from 'antd';
 import { CloudUploadOutlined, ReloadOutlined, DownloadOutlined } from '@ant-design/icons';
 import moment from 'moment';
 
@@ -16,6 +16,8 @@ import { removeSavedRateUnits } from '@/utils/localStorage';
 import { handleCSVExport } from '@/utils/csvExport';
 import PageFrame from '@/components/common/PageFrame';
 import StreetRatesTable from '@/widget/StreetRates/StreetRatesTable';
+import PublishConfirmModal from '@/widget/Modal/PublishConfirmModal';
+import ErrorModal from '@/widget/Modal/ErrorModal';
 import './StreetRates.less';
 
 const { Search } = Input;
@@ -191,39 +193,16 @@ const StreetRates = () => {
         />
 
         {/* Publish Confirmation Modal */}
-        <Modal
-          title="Publish New Rates"
+        <PublishConfirmModal
           open={publishModalOpen}
           onOk={confirmPublishAllRates}
           onCancel={() => setPublishModalOpen(false)}
           confirmLoading={isSubmitting}
-          okText="Publish"
-          cancelText="Cancel"
-        >
-          <p>Are you sure you want to publish the new street rates?</p>
-          <p>
-            This will update rates for {savedRateChangedUnits.length} saved unit types across all
-            facilities.
-          </p>
-        </Modal>
+          savedRateChangedUnitsCount={savedRateChangedUnits.length}
+        />
 
         {/* Error Modal */}
-        <Modal
-          title="Error Alert"
-          open={modalErrorIsOpen}
-          onCancel={closeModalError}
-          footer={[
-            <Button key="close" onClick={closeModalError}>
-              Close
-            </Button>,
-          ]}
-        >
-          <div className="street-rates-error-message">
-            There was an error publishing your rates. Please try again later or reach out to our
-            Customer Success team for more information.
-          </div>
-          {errorLog && <div className="street-rates-error-log">{errorLog}</div>}
-        </Modal>
+        <ErrorModal open={modalErrorIsOpen} onCancel={closeModalError} errorLog={errorLog} />
       </Space>
     </PageFrame>
   );

@@ -9,6 +9,7 @@ import {
   useUpdateFacilityMutation,
 } from '@/api/competitorsApi';
 import { STRATEGY_OPTIONS } from '../../utils/config';
+import CompetitorMap from '@/components/widgets/Competitors/CompetitorMap/CompetitorMap';
 import './Competitors.less';
 
 const { Search } = Input;
@@ -21,239 +22,251 @@ const competitorTypeOptions = [
 
 const Competitors = () => {
   const navigate = useNavigate();
-  const { id: facilityId } = useParams();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedStrategy, setSelectedStrategy] = useState('all');
-  const [selectedType, setSelectedType] = useState('all');
+  const { id } = useParams();
+
+  const [selectedFacility, setSelectedFacility] = useState(id || undefined);
+  const [strategy, setStrategy] = useState();
+  const [search, setSearch] = useState('');
+  const [hoveredCompetitor, setHoveredCompetitor] = useState(null);
+  const [mapCenter, setMapCenter] = useState({ lat: 39.8283, lng: -98.5795 }); // Center of US
 
   // API queries
   const { data: facilities, isLoading: facilitiesLoading } = useGetFacilitiesQuery();
   const { data: competitors, isLoading: competitorsLoading } = useGetCompetitorsQuery(
-    { facility_id: facilityId },
-    { skip: !facilityId }
+    { facility_id: selectedFacility },
+    { skip: !selectedFacility }
   );
   const [updateFacility] = useUpdateFacilityMutation();
 
+  // Get facility options for dropdown
+  const facilityOptions = useMemo(() => {
+    if (!facilities) return [];
+    return facilities.map((f) => ({
+      label: f.facility_name,
+      value: f.facility_id.toString(),
+    }));
+  }, [facilities]);
+
   // Get current facility
   const currentFacility = useMemo(() => {
-    if (!facilities || !facilityId) return null;
-    return facilities.find((f) => f.facility_id === parseInt(facilityId));
-  }, [facilities, facilityId]);
+    if (!facilities || !selectedFacility) return null;
+    return facilities.find((f) => f.facility_id === parseInt(selectedFacility));
+  }, [facilities, selectedFacility]);
 
-  // Filter competitors based on search and filters
+  // Get facility coordinates for map center
+  const facilityCoords = useMemo(() => {
+    if (!currentFacility?.latitude || !currentFacility?.longitude) return null;
+    return {
+      lat: parseFloat(currentFacility.latitude),
+      lng: parseFloat(currentFacility.longitude),
+    };
+  }, [currentFacility]);
+
+  // Update map center when facility changes
+  useEffect(() => {
+    if (facilityCoords) {
+      setMapCenter(facilityCoords);
+    }
+  }, [facilityCoords]);
+
+  // Strategy labels for segmented control
+  const strategyLabels = useMemo(() => STRATEGY_OPTIONS.map((s) => s.label), []);
+
+  // Filter competitors based on search
   const filteredCompetitors = useMemo(() => {
     if (!competitors) return [];
+    return competitors.filter(
+      (competitor) =>
+        competitor.store_name?.toLowerCase().includes(search.toLowerCase()) ||
+        competitor.address?.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [competitors, search]);
 
-    return competitors.filter((competitor) => {
-      const matchesSearch = competitor.facility_name
-        ?.toLowerCase()
-        .includes(searchTerm.toLowerCase());
-      const matchesStrategy =
-        selectedStrategy === 'all' || competitor.strategy === selectedStrategy;
-      const matchesType = selectedType === 'all' || competitor.type === selectedType;
-
-      return matchesSearch && matchesStrategy && matchesType;
-    });
-  }, [competitors, searchTerm, selectedStrategy, selectedType]);
-
-  // Handle strategy update
-  const handleStrategyUpdate = async (competitorId, newStrategy) => {
+  // Handle competitor type update
+  const handleCompetitorTypeUpdate = async (competitorId, newType) => {
     try {
       await updateFacility({
         facility_id: competitorId,
-        strategy: newStrategy,
+        comp_type: newType,
       }).unwrap();
-      message.success('Strategy updated successfully');
+      message.success('Competitor type updated successfully');
     } catch (error) {
-      message.error('Failed to update strategy');
-    }
-  };
-
-  // Handle type update
-  const handleTypeUpdate = async (competitorId, newType) => {
-    try {
-      await updateFacility({
-        facility_id: competitorId,
-        type: newType,
-      }).unwrap();
-      message.success('Type updated successfully');
-    } catch (error) {
-      message.error('Failed to update type');
+      message.error('Failed to update competitor type');
     }
   };
 
   const columns = [
     {
-      title: 'Facility Name',
-      dataIndex: 'facility_name',
-      key: 'facility_name',
-      render: (text, record) => (
-        <Space>
-          <ShopOutlined />
-          <span>{text}</span>
-        </Space>
+      title: '',
+      dataIndex: 'comp_type',
+      key: 'warning',
+      width: 40,
+      render: (val) => (!val ? <Tag color="red">!</Tag> : null),
+    },
+    {
+      title: 'Competitor',
+      dataIndex: 'store_name',
+      key: 'store_name',
+      sorter: (a, b) => (a.store_name || '').localeCompare(b.store_name || ''),
+      render: (_, record) => (
+        <a href={record.source_url} target="_blank" rel="noreferrer">
+          {record.store_name} {record.address}
+        </a>
       ),
     },
     {
-      title: 'Address',
-      dataIndex: 'address',
-      key: 'address',
-      render: (text, record) => (
-        <Space>
-          <EnvironmentOutlined />
-          <span>{`${record.address}, ${record.city}, ${record.state} ${record.zip}`}</span>
-        </Space>
-      ),
-    },
-    {
-      title: 'Distance (mi)',
-      dataIndex: 'distance_miles',
-      key: 'distance_miles',
-      render: (distance) => distance?.toFixed(2) || 'N/A',
-      sorter: (a, b) => (a.distance_miles || 0) - (b.distance_miles || 0),
-    },
-    {
-      title: 'Strategy',
-      dataIndex: 'strategy',
-      key: 'strategy',
-      render: (strategy, record) => (
-        <Select
-          value={strategy || 'none'}
-          style={{ width: 120 }}
-          onChange={(value) => handleStrategyUpdate(record.facility_id, value)}
-          options={STRATEGY_OPTIONS}
-        />
-      ),
+      title: 'Distance',
+      dataIndex: 'distance',
+      key: 'distance',
+      sorter: (a, b) => (parseFloat(a.distance) || 0) - (parseFloat(b.distance) || 0),
     },
     {
       title: 'Type',
-      dataIndex: 'type',
-      key: 'type',
-      render: (type, record) => (
+      dataIndex: 'comp_type',
+      key: 'comp_type',
+      render: (value, record) => (
         <Select
-          value={type || 'Direct'}
-          style={{ width: 140 }}
-          onChange={(value) => handleTypeUpdate(record.facility_id, value)}
+          size="small"
+          value={value}
+          placeholder="Select..."
+          style={{ width: 160 }}
           options={competitorTypeOptions}
+          onChange={(val) => handleCompetitorTypeUpdate(record.id, val)}
         />
-      ),
-    },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-      render: (status) => (
-        <Tag color={status === 'enabled' ? 'green' : 'red'}>
-          {status?.toUpperCase() || 'UNKNOWN'}
-        </Tag>
       ),
     },
   ];
 
-  if (!facilityId) {
-    return (
-      <PageFrame title="Competitors" extra={[]}>
-        <Card>
-          <div style={{ textAlign: 'center', padding: '40px 0' }}>
-            <h3>Select a facility to view competitors</h3>
-            <p>Choose a facility from the navigation to see its competitor analysis.</p>
-          </div>
-        </Card>
-      </PageFrame>
-    );
-  }
-
   return (
     <PageFrame
-      title={`Competitors - ${currentFacility?.facility_name || 'Loading...'}`}
+      title="Competitors"
       extra={[
-        <Button
-          key="back"
-          icon={<ArrowLeftOutlined />}
-          onClick={() => navigate('/competitors')}
-        >
-          Back to Facilities
-        </Button>,
+        <Space key="controls">
+          <Select
+            showSearch
+            allowClear
+            size="middle"
+            placeholder="Select Facility"
+            options={facilityOptions}
+            value={selectedFacility}
+            onChange={(val) => setSelectedFacility(val)}
+          />
+          <Segmented
+            size="middle"
+            value={strategy}
+            onChange={setStrategy}
+            options={strategyLabels}
+          />
+        </Space>,
       ]}
     >
-      <Space direction="vertical" size="large" style={{ width: '100%' }}>
-        {/* Current Facility Info */}
-        {currentFacility && (
-          <Card title="Current Facility" size="small">
-            <Row gutter={16}>
-              <Col span={12}>
-                <strong>Name:</strong> {currentFacility.facility_name}
-              </Col>
-              <Col span={12}>
-                <strong>Address:</strong> {currentFacility.address}, {currentFacility.city},{' '}
-                {currentFacility.state} {currentFacility.zip}
-              </Col>
-            </Row>
-          </Card>
-        )}
+      <Space direction="vertical" size="large" className="page">
+        <Row gutter={[16, 8]} align="middle" justify="space-between">
+          <Col xs={24} md={12}>
+            <Search
+              size="middle"
+              placeholder="Search..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </Col>
+          <Col xs={24} md={12} className="actions-col">
+            <Button
+              color="green"
+              variant="solid"
+              icon={<ArrowLeftOutlined />}
+              onClick={() => navigate('/street-rates')}
+            >
+              Back to Street Rates
+            </Button>
+          </Col>
+        </Row>
 
-        {/* Filters */}
-        <Card>
-          <Row gutter={16} align="middle">
-            <Col xs={24} sm={12} md={8}>
-              <Search
-                placeholder="Search competitors..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                allowClear
-              />
-            </Col>
-            <Col xs={24} sm={6} md={4}>
-              <Select
-                placeholder="Strategy"
-                value={selectedStrategy}
-                onChange={setSelectedStrategy}
-                style={{ width: '100%' }}
-                options={[
-                  { label: 'All Strategies', value: 'all' },
-                  ...STRATEGY_OPTIONS,
-                ]}
-              />
-            </Col>
-            <Col xs={24} sm={6} md={4}>
-              <Select
-                placeholder="Type"
-                value={selectedType}
-                onChange={setSelectedType}
-                style={{ width: '100%' }}
-                options={[
-                  { label: 'All Types', value: 'all' },
-                  ...competitorTypeOptions,
-                ]}
-              />
-            </Col>
-            <Col xs={24} sm={12} md={8}>
-              <Space>
-                <span>
-                  <strong>Total Competitors:</strong> {filteredCompetitors.length}
-                </span>
-              </Space>
-            </Col>
-          </Row>
-        </Card>
-
-        {/* Competitors Table */}
-        <Card>
-          <Table
-            columns={columns}
-            dataSource={filteredCompetitors}
-            rowKey="facility_id"
-            loading={competitorsLoading || facilitiesLoading}
-            pagination={{
-              pageSize: 10,
-              showSizeChanger: true,
-              showQuickJumper: true,
-              showTotal: (total, range) =>
-                `${range[0]}-${range[1]} of ${total} competitors`,
-            }}
-            scroll={{ x: 800 }}
-          />
-        </Card>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} lg={12}>
+            <Table
+              rowKey="id"
+              bordered
+              size="small"
+              columns={columns}
+              dataSource={filteredCompetitors}
+              loading={competitorsLoading || facilitiesLoading}
+              locale={{
+                emptyText: (
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      padding: '40px 20px',
+                      color: '#8c8c8c',
+                    }}
+                  >
+                    <ShopOutlined
+                      style={{ fontSize: '48px', marginBottom: '16px', color: '#d9d9d9' }}
+                    />
+                    <div
+                      style={{
+                        fontSize: '16px',
+                        fontWeight: 500,
+                        marginBottom: '8px',
+                        color: '#595959',
+                      }}
+                    >
+                      No Competitors Found
+                    </div>
+                    <div style={{ fontSize: '14px', textAlign: 'center', lineHeight: '1.5' }}>
+                      Competitor information will appear here when available.
+                      <br />
+                      Try adjusting your search criteria or check back later.
+                    </div>
+                  </div>
+                ),
+              }}
+              pagination={{ pageSize: 10 }}
+              onRow={(record) => ({
+                onMouseEnter: () => setHoveredCompetitor(record),
+                onMouseLeave: () => setHoveredCompetitor(null),
+              })}
+            />
+          </Col>
+          <Col xs={24} lg={12}>
+            <Card className="page-card">
+              {selectedFacility && facilityCoords ? (
+                <CompetitorMap
+                  competitors={filteredCompetitors || []}
+                  selectedFacility={currentFacility}
+                  facilityCoords={facilityCoords}
+                  mapCenter={mapCenter}
+                  onMapCenterChange={setMapCenter}
+                  hoveredCompetitor={hoveredCompetitor}
+                />
+              ) : (
+                <div
+                  style={{
+                    height: '400px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: '#fafafa',
+                    border: '2px dashed #d9d9d9',
+                    borderRadius: '8px',
+                    color: '#8c8c8c',
+                  }}
+                >
+                  <EnvironmentOutlined style={{ fontSize: '48px', marginBottom: '16px' }} />
+                  <div style={{ fontSize: '16px', fontWeight: 500 }}>Interactive Map</div>
+                  <div style={{ fontSize: '14px', marginTop: '8px' }}>
+                    {selectedFacility
+                      ? 'Loading competitor locations...'
+                      : 'Select a facility to view competitor locations'}
+                  </div>
+                </div>
+              )}
+            </Card>
+          </Col>
+        </Row>
       </Space>
     </PageFrame>
   );

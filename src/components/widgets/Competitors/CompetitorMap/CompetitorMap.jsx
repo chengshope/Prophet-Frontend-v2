@@ -9,6 +9,7 @@ const CompetitorMap = ({
   facilityCoords,
   mapCenter,
   onMapCenterChange,
+  hoveredCompetitor,
 }) => {
   const mapRef = useRef(null);
   const [map, setMap] = useState(null);

@@ -1,19 +1,26 @@
 import { Modal, Button, Space } from 'antd';
+import './LinkOrAnchorModal.less';
 
 const LinkOrAnchorModal = ({ open, onCancel, onLinkClick, onAnchorClick }) => {
   return (
-    <Modal title="Link or Anchor Unit?" open={open} onCancel={onCancel} footer={null} centered>
-      <div style={{ textAlign: 'center', padding: '20px 0' }}>
-        <Space size="large">
+    <Modal
+      title="Link or Anchor Unit?"
+      open={open}
+      onCancel={onCancel}
+      footer={null}
+      centered
+      width={400}
+    >
+      <div className="link-anchor-modal-content">
+        <p className="link-anchor-modal-description">
+          Choose how you want to handle this unit type:
+        </p>
+        <Space size="large" className="link-anchor-modal-buttons">
           <Button
             type="default"
             size="large"
             onClick={onLinkClick}
-            style={{
-              minWidth: '100px',
-              borderColor: '#ff4d4f',
-              color: '#ff4d4f',
-            }}
+            className="link-anchor-modal-button link-button"
           >
             LINK
           </Button>
@@ -21,11 +28,7 @@ const LinkOrAnchorModal = ({ open, onCancel, onLinkClick, onAnchorClick }) => {
             type="default"
             size="large"
             onClick={onAnchorClick}
-            style={{
-              minWidth: '100px',
-              borderColor: '#ff4d4f',
-              color: '#ff4d4f',
-            }}
+            className="link-anchor-modal-button anchor-button"
           >
             ANCHOR
           </Button>

@@ -1,0 +1,29 @@
+/* ErrorModal Styles */
+
+.error-modal-message {
+  color: #ff4d4f;
+  margin-bottom: 16px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.error-modal-log {
+  white-space: pre-wrap;
+  font-size: 12px;
+  color: #8c8c8c;
+  background-color: #f5f5f5;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #d9d9d9;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* Dark theme support */
+[data-theme='dark'] {
+  .error-modal-log {
+    color: #a6a6a6;
+    background-color: #1f1f1f;
+    border-color: #434343;
+  }
+}

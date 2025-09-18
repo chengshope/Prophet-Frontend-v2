@@ -1,0 +1,73 @@
+/* LinkOrAnchorModal Styles */
+
+.link-anchor-modal-content {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.link-anchor-modal-description {
+  margin-bottom: 24px;
+  font-size: 14px;
+  color: #666;
+}
+
+.link-anchor-modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.link-anchor-modal-button {
+  min-width: 100px;
+  height: 40px;
+  font-weight: 600;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.link-button {
+  border-color: #ff4d4f;
+  color: #ff4d4f;
+
+  &:hover {
+    border-color: #ff7875;
+    color: #ff7875;
+    background-color: #fff2f0;
+  }
+
+  &:focus {
+    border-color: #ff4d4f;
+    color: #ff4d4f;
+  }
+}
+
+.anchor-button {
+  border-color: #1890ff;
+  color: #1890ff;
+
+  &:hover {
+    border-color: #40a9ff;
+    color: #40a9ff;
+    background-color: #f0f8ff;
+  }
+
+  &:focus {
+    border-color: #1890ff;
+    color: #1890ff;
+  }
+}
+
+/* Dark theme support */
+[data-theme='dark'] {
+  .link-anchor-modal-description {
+    color: #a6a6a6;
+  }
+
+  .link-button:hover {
+    background-color: #2a1215;
+  }
+
+  .anchor-button:hover {
+    background-color: #111b26;
+  }
+}
