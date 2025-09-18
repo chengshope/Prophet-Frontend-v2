@@ -6,11 +6,11 @@
 import { Row, Space } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import ReportingFilters from '@/components/common/ReportingFilters';
-import MetricCards from '@/components/widgets/ExecutiveSummary/MetricCards';
-import RevenueChart from '@/components/widgets/ExecutiveSummary/RevenueChart';
-import OccupancyChart from '@/components/widgets/ExecutiveSummary/OccupancyChart';
-import PotentialRevenueChart from '@/components/widgets/ExecutiveSummary/PotentialRevenueChart';
-import RevPAFChart from '@/components/widgets/ExecutiveSummary/RevPAFChart';
+import MetricCards from './MetricCards';
+import RevenueChart from './RevenueChart';
+import OccupancyChart from './OccupancyChart';
+import PotentialRevenueChart from './PotentialRevenueChart';
+import RevPAFChart from './RevPAFChart';
 import {
   setExecutiveSummaryFilters,
   resetExecutiveSummaryFilters,

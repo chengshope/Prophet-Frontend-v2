@@ -1,1 +1,1 @@
-export { default } from './StreetRates';
+export { default } from './StreetRatesTab';

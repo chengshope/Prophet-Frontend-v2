@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import Filters from '@/components/common/Filters';
 import OccupancyChart from '../OccupancyChart';
 import FacilitiesChart from '../FacilitiesChart';
-import UnitTypeTable from '../../Reporting/StreetRates/UnitTypeTable';
+import UnitTypeTable from '../UnitTypeTable';
 
 const StreetRatesTab = () => {
   const [range, setRange] = useState([dayjs().subtract(30, 'day'), dayjs()]);

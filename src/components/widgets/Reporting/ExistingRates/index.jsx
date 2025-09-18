@@ -1,1 +1,1 @@
-export { default } from './ExistingRates';
+export { default } from './ExistingRatesTab';

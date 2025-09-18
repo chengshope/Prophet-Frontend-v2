@@ -6,8 +6,8 @@
 import { Row, Space } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import ReportingFilters from '@/components/common/ReportingFilters';
-import FacilitiesChart from '@/components/widgets/StreetRates/FacilitiesChart';
-import OccupancyChart from '@/components/widgets/StreetRates/OccupancyChart';
+import FacilitiesChart from './FacilitiesChart';
+import OccupancyChart from './OccupancyChart';
 import UnitTypeTable from './UnitTypeTable';
 import {
   setStreetRatesFilters,

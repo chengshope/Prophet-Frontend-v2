@@ -1,1 +1,1 @@
-export { default } from './ExecutiveSummary';
+export { default } from './ExecutiveSummaryTab';
