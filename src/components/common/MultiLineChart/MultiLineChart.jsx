@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useMemo, useRef, useEffect, useState } from 'react';
 import { Card } from 'antd';
 import {
   Chart as ChartJS,
@@ -123,9 +123,9 @@ const MultiLineChart = ({
     interaction: { mode: 'index', intersect: false },
     scales: {
       x: {
-        grid: { drawBorder: true, drawOnChartArea: true, color: '#e0e0e0' },
-        ticks: { color: '#595959', fontSize: 12 },
-        border: { color: '#d9d9d9', width: 1 },
+        grid: { drawBorder: true, drawOnChartArea: true, color: '#bbbbbb60' },
+        ticks: { color: '#bbbbbb60', fontSize: 12 },
+        border: { color: '#bbbbbb60', width: 1 },
       },
       y: {
         min: domain?.[0] ?? 0,
@@ -135,14 +135,14 @@ const MultiLineChart = ({
           drawBorder: true,
           drawOnChartArea: true,
           lineWidth: (ctx) => (ctx.tick.value === 0 ? 2 : 1),
-          color: (ctx) => (ctx.tick.value === 0 ? '#999999' : '#e0e0e0'),
+          color: (ctx) => (ctx.tick.value === 0 ? '#999999' : '#bbbbbb60'),
         },
         ticks: {
-          color: '#595959',
+          color: '#bbbbbb60',
           fontSize: 12,
           callback: (value) => formatter(value),
         },
-        border: { color: '#d9d9d9', width: 1 },
+        border: { color: '#bbbbbb60', width: 1 },
       },
     },
   };

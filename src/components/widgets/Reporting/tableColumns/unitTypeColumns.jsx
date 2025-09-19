@@ -32,7 +32,7 @@ export const unitTypeColumns = [
     render: (value) => {
       if (!value) return '0.00%';
       const numValue = parseFloat(value.replace('%', '') || 0);
-      const color = numValue >= 90 ? '#52c41a' : numValue >= 80 ? '#faad14' : '#ff4d4f';
+      const color = numValue >= 90 ? 'var(--ant-color-success)' : numValue >= 80 ? 'var(--ant-color-warning)' : 'var(--ant-color-error)';
       return <span style={{ color }}>{value}</span>;
     },
   },
@@ -52,7 +52,7 @@ export const unitTypeColumns = [
     render: (value) => {
       if (!value) return '0.00%';
       const numValue = parseFloat(value.replace('%', '') || 0);
-      const color = numValue >= 90 ? '#52c41a' : numValue >= 80 ? '#faad14' : '#ff4d4f';
+      const color = numValue >= 90 ? 'var(--ant-color-success)' : numValue >= 80 ? 'var(--ant-color-warning)' : 'var(--ant-color-error)';
       return <span style={{ color }}>{value}</span>;
     },
   },
@@ -72,7 +72,7 @@ export const unitTypeColumns = [
     render: (value) => {
       if (!value) return '0.00%';
       const numValue = parseFloat(value.replace('%', '') || 0);
-      const color = numValue >= 0 ? '#52c41a' : '#ff4d4f';
+      const color = numValue >= 0 ? 'var(--ant-color-success)' : 'var(--ant-color-error)';
       return <span style={{ color, fontWeight: 500 }}>{value}</span>;
     },
   },
@@ -109,7 +109,7 @@ export const unitTypeColumns = [
     sortDirections: ['ascend', 'descend'],
     render: (value) => {
       const numValue = parseInt(value || 0);
-      const color = numValue >= 0 ? '#52c41a' : '#ff4d4f';
+      const color = numValue >= 0 ? 'var(--ant-color-success)' : 'var(--ant-color-error)';
       return <span style={{ color, fontWeight: 500 }}>{numValue.toLocaleString()}</span>;
     },
   },
@@ -172,7 +172,7 @@ export const unitTypeColumnsMobile = [
     render: (_, record) => (
       <div style={{ fontSize: '12px' }}>
         <div>{record.beginningOccupancy}</div>
-        <div style={{ color: '#8c8c8c' }}>→ {record.endingOccupancy}</div>
+        <div style={{ color: 'var(--ant-color-text-tertiary)' }}>→ {record.endingOccupancy}</div>
       </div>
     ),
   },
@@ -185,7 +185,7 @@ export const unitTypeColumnsMobile = [
     render: (value) => {
       if (!value) return '0.00%';
       const numValue = parseFloat(value.replace('%', '') || 0);
-      const color = numValue >= 0 ? '#52c41a' : '#ff4d4f';
+      const color = numValue >= 0 ? 'var(--ant-color-success)' : 'var(--ant-color-error)';
       return <span style={{ color, fontWeight: 500, fontSize: '12px' }}>{value}</span>;
     },
   },

@@ -1,6 +1,14 @@
 import PageFrame from '@/components/common/PageFrame';
 import { showError, showSuccess } from '@/utils/messageService';
-import { SaveOutlined } from '@ant-design/icons';
+import {
+  SaveOutlined,
+  BulbOutlined,
+  InfoCircleOutlined,
+  ClockCircleOutlined,
+  SettingOutlined,
+  UploadOutlined,
+  DownloadOutlined
+} from '@ant-design/icons';
 import {
   Button,
   Card,
@@ -13,6 +21,9 @@ import {
   Select,
   Switch,
   TimePicker,
+  Tooltip,
+  Alert,
+  Upload,
 } from 'antd';
 import { useState } from 'react';
 import './Settings.less';
@@ -23,7 +34,6 @@ const Settings = () => {
   const [scope, setScope] = useState('portfolio');
   const [form] = Form.useForm();
   const [frequency, setFrequency] = useState('Daily');
-  const [cadence, setCadence] = useState('Scheduled');
 
   // Handle scope change
   const handleScopeChange = (value) => {
@@ -35,11 +45,6 @@ const Settings = () => {
   // Handle frequency change to show/hide conditional fields
   const handleFrequencyChange = (value) => {
     setFrequency(value);
-  };
-
-  // Handle cadence change
-  const handleCadenceChange = (value) => {
-    setCadence(value);
   };
 
   const onFinish = async (values) => {
@@ -123,52 +128,178 @@ const Settings = () => {
             </>
           )}
 
+          {/* Profile - only show for facility scope */}
+          {scope === 'facility' && (
+            <>
+              <Divider orientation="left">Profile</Divider>
+              <Row gutter={[16, 16]}>
+                <Col xs={24} md={12} lg={8}>
+                  <Form.Item
+                    label={
+                      <span>
+                        <SettingOutlined style={{ marginRight: 8, color: '#52c41a' }} />
+                        Profile
+                        <Tooltip title="Select the facility profile type.">
+                          <InfoCircleOutlined style={{ marginLeft: 8, color: '#1890ff' }} />
+                        </Tooltip>
+                      </span>
+                    }
+                    name="profile"
+                  >
+                    <Segmented
+                      size="middle"
+                      options={[
+                        { label: 'Stabilized', value: 'stabilized' },
+                        { label: 'Lease Up', value: 'lease_up' },
+                      ]}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+            </>
+          )}
+
           <Divider orientation="left">Street Rate Strategy</Divider>
+
+          {/* Strategy Selection with Hint */}
+          <Alert
+            message="Your selection will apply to all facilities."
+            type="info"
+            showIcon
+            style={{ marginBottom: 16 }}
+          />
+
           <Row gutter={[16, 16]}>
-            <Col xs={24} md={12} lg={8}>
-              <Form.Item label="Strategy" name="strategy">
-                <Segmented
-                  size="middle"
-                  options={[
-                    { label: 'Mirror Competitors', value: 'mirror' },
-                    { label: 'Maverick', value: 'maverick' },
-                    { label: 'Happy Medium', value: 'happy_medium' },
-                    { label: 'Maverick+', value: 'maverick_plus' },
-                  ]}
-                />
+            <Col xs={24}>
+              <Form.Item
+                label={
+                  <span>
+                    <BulbOutlined style={{ marginRight: 8, color: '#fa8c16' }} />
+                    Street Rate Strategy
+                    <Tooltip title="Your selection will apply to all facilities.">
+                      <InfoCircleOutlined style={{ marginLeft: 8, color: '#1890ff' }} />
+                    </Tooltip>
+                  </span>
+                }
+                name="strategy"
+              >
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                  <Segmented
+                    size="middle"
+                    options={[
+                      { label: 'Mirror Competitors', value: 'mirror' },
+                      { label: 'Maverick', value: 'maverick' },
+                      { label: 'Happy Medium', value: 'happy_medium' },
+                      { label: 'Maverick+', value: 'maverick_plus' },
+                    ]}
+                  />
+                  {scope === 'portfolio' && (
+                    <Button
+                      size="middle"
+                      style={{
+                        height: '32px',
+                        borderRadius: '6px',
+                        border: '1px solid #d9d9d9'
+                      }}
+                    >
+                      Multiple
+                    </Button>
+                  )}
+                </div>
               </Form.Item>
             </Col>
             <Col xs={24} md={12} lg={8}>
-              <Form.Item label="Value Pricing" name="valuePricing">
+              <Form.Item
+                label={
+                  <span>
+                    <SettingOutlined style={{ marginRight: 8, color: '#52c41a' }} />
+                    Value Pricing
+                    <Tooltip title="Configure value pricing settings for your facilities.">
+                      <InfoCircleOutlined style={{ marginLeft: 8, color: '#1890ff' }} />
+                    </Tooltip>
+                  </span>
+                }
+                name="valuePricing"
+              >
                 <Segmented
                   size="middle"
-                  options={[
-                    { label: 'On', value: 'on' },
-                    { label: 'Off', value: 'off' },
-                    { label: 'Multiple', value: 'multiple' },
-                  ]}
+                  options={
+                    scope === 'portfolio'
+                      ? [
+                          { label: 'On', value: 'on' },
+                          { label: 'Off', value: 'off' },
+                          { label: 'Multiple', value: 'multiple' },
+                        ]
+                      : [
+                          { label: 'On', value: 'on' },
+                          { label: 'Off', value: 'off' },
+                        ]
+                  }
                 />
               </Form.Item>
             </Col>
-            <Col xs={24} md={12} lg={8}>
-              <Form.Item label="Cadence" name="cadence">
-                <Segmented
-                  size="middle"
-                  value={cadence}
-                  onChange={handleCadenceChange}
-                  options={[
-                    { label: 'Scheduled', value: 'Scheduled' },
-                    { label: 'Manual', value: 'Manual' },
-                  ]}
-                />
-              </Form.Item>
-            </Col>
+
           </Row>
 
-          {/* Street Rate Update Strategy - only show for Scheduled cadence */}
-          {cadence === 'Scheduled' && (
+          {/* Unit Ranking Upload - only show for facility scope */}
+          {scope === 'facility' && (
             <>
-              <Divider orientation="left">Street Rate Update Schedule</Divider>
+              <Divider orientation="left">Unit Ranking Upload</Divider>
+              <Row gutter={[16, 16]}>
+                <Col xs={24}>
+                  <Form.Item
+                    label={
+                      <span>
+                        <BulbOutlined style={{ marginRight: 8, color: '#fa8c16' }} />
+                        Unit Ranking Upload
+                        <Tooltip title="Upload unit ranking data for this facility.">
+                          <InfoCircleOutlined style={{ marginLeft: 8, color: '#1890ff' }} />
+                        </Tooltip>
+                      </span>
+                    }
+                  >
+                    <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                      <Upload
+                        accept=".xlsx"
+                        showUploadList={false}
+                        beforeUpload={() => false}
+                      >
+                        <Button icon={<UploadOutlined />}>
+                          Click Here To Upload Your Unit Ranking
+                        </Button>
+                      </Upload>
+                      <Button
+                        type="link"
+                        icon={<DownloadOutlined />}
+                        onClick={() => {
+                          // Download sample XLSX logic
+                          console.log('Download sample XLSX');
+                        }}
+                      >
+                        Download Sample XLSX
+                      </Button>
+                    </div>
+                    <div style={{ marginTop: '16px' }}>
+                      <Button
+                        icon={<DownloadOutlined />}
+                        onClick={() => {
+                          // Export unit ranking logic
+                          console.log('Export unit ranking');
+                        }}
+                      >
+                        Click Here To Export Unit Ranking
+                      </Button>
+                    </div>
+                  </Form.Item>
+                </Col>
+              </Row>
+            </>
+          )}
+
+          {/* Street Rate Update Strategy - only show for portfolio scope */}
+          {scope === 'portfolio' && (
+            <>
+              <Divider orientation="left">Street Rate Update Strategy</Divider>
               <Row gutter={[16, 16]}>
                 <Col xs={24} md={12} lg={8}>
                   <Form.Item label="Frequency" name="frequency">
@@ -223,8 +354,20 @@ const Settings = () => {
                 {/* Time of Day - show for Weekly and Monthly */}
                 {(frequency === 'Weekly' || frequency === 'Monthly') && (
                   <Col xs={24} md={12} lg={8}>
-                    <Form.Item label="Time of Day" name="timeOfDay" className="full-width-picker">
-                      <TimePicker format="HH:mm" />
+                    <Form.Item
+                      label={
+                        <span>
+                          <ClockCircleOutlined style={{ marginRight: 8, color: '#fa8c16' }} />
+                          Time of Day
+                          <Tooltip title="Set the time when updates should be executed.">
+                            <InfoCircleOutlined style={{ marginLeft: 8, color: '#1890ff' }} />
+                          </Tooltip>
+                        </span>
+                      }
+                      name="timeOfDay"
+                      className="full-width-picker"
+                    >
+                      <TimePicker format="HH:mm" size="middle" />
                     </Form.Item>
                   </Col>
                 )}
@@ -245,17 +388,20 @@ const Settings = () => {
 
           <Divider orientation="left">Rates To Update</Divider>
           <Row gutter={[16, 16]}>
-            {/* Override Portfolio Rate Setting - only show for facility scope */}
+            {/* Facility-specific fields */}
             {scope === 'facility' && (
-              <Col xs={24} md={12} lg={8}>
-                <Form.Item
-                  name="overridePortfolio"
-                  valuePropName="checked"
-                  label="Override Portfolio Rate Setting"
-                >
-                  <Switch />
-                </Form.Item>
-              </Col>
+              <>
+                <Col xs={24} md={12} lg={8}>
+                  <Form.Item
+                    name="overridePortfolio"
+                    valuePropName="checked"
+                    label="Override Portfolio Rate Setting"
+                  >
+                    <Switch />
+                  </Form.Item>
+                </Col>
+
+              </>
             )}
 
             <Col xs={24} md={12} lg={8}>

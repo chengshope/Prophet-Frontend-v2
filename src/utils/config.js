@@ -20,19 +20,28 @@ export const CADENCE_OPTIONS = ['Scheduled', 'Manual'];
 export const getBearerToken = (token) => `Bearer ${token}`;
 
 export const MOVE_OUT_PROBABILITY_COLORS = {
-  '0-8': '#bbf7d0',
-  '8-14': '#EDF4A2',
-  'above-14': '#FFD7BA',
+  light: {
+    '0-8': '#bbf7d0',
+    '8-14': '#EDF4A2',
+    'above-14': '#FFD7BA',
+  },
+  dark: {
+    '0-8': '#065f46',
+    '8-14': '#713f12',
+    'above-14': '#9a3412',
+  }
 };
 
-export const getMoveOutProbabilityColor = (probability) => {
+export const getMoveOutProbabilityColor = (probability, isDark = false) => {
+  const colors = isDark ? MOVE_OUT_PROBABILITY_COLORS.dark : MOVE_OUT_PROBABILITY_COLORS.light;
+
   if (probability >= 8 && probability < 14) {
-    return MOVE_OUT_PROBABILITY_COLORS['8-14'];
+    return colors['8-14'];
   }
   if (probability >= 14) {
-    return MOVE_OUT_PROBABILITY_COLORS['above-14'];
+    return colors['above-14'];
   }
-  return MOVE_OUT_PROBABILITY_COLORS['0-8'];
+  return colors['0-8'];
 };
 
 export const convertToNumber = (value) => (!value ? null : Number(value));

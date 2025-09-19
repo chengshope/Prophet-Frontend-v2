@@ -347,6 +347,7 @@ export const darkTheme = {
     colorTextQuaternary: 'rgba(255, 255, 255, 0.25)',
     colorBorder: '#434343',
     colorBorderSecondary: '#303030',
+    colorTextLabel: '#c0c4cc',
   },
   components: {
     ...lightTheme.components,
@@ -419,6 +420,12 @@ export const darkTheme = {
       headerSortActiveBg: '#262626',
       bodySortBg: '#1f1f1f',
       rowHoverBg: '#262626',
+    },
+    Form: {
+      ...lightTheme.components.Form,
+      labelColor: 'rgba(255, 255, 255, 0.85)',
+      labelFontSize: 14,
+      labelRequiredMarkColor: '#ff4d4f',
     },
   },
 };

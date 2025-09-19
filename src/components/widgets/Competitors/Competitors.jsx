@@ -289,8 +289,8 @@ const Competitors = () => {
       {!selectedFacility && (
         <Card>
           <div style={{ textAlign: 'center', padding: '48px' }}>
-            <EnvironmentOutlined style={{ fontSize: '48px', color: '#d9d9d9' }} />
-            <Title level={3} style={{ color: '#d9d9d9', marginTop: '16px' }}>
+            <EnvironmentOutlined style={{ fontSize: '48px', opacity: 0.45 }} />
+            <Title level={3} style={{ opacity: 0.45, marginTop: '16px' }}>
               Select a Facility
             </Title>
             <Text type="secondary">

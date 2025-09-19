@@ -78,9 +78,9 @@ const LineChart = ({
       },
       scales: {
         x: {
-          grid: { color: '#e0e0e0', drawBorder: true },
+          grid: { color: '#bbbbbb60', drawBorder: true },
           ticks: { color: '#595959', font: { size: 12 } },
-          border: { color: '#d9d9d9', width: 1 },
+          border: { color: '#bbbbbb60', width: 1 },
         },
         y: {
           min: domain?.[0] ?? 0,
@@ -90,14 +90,14 @@ const LineChart = ({
             drawBorder: true,
             drawOnChartArea: true,
             lineWidth: (ctx) => (ctx.tick.value === 0 ? 2 : 1),
-            color: (ctx) => (ctx.tick.value === 0 ? '#999999' : '#e0e0e0'),
+            color: (ctx) => (ctx.tick.value === 0 ? '#999999' : '#bbbbbb60'),
           },
           ticks: {
             color: '#595959',
             font: { size: 12 },
             callback: (v) => (formatter ? formatter(v) : v),
           },
-          border: { color: '#d9d9d9', width: 1 },
+          border: { color: '#bbbbbb60', width: 1 },
         },
       },
       interaction: { mode: 'index', intersect: false },

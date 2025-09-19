@@ -51,7 +51,7 @@ export const existingRatesColumns = [
     render: (value) => {
       if (!value) return '0.00%';
       const numValue = parseFloat(value.replace('%', '') || 0);
-      const color = numValue >= 5 ? '#52c41a' : numValue >= 2 ? '#faad14' : '#ff4d4f';
+      const color = numValue >= 5 ? 'var(--ant-color-success)' : numValue >= 2 ? 'var(--ant-color-warning)' : 'var(--ant-color-error)';
       return <span style={{ color }}>{value}</span>;
     },
   },
@@ -71,7 +71,7 @@ export const existingRatesColumns = [
     render: (value) => {
       if (!value) return '$0.00';
       const numValue = parseFloat(value.toString().replace(/[$,]/g, '') || 0);
-      const color = numValue >= 0 ? '#52c41a' : '#ff4d4f';
+      const color = numValue >= 0 ? 'var(--ant-color-success)' : 'var(--ant-color-error)';
       return <span style={{ color }}>{value}</span>;
     },
   },
@@ -91,7 +91,7 @@ export const existingRatesColumns = [
     render: (value) => {
       if (!value) return '0.00%';
       const numValue = parseFloat(value.replace('%', '') || 0);
-      const color = numValue <= 10 ? '#52c41a' : numValue <= 20 ? '#faad14' : '#ff4d4f';
+      const color = numValue <= 10 ? 'var(--ant-color-success)' : numValue <= 20 ? 'var(--ant-color-warning)' : 'var(--ant-color-error)';
       return <span style={{ color }}>{value}</span>;
     },
   },
@@ -133,7 +133,7 @@ export const existingRatesColumnsMobile = [
     render: (value) => {
       if (!value) return '0.00%';
       const numValue = parseFloat(value.replace('%', '') || 0);
-      const color = numValue >= 5 ? '#52c41a' : numValue >= 2 ? '#faad14' : '#ff4d4f';
+      const color = numValue >= 5 ? 'var(--ant-color-success)' : numValue >= 2 ? 'var(--ant-color-warning)' : 'var(--ant-color-error)';
       return <span style={{ color }}>{value}</span>;
     },
   },
@@ -147,7 +147,7 @@ export const existingRatesColumnsMobile = [
       if (!value) return '$0';
       // Abbreviated format for mobile
       const numValue = parseFloat(value.toString().replace(/[$,]/g, '') || 0);
-      const color = numValue >= 0 ? '#52c41a' : '#ff4d4f';
+      const color = numValue >= 0 ? 'var(--ant-color-success)' : 'var(--ant-color-error)';
       if (numValue >= 1000000) {
         return <span style={{ color }}>${(numValue / 1000000).toFixed(1)}M</span>;
       } else if (numValue >= 1000) {

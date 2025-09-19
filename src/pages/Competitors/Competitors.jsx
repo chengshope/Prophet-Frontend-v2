@@ -301,10 +301,10 @@ const Competitors = () => {
                     flexDirection: 'column',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    backgroundColor: '#fafafa',
-                    border: '2px dashed #d9d9d9',
+                    backgroundColor: 'var(--ant-color-fill-quaternary)',
+                    border: '2px dashed var(--ant-color-border)',
                     borderRadius: '8px',
-                    color: '#8c8c8c',
+                    opacity: 0.6,
                   }}
                 >
                   <ShopOutlined style={{ fontSize: '48px', marginBottom: '16px' }} />

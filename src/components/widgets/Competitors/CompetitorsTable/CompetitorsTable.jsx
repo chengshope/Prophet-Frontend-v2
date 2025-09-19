@@ -52,7 +52,7 @@ const CompetitorsTable = ({ data, loading, onCompetitorUpdate, onRowHover }) => 
         key: 'store_name',
         sorter: (a, b) => (a.store_name || '').localeCompare(b.store_name || ''),
         render: (_, record) => (
-          <a href={record.source_url} target="_blank" rel="noreferrer" style={{ color: '#1890ff' }}>
+          <a href={record.source_url} target="_blank" rel="noreferrer" style={{ color: 'var(--ant-color-primary)' }}>
             {record.store_name} {record.address}
           </a>
         ),
@@ -110,16 +110,16 @@ const CompetitorsTable = ({ data, loading, onCompetitorUpdate, onRowHover }) => 
                 flexDirection: 'column',
                 alignItems: 'center',
                 padding: '40px 20px',
-                color: '#8c8c8c',
+                color: 'var(--ant-color-text-tertiary)',
               }}
             >
-              <ShopOutlined style={{ fontSize: '48px', marginBottom: '16px', color: '#d9d9d9' }} />
+              <ShopOutlined style={{ fontSize: '48px', marginBottom: '16px', color: 'var(--ant-color-text-quaternary)' }} />
               <div
                 style={{
                   fontSize: '16px',
                   fontWeight: 500,
                   marginBottom: '8px',
-                  color: '#595959',
+                  color: 'var(--ant-color-text-secondary)',
                 }}
               >
                 No Competitors Found

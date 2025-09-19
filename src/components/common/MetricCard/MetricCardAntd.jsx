@@ -23,9 +23,9 @@ const MetricCard = ({
   const getChangeIcon = () => {
     switch (changeType) {
       case 'positive':
-        return <ArrowUpOutlined style={{ color: '#52c41a' }} />;
+        return <ArrowUpOutlined style={{ color: 'var(--ant-color-success)' }} />;
       case 'negative':
-        return <ArrowDownOutlined style={{ color: '#ff4d4f' }} />;
+        return <ArrowDownOutlined style={{ color: 'var(--ant-color-error)' }} />;
       default:
         return null;
     }
@@ -34,11 +34,11 @@ const MetricCard = ({
   const getChangeColor = () => {
     switch (changeType) {
       case 'positive':
-        return '#52c41a';
+        return 'var(--ant-color-success)';
       case 'negative':
-        return '#ff4d4f';
+        return 'var(--ant-color-error)';
       default:
-        return '#8c8c8c';
+        return 'var(--ant-color-text-tertiary)';
     }
   };
 
@@ -52,7 +52,7 @@ const MetricCard = ({
       {date && (
         <div
           className="metric-date"
-          style={{ color: '#8c8c8c', fontSize: '12px', marginTop: '4px' }}
+          style={{ color: 'var(--ant-color-text-tertiary)', fontSize: '12px', marginTop: '4px' }}
         >
           {date}
         </div>
