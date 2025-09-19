@@ -39,7 +39,11 @@ import {
 } from '@/features/existingCustomers/existingCustomersSlice';
 import { removeSavedTenantChanges } from '@/utils/localStorage';
 import PageFrame from '@/components/common/PageFrame';
-import { ExistingCustomersTable, PublishAllModal, ErrorModal } from '@/components/widgets/ExistingCustomers';
+import {
+  ExistingCustomersTable,
+  PublishAllModal,
+  ErrorModal,
+} from '@/components/widgets/ExistingCustomers';
 import './ExistingCustomers.less';
 
 const { Search } = Input;

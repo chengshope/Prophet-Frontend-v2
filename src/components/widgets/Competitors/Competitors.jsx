@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Row, Col, Input, Button, Select, Card, Typography, Space, message } from 'antd';
-import { SearchOutlined, EnvironmentOutlined, SaveOutlined } from '@ant-design/icons';
+import { Row, Col, Input, Button, Select, Card, Typography, Space, message, Segmented } from 'antd';
+import { SearchOutlined, EnvironmentOutlined } from '@ant-design/icons';
 import {
   useGetCompetitorsQuery,
   useGetFacilitiesQuery,
@@ -9,7 +9,8 @@ import {
 } from '@/api/competitorsApi';
 import CompetitorsTable from './CompetitorsTable/CompetitorsTable';
 import CompetitorMap from './CompetitorMap/CompetitorMap';
-import { STRATEGY_OPTIONS } from '../../../utils/LegacyV1/config';
+import { STRATEGY_OPTIONS } from '../../../utils/config';
+import { createValidatedStrategySetter, getStrategyLabel } from '../../../utils/strategyValidation';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -19,10 +20,13 @@ const Competitors = () => {
   const navigate = useNavigate();
 
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [selectedFacilityId, setSelectedFacilityId] = useState(id || null);
   const [selectedStrategy, setSelectedStrategy] = useState(null);
   const [mapCenter, setMapCenter] = useState({ lat: 37.7749, lng: -122.4194 });
   const [facilityCoords, setFacilityCoords] = useState(null);
+  const [hoveredCompetitor, setHoveredCompetitor] = useState(null);
+  const [previousFacilityId, setPreviousFacilityId] = useState(null);
 
   // API hooks
   const { data: facilitiesData } = useGetFacilitiesQuery();
@@ -31,9 +35,11 @@ const Competitors = () => {
     isLoading: isLoadingCompetitors,
     refetch,
   } = useGetCompetitorsQuery(
-    { facilityId: selectedFacilityId, search },
-    { skip: !selectedFacilityId }
+    { storeTrackId: selectedFacility?.stortrack_id, search: debouncedSearch },
+    { skip: !selectedFacility?.stortrack_id }
   );
+
+  // Strategy-related API hooks
   const [updateFacility] = useUpdateFacilityMutation();
 
   // Get selected facility details
@@ -42,10 +48,17 @@ const Competitors = () => {
     return facilitiesData.data.find((f) => f.facility_id === parseInt(selectedFacilityId));
   }, [facilitiesData, selectedFacilityId]);
 
+  // Helper function to validate and set strategy using utility
+  const setValidatedStrategy = useMemo(
+    () => createValidatedStrategySetter(setSelectedStrategy),
+    []
+  );
+
   // Set initial strategy when facility is selected
   useEffect(() => {
     if (selectedFacility) {
-      setSelectedStrategy(selectedFacility.strategy || null);
+      // Use facility's street_rate_strategy property directly with validation
+      setValidatedStrategy(selectedFacility.street_rate_strategy);
 
       // Set facility coordinates and map center
       if (selectedFacility.latitude && selectedFacility.longitude) {
@@ -57,7 +70,7 @@ const Competitors = () => {
         setMapCenter(coords);
       }
     }
-  }, [selectedFacility]);
+  }, [selectedFacility, setValidatedStrategy]);
 
   // Handle facility selection
   const handleFacilityChange = (facilityId) => {
@@ -65,41 +78,49 @@ const Competitors = () => {
     navigate(`/competitors/${facilityId}`);
   };
 
-  // Handle strategy change
-  const handleStrategyChange = (strategy) => {
+  // Handle strategy change - immediately update facility (matching v1)
+  const handleStrategyChange = async (strategy) => {
+    if (!selectedFacilityId || !strategy) return;
+
     setSelectedStrategy(strategy);
-  };
 
-  // Save strategy
-  const handleSaveStrategy = async () => {
-    if (!selectedFacilityId || !selectedStrategy) {
-      message.warning('Please select a facility and strategy');
-      return;
-    }
-
+    // Immediately save to backend like v1 does
     try {
       await updateFacility({
         facilityId: selectedFacilityId,
-        strategy: selectedStrategy,
+        street_rate_strategy: strategy,
       }).unwrap();
 
       message.success('Strategy updated successfully');
     } catch (error) {
       console.error('Error updating strategy:', error);
       message.error('Failed to update strategy');
+      // Revert strategy on error
+      setValidatedStrategy(selectedFacility?.street_rate_strategy);
     }
   };
 
-  // Handle search with debounce
+  // Debounce search input (matching v1's 500ms delay)
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (selectedFacilityId) {
-        refetch();
-      }
+      setDebouncedSearch(search);
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [search, refetch, selectedFacilityId]);
+  }, [search]);
+
+  // Reset competitors data when facility changes
+  useEffect(() => {
+    if (selectedFacilityId !== previousFacilityId) {
+      // Clear search when facility changes
+      setSearch('');
+      setDebouncedSearch('');
+      // Clear hovered competitor
+      setHoveredCompetitor(null);
+      // Update previous facility ID
+      setPreviousFacilityId(selectedFacilityId);
+    }
+  }, [selectedFacilityId, previousFacilityId]);
 
   // Prepare facility options
   const facilityOptions = useMemo(() => {
@@ -152,34 +173,15 @@ const Competitors = () => {
 
           <Col xs={24} md={8}>
             <Text strong>Strategy:</Text>
-            <Select
-              style={{ width: '100%', marginTop: '8px' }}
-              placeholder="Select strategy"
-              value={selectedStrategy}
-              onChange={handleStrategyChange}
-              disabled={!selectedFacilityId}
-            >
-              {strategyOptions.map((option) => (
-                <Option key={option.value} value={option.value}>
-                  {option.label}
-                </Option>
-              ))}
-            </Select>
-          </Col>
-
-          <Col xs={24} md={8} style={{ paddingTop: '24px' }}>
-            <Button
-              type="primary"
-              icon={<SaveOutlined />}
-              onClick={handleSaveStrategy}
-              disabled={
-                !selectedFacilityId ||
-                !selectedStrategy ||
-                selectedStrategy === selectedFacility?.strategy
-              }
-            >
-              Save Strategy
-            </Button>
+            <div style={{ marginTop: '8px' }}>
+              <Segmented
+                options={strategyOptions}
+                value={selectedStrategy}
+                onChange={handleStrategyChange}
+                disabled={!selectedFacility}
+                style={{ width: '100%' }}
+              />
+            </div>
           </Col>
         </Row>
       </Card>
@@ -206,7 +208,8 @@ const Competitors = () => {
             <Col xs={24} md={12}>
               <Space direction="vertical" size="small">
                 <Text>
-                  <strong>Current Strategy:</strong> {selectedFacility.strategy || 'Not set'}
+                  <strong>Current Strategy:</strong>{' '}
+                  {getStrategyLabel(selectedFacility.street_rate_strategy)}
                 </Text>
                 <Text>
                   <strong>Total Units:</strong> {selectedFacility.total_units || 'N/A'}
@@ -220,18 +223,32 @@ const Competitors = () => {
         </Card>
       )}
 
-      {selectedFacilityId && (
+      {selectedFacility && (
         <>
           {/* Search and Controls */}
           <Row justify="space-between" align="middle" style={{ marginBottom: '16px' }}>
             <Col xs={24} md={12}>
-              <Input
-                placeholder="Search competitors..."
-                prefix={<SearchOutlined />}
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                style={{ maxWidth: '400px' }}
-              />
+              <Space direction="vertical" size="small">
+                <Input
+                  placeholder="Search competitors..."
+                  prefix={<SearchOutlined />}
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  style={{ maxWidth: '400px' }}
+                  suffix={
+                    isLoadingCompetitors && debouncedSearch !== search ? (
+                      <SearchOutlined spin />
+                    ) : null
+                  }
+                />
+                {debouncedSearch && competitorsData && (
+                  <Text type="secondary" style={{ fontSize: '12px' }}>
+                    Found {competitorsData.length} competitor
+                    {competitorsData.length !== 1 ? 's' : ''}
+                    {debouncedSearch && ` for "${debouncedSearch}"`}
+                  </Text>
+                )}
+              </Space>
             </Col>
             <Col xs={24} md={12} style={{ textAlign: 'right' }}>
               <Button
@@ -249,9 +266,11 @@ const Competitors = () => {
           {/* Competitors Table */}
           <CompetitorsTable
             data={competitorsData}
-            loading={isLoadingCompetitors}
+            loading={isLoadingCompetitors || (search !== debouncedSearch && search.length > 0)}
             selectedFacility={selectedFacility}
             onCompetitorUpdate={refetch}
+            onRowHover={setHoveredCompetitor}
+            onTableLeave={() => setHoveredCompetitor(null)}
           />
 
           {/* Map */}
@@ -261,13 +280,13 @@ const Competitors = () => {
               selectedFacility={selectedFacility}
               facilityCoords={facilityCoords}
               mapCenter={mapCenter}
-              onMapCenterChange={setMapCenter}
+              hoveredCompetitor={hoveredCompetitor}
             />
           </Card>
         </>
       )}
 
-      {!selectedFacilityId && (
+      {!selectedFacility && (
         <Card>
           <div style={{ textAlign: 'center', padding: '48px' }}>
             <EnvironmentOutlined style={{ fontSize: '48px', color: '#d9d9d9' }} />

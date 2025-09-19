@@ -27,3 +27,9 @@ export const selectPortfolioId = (state) => {
 export const selectIsAuthenticated = (state) => Boolean(state.auth.token);
 
 export const selectPmsType = (state) => state.auth.user?.pf?.pms_type;
+
+export const selectCustomerId = (state) => {
+  const user = state?.auth?.user;
+  if (!user) return undefined;
+  return user.id || user.customer_id || user?.user?.id || undefined;
+};

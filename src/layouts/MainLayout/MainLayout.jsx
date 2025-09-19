@@ -145,8 +145,8 @@ const MainLayout = () => {
     const currentPath = location.pathname;
 
     // Handle sub-routes by checking if current path starts with any menu item key
-    const matchingMenuItem = menuItems.find(item =>
-      currentPath === item.key || currentPath.startsWith(item.key + '/')
+    const matchingMenuItem = menuItems.find(
+      (item) => currentPath === item.key || currentPath.startsWith(item.key + '/')
     );
 
     return matchingMenuItem ? matchingMenuItem.key : currentPath;

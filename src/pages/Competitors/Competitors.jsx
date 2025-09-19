@@ -1,244 +1,296 @@
+/**
+ * Competitors Page Component
+ * Following Rule #4: Main code structure should be pages/{PageName}/{PageComponent}.jsx
+ * Following Rule #2: All API calls must be made via Redux Toolkit (RTK)
+ * Matching v1 UI layout and functionality exactly
+ */
+
+import { useEffect, useCallback, useState, useMemo, useRef } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { Row, Col, Input, Select, Segmented, Space, Card, Flex, Typography } from 'antd';
+import { ShopOutlined } from '@ant-design/icons';
+
 import PageFrame from '@/components/common/PageFrame';
-import { ArrowLeftOutlined, EnvironmentOutlined, ShopOutlined } from '@ant-design/icons';
-import { Button, Card, Col, Input, Row, Segmented, Select, Space, Table, Tag, message } from 'antd';
-import { useMemo, useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import {
-  useGetCompetitorsQuery,
-  useGetFacilitiesQuery,
-  useUpdateFacilityMutation,
-} from '@/api/competitorsApi';
-import { STRATEGY_OPTIONS } from '../../utils/config';
+import CompetitorsTable from '@/components/widgets/Competitors/CompetitorsTable/CompetitorsTable';
 import CompetitorMap from '@/components/widgets/Competitors/CompetitorMap';
+
+// RTK API imports (Rule #2: All API calls must be made via RTK)
+import { useGetCompetitorsQuery, useUpdateFacilityMutation } from '@/api/competitorsApi';
+import { useGetFacilityByIdQuery } from '@/api/streetRatesApi';
+
+// Redux imports (only for caching API responses per Rule #29)
+import { setCachedFacilities } from '@/features/competitors/competitorsSlice';
+import { selectFacilityOptions } from '@/features/competitors/competitorsSelector';
+
+// Validation imports
+import { createValidatedStrategySetter } from '@/utils/strategyValidation';
+
 import './Competitors.less';
+import { useGetFacilitiesListQuery } from '@/api/facilitiesApi';
 
 const { Search } = Input;
-
-const competitorTypeOptions = [
-  { label: 'Direct', value: 'Direct' },
-  { label: 'Indirect', value: 'Indirect' },
-  { label: 'Non-competitor', value: 'Non-competitor' },
-];
+const { Text } = Typography;
 
 const Competitors = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const dispatch = useDispatch();
 
-  const [selectedFacility, setSelectedFacility] = useState(id || undefined);
-  const [strategy, setStrategy] = useState();
+  // Local state (Rule #29: useState for local state)
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [strategy, setStrategy] = useState(null);
+  const [mapCenter, setMapCenter] = useState({ lat: 37.7749, lng: -122.4194 });
   const [hoveredCompetitor, setHoveredCompetitor] = useState(null);
-  const [mapCenter, setMapCenter] = useState({ lat: 39.8283, lng: -98.5795 }); // Center of US
+  const [previousFacilityId, setPreviousFacilityId] = useState(null);
 
-  // API queries
-  const { data: facilities, isLoading: facilitiesLoading } = useGetFacilitiesQuery();
-  const { data: competitors, isLoading: competitorsLoading } = useGetCompetitorsQuery(
-    { facility_id: selectedFacility },
-    { skip: !selectedFacility }
-  );
+  // API queries (Rule #2: All API calls via RTK + Rule #29: redux for api responses)
+  const { data: facilities, isLoading: facilitiesLoading } = useGetFacilitiesListQuery();
+
+  // Get facility details when URL id changes (RTK)
+  const { data: selectedFacility, isLoading: facilityLoading } = useGetFacilityByIdQuery(id, {
+    skip: !id,
+  });
+
+  // RTK mutation for facility updates (including strategy)
   const [updateFacility] = useUpdateFacilityMutation();
 
-  // Get facility options for dropdown
-  const facilityOptions = useMemo(() => {
-    if (!facilities) return [];
-    return facilities.map((f) => ({
-      label: f.facility_name,
-      value: f.facility_id.toString(),
-    }));
-  }, [facilities]);
+  // Helper function to validate and set strategy using utility
+  const setValidatedStrategy = useMemo(() => createValidatedStrategySetter(setStrategy), []);
 
-  // Get current facility
-  const currentFacility = useMemo(() => {
-    if (!facilities || !selectedFacility) return null;
-    return facilities.find((f) => f.facility_id === parseInt(selectedFacility));
-  }, [facilities, selectedFacility]);
-
-  // Get facility coordinates for map center
+  // Compute facility coordinates from selected facility
   const facilityCoords = useMemo(() => {
-    if (!currentFacility?.latitude || !currentFacility?.longitude) return null;
+    if (!selectedFacility?.latitude || !selectedFacility?.longitude) return null;
+    setValidatedStrategy(selectedFacility.street_rate_strategy);
     return {
-      lat: parseFloat(currentFacility.latitude),
-      lng: parseFloat(currentFacility.longitude),
+      lat: parseFloat(selectedFacility.latitude),
+      lng: parseFloat(selectedFacility.longitude),
     };
-  }, [currentFacility]);
+  }, [selectedFacility, setValidatedStrategy]);
 
-  // Update map center when facility changes
+  // Compute competitors API params
+  const competitorsApiParams = useMemo(() => {
+    if (!selectedFacility?.stortrack_id) return null;
+    return {
+      storeTrackId: selectedFacility.stortrack_id,
+      search: debouncedSearch || '',
+    };
+  }, [selectedFacility?.stortrack_id, debouncedSearch]);
+
+  // Get competitors data (RTK)
+  const {
+    data: competitors,
+    isLoading: competitorsLoading,
+    refetch,
+  } = useGetCompetitorsQuery(competitorsApiParams, { skip: !competitorsApiParams });
+
+  // Redux selectors (only for cached facilities dropdown)
+  const facilityOptions = useSelector(selectFacilityOptions);
+
+  // Strategy options (static)
+  const strategyOptions = useMemo(
+    () => [
+      { label: 'Mirror Competitors', value: 'mirror' },
+      { label: 'Maverick', value: 'maverick' },
+      { label: 'Happy Medium', value: 'happy_medium' },
+      { label: 'Maverick+', value: 'maverick_plus' },
+    ],
+    []
+  );
+
+  // Update map center when facility coordinates change
   useEffect(() => {
+    if (facilityCoords) {
+      setMapCenter(facilityCoords);
+    } else {
+      setMapCenter({ lat: 37.7749, lng: -122.4194 });
+    }
+  }, [facilityCoords]);
+
+  // Cache facilities data when it's loaded (Rule #29: use redux for api responses)
+  useEffect(() => {
+    if (facilities) {
+      dispatch(setCachedFacilities(facilities));
+    }
+  }, [facilities, dispatch]);
+
+  // Debounce search input (matching v1's 500ms delay)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  // Reset competitors data when facility changes
+  useEffect(() => {
+    if (id !== previousFacilityId) {
+      // Clear search when facility changes
+      setSearch('');
+      setDebouncedSearch('');
+      // Clear hovered competitor
+      setHoveredCompetitor(null);
+      // Update previous facility ID
+      setPreviousFacilityId(id);
+    }
+  }, [id, previousFacilityId]);
+
+  // Event handlers (copying v1 logic)
+  const handleFacilityChange = useCallback(
+    (facilityId, { facility }) => {
+      setValidatedStrategy(facility.street_rate_strategy);
+      navigate(`/competitors/${facilityId}`);
+    },
+    [navigate, setValidatedStrategy]
+  );
+
+  const handleSearchChange = useCallback((value) => {
+    setSearch(value);
+  }, []);
+
+  const handleStrategyChange = useCallback(
+    async (value) => {
+      if (!selectedFacility || !value) return;
+
+      setStrategy(value);
+
+      // Immediately update facility using RTK mutation (matching v1 behavior)
+      try {
+        await updateFacility({
+          facilityId: selectedFacility.facility_id,
+          street_rate_strategy: value,
+        }).unwrap();
+
+        console.log('Strategy updated successfully');
+      } catch (error) {
+        console.error('Error updating strategy:', error);
+        // Revert strategy on error
+        setValidatedStrategy(selectedFacility?.street_rate_strategy);
+      }
+    },
+    [selectedFacility, setValidatedStrategy, updateFacility]
+  );
+
+  // Throttle ref for smooth map animations (matching v1 behavior)
+  const hoverTimeoutRef = useRef(null);
+
+  const handleRowHover = useCallback((competitor) => {
+    setHoveredCompetitor(competitor);
+
+    // Clear any pending hover timeout
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+
+    // Throttle map center changes for smoother animation (v1-like behavior)
+    if (competitor && competitor.latitude && competitor.longitude) {
+      hoverTimeoutRef.current = setTimeout(() => {
+        setMapCenter({
+          lat: parseFloat(competitor.latitude),
+          lng: parseFloat(competitor.longitude),
+        });
+      }, 50); // Small delay for smoother transitions
+    }
+  }, []);
+
+  const handleTableLeave = useCallback(() => {
+    console.log('Left table area');
+    setHoveredCompetitor(null);
+
+    // Clear any pending hover timeout
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+
+    // Return to facility location when leaving table area
     if (facilityCoords) {
       setMapCenter(facilityCoords);
     }
   }, [facilityCoords]);
 
-  // Strategy labels for segmented control
-  const strategyLabels = useMemo(() => STRATEGY_OPTIONS.map((s) => s.label), []);
-
-  // Filter competitors based on search
-  const filteredCompetitors = useMemo(() => {
-    if (!competitors) return [];
-    return competitors.filter(
-      (competitor) =>
-        competitor.store_name?.toLowerCase().includes(search.toLowerCase()) ||
-        competitor.address?.toLowerCase().includes(search.toLowerCase())
-    );
-  }, [competitors, search]);
-
-  // Handle competitor type update
-  const handleCompetitorTypeUpdate = async (competitorId, newType) => {
-    try {
-      await updateFacility({
-        facility_id: competitorId,
-        comp_type: newType,
-      }).unwrap();
-      message.success('Competitor type updated successfully');
-    } catch {
-      // automatically handled by RTK Query
-    }
-  };
-
-  const columns = [
-    {
-      title: '',
-      dataIndex: 'comp_type',
-      key: 'warning',
-      width: 40,
-      render: (val) => (!val ? <Tag color="red">!</Tag> : null),
-    },
-    {
-      title: 'Competitor',
-      dataIndex: 'store_name',
-      key: 'store_name',
-      sorter: (a, b) => (a.store_name || '').localeCompare(b.store_name || ''),
-      render: (_, record) => (
-        <a href={record.source_url} target="_blank" rel="noreferrer">
-          {record.store_name} {record.address}
-        </a>
-      ),
-    },
-    {
-      title: 'Distance',
-      dataIndex: 'distance',
-      key: 'distance',
-      sorter: (a, b) => (parseFloat(a.distance) || 0) - (parseFloat(b.distance) || 0),
-    },
-    {
-      title: 'Type',
-      dataIndex: 'comp_type',
-      key: 'comp_type',
-      render: (value, record) => (
-        <Select
-          size="small"
-          value={value}
-          placeholder="Select..."
-          style={{ width: 160 }}
-          options={competitorTypeOptions}
-          onChange={(val) => handleCompetitorTypeUpdate(record.id, val)}
-        />
-      ),
-    },
-  ];
+  const handleCompetitorUpdate = useCallback(() => {
+    refetch();
+  }, [refetch]);
 
   return (
     <PageFrame
       title="Competitors"
       extra={[
-        <Space key="controls">
-          <Select
-            showSearch
-            allowClear
-            size="middle"
-            placeholder="Select Facility"
-            options={facilityOptions}
-            value={selectedFacility}
-            onChange={(val) => setSelectedFacility(val)}
-          />
-          <Segmented
-            size="middle"
-            value={strategy}
-            onChange={setStrategy}
-            options={strategyLabels}
-          />
-        </Space>,
+        <Select
+          showSearch
+          allowClear
+          size="middle"
+          placeholder="Select Facility"
+          options={facilityOptions}
+          value={selectedFacility?.id}
+          onChange={handleFacilityChange}
+          loading={facilitiesLoading}
+          style={{ width: 300 }}
+          // Enhanced search functionality (matching v1 flexibility)
+          filterOption={(input, option) => {
+            const searchTerm = input.toLowerCase();
+            // Search in label and additional search text
+            return (
+              option.label.toLowerCase().includes(searchTerm) ||
+              (option.searchText && option.searchText.includes(searchTerm))
+            );
+          }}
+          // Better dropdown behavior (matching v1 flexibility)
+          popupMatchSelectWidth={false}
+          listHeight={400}
+          optionFilterProp="label"
+          virtual={true} // Enable virtual scrolling for large lists
+          // Show more results
+          notFoundContent={facilitiesLoading ? 'Loading...' : 'No facilities found'}
+          // Auto-focus search input when dropdown opens
+          autoFocus={false}
+        />,
       ]}
     >
       <Space direction="vertical" size="large" className="page">
-        <Row gutter={[16, 8]} align="middle" justify="space-between">
-          <Col xs={24} md={12}>
+        {/* Search Section */}
+        <Flex justify="space-between" align="center">
+          <Space direction="vertical" size="small">
             <Search
               size="middle"
-              placeholder="Search..."
+              placeholder="Search competitors..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              allowClear
+              style={{ width: 400 }}
+              loading={competitorsLoading && debouncedSearch !== search}
             />
-          </Col>
-          <Col xs={24} md={12} className="actions-col">
-            <Button
-              color="green"
-              variant="solid"
-              icon={<ArrowLeftOutlined />}
-              onClick={() => navigate('/street-rates')}
-            >
-              Back to Street Rates
-            </Button>
-          </Col>
-        </Row>
+          </Space>
+          <Segmented
+            size="middle"
+            value={strategy}
+            onChange={handleStrategyChange}
+            options={strategyOptions}
+            disabled={!selectedFacility}
+          />
+        </Flex>
 
+        {/* Main Content: Table and Map Side by Side (matching v1 layout) */}
         <Row gutter={[16, 16]}>
           <Col xs={24} lg={12}>
-            <Table
-              rowKey="id"
-              bordered
-              size="small"
-              columns={columns}
-              dataSource={filteredCompetitors}
-              loading={competitorsLoading || facilitiesLoading}
-              locale={{
-                emptyText: (
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      padding: '40px 20px',
-                      color: '#8c8c8c',
-                    }}
-                  >
-                    <ShopOutlined
-                      style={{ fontSize: '48px', marginBottom: '16px', color: '#d9d9d9' }}
-                    />
-                    <div
-                      style={{
-                        fontSize: '16px',
-                        fontWeight: 500,
-                        marginBottom: '8px',
-                        color: '#595959',
-                      }}
-                    >
-                      No Competitors Found
-                    </div>
-                    <div style={{ fontSize: '14px', textAlign: 'center', lineHeight: '1.5' }}>
-                      Competitor information will appear here when available.
-                      <br />
-                      Try adjusting your search criteria or check back later.
-                    </div>
-                  </div>
-                ),
-              }}
-              pagination={{ pageSize: 10 }}
-              onRow={(record) => ({
-                onMouseEnter: () => setHoveredCompetitor(record),
-                onMouseLeave: () => setHoveredCompetitor(null),
-              })}
+            <CompetitorsTable
+              data={competitors}
+              loading={competitorsLoading || (search !== debouncedSearch && search.length > 0)}
+              onCompetitorUpdate={handleCompetitorUpdate}
+              onRowHover={handleRowHover}
+              onTableLeave={handleTableLeave}
             />
           </Col>
           <Col xs={24} lg={12}>
             <Card className="page-card">
               {selectedFacility && facilityCoords ? (
                 <CompetitorMap
-                  competitors={filteredCompetitors || []}
-                  selectedFacility={currentFacility}
+                  competitors={competitors || []}
+                  selectedFacility={selectedFacility}
                   facilityCoords={facilityCoords}
                   mapCenter={mapCenter}
-                  onMapCenterChange={setMapCenter}
                   hoveredCompetitor={hoveredCompetitor}
                 />
               ) : (
@@ -255,7 +307,7 @@ const Competitors = () => {
                     color: '#8c8c8c',
                   }}
                 >
-                  <EnvironmentOutlined style={{ fontSize: '48px', marginBottom: '16px' }} />
+                  <ShopOutlined style={{ fontSize: '48px', marginBottom: '16px' }} />
                   <div style={{ fontSize: '16px', fontWeight: 500 }}>Interactive Map</div>
                   <div style={{ fontSize: '14px', marginTop: '8px' }}>
                     {selectedFacility
