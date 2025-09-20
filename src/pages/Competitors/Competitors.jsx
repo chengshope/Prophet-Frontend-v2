@@ -140,6 +140,8 @@ const Competitors = () => {
   // Event handlers (copying v1 logic)
   const handleFacilityChange = useCallback(
     (facilityId, { facility }) => {
+      // Reset page state when facility changes
+      setSearch('');
       setValidatedStrategy(facility.street_rate_strategy);
       navigate(`/competitors/${facilityId}`);
     },

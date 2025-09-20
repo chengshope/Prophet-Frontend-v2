@@ -6,6 +6,7 @@
  */
 
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { Row, Col, Input, Button, message, Card, Typography, Space } from 'antd';
 import { UserOutlined, ReloadOutlined, CloudUploadOutlined } from '@ant-design/icons';
 import moment from 'moment';
@@ -13,7 +14,6 @@ import moment from 'moment';
 import {
   useGetExistingCustomersQuery,
   usePublishAllRateChangesMutation,
-  useRefreshModelMutation,
 } from '@/api/existingCustomersApi';
 import {
   selectExistingCustomersApiParams,
@@ -50,8 +50,9 @@ const { Search } = Input;
 const { Text } = Typography;
 
 const ExistingCustomers = () => {
-  // Redux state
+  // Redux state and navigation
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   // Redux selectors - centralized state
   const apiParams = useSelector(selectExistingCustomersApiParams);
@@ -68,7 +69,6 @@ const ExistingCustomers = () => {
   // API queries and mutations
   const { isLoading, isFetching } = useGetExistingCustomersQuery(apiParams);
   const [publishAllRateChanges, { isLoading: isPublishing }] = usePublishAllRateChangesMutation();
-  const [refreshModel] = useRefreshModelMutation();
 
   // Event handlers using Redux actions
   const handleSearch = (value) => {
@@ -112,17 +112,11 @@ const ExistingCustomers = () => {
     }
   };
 
-  // Handle refresh model
-  const handleRefreshModel = async () => {
-    try {
-      await refreshModel().unwrap();
-      message.success('Model refreshed successfully');
-      // Navigate to loading page like v1 does
-      window.location.href = '/loading?redirect=existing-customer-rate-increases';
-    } catch (error) {
-      console.error('Error refreshing model:', error);
-      message.error('Failed to refresh model');
-    }
+  // Handle refresh model - redirect to loading page like v1
+  const handleRefreshModel = () => {
+    // Clear any saved changes before refreshing (matching v1 behavior)
+    // Navigate to loading page with redirect parameter
+    navigate('/loading?redirect=existing-customer-rate-increases');
   };
 
   return (
@@ -135,7 +129,7 @@ const ExistingCustomers = () => {
           color="danger"
           variant="filled"
           icon={<ReloadOutlined />}
-          loading={isRefreshingModel}
+          loading={false}
           onClick={handleRefreshModel}
         >
           Refresh Model

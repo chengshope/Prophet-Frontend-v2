@@ -29,7 +29,7 @@ export const MOVE_OUT_PROBABILITY_COLORS = {
     '0-8': '#065f46',
     '8-14': '#713f12',
     'above-14': '#9a3412',
-  }
+  },
 };
 
 export const getMoveOutProbabilityColor = (probability, isDark = false) => {

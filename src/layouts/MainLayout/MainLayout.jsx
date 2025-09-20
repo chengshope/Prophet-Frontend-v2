@@ -31,7 +31,7 @@ const MainLayout = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const isIntegrator = user?.role?.name === 'integrator' || user?.user?.role?.name === 'integrator';
-  const { isDarkMode, toggleTheme, toggleDensity } = useThemeContext();
+  const { isDarkMode } = useThemeContext();
 
   const [logoutApi] = useLogoutMutation();
   const handleLogout = async () => {
@@ -100,12 +100,7 @@ const MainLayout = () => {
       label: 'Settings',
       onClick: () => navigate('/settings'),
     },
-    {
-      key: 'theme',
-      icon: <BulbOutlined />,
-      label: isDarkMode ? 'Light Mode' : 'Dark Mode',
-      onClick: toggleTheme,
-    },
+
     {
       type: 'divider',
     },
@@ -127,14 +122,24 @@ const MainLayout = () => {
       reporting: 'Reporting',
       settings: 'Settings',
       portfolio: 'Portfolio',
+      profile: 'Profile',
     };
-    const items = [{ title: <HomeOutlined />, onClick: () => navigate('/street-rates') }];
 
+    // Start with Home icon that navigates to the default page (Street Rates)
+    const items = [{
+      title: <HomeOutlined />,
+      href: '/street-rates'
+    }];
+
+    // Add breadcrumb items for each path segment
     pathSegments.forEach((segment, index) => {
       const path = `/${pathSegments.slice(0, index + 1).join('/')}`;
-      const title =
-        labelMap[segment] || segment.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
-      items.push({ title, onClick: () => navigate(path) });
+      const title = labelMap[segment] || segment.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+
+      items.push({
+        title,
+        href: path
+      });
     });
 
     return items;
@@ -164,8 +169,6 @@ const MainLayout = () => {
         <HeaderBar
           breadcrumbItems={getBreadcrumbItems()}
           userMenuItems={userMenuItems}
-          onToggleTheme={toggleTheme}
-          onToggleDensity={toggleDensity}
         />
         <Content className="page-content">
           <div className="content-area">

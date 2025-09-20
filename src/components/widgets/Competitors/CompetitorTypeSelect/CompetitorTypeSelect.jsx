@@ -45,7 +45,7 @@ const CompetitorTypeSelect = memo(({ selected, onChange, disabled = false, size 
         <Button block variant="filled" color={colors[selected]}>
           {selected ?? 'Select...'}
         </Button>,
-        <Button variant="filled" color={colors[selected]} icon={<MoreOutlined />}/>,
+        <Button variant="filled" color={colors[selected]} icon={<MoreOutlined />} />,
       ]}
     />
   );

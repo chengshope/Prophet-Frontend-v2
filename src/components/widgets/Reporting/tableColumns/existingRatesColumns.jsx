@@ -51,7 +51,12 @@ export const existingRatesColumns = [
     render: (value) => {
       if (!value) return '0.00%';
       const numValue = parseFloat(value.replace('%', '') || 0);
-      const color = numValue >= 5 ? 'var(--ant-color-success)' : numValue >= 2 ? 'var(--ant-color-warning)' : 'var(--ant-color-error)';
+      const color =
+        numValue >= 5
+          ? 'var(--ant-color-success)'
+          : numValue >= 2
+            ? 'var(--ant-color-warning)'
+            : 'var(--ant-color-error)';
       return <span style={{ color }}>{value}</span>;
     },
   },
@@ -91,7 +96,12 @@ export const existingRatesColumns = [
     render: (value) => {
       if (!value) return '0.00%';
       const numValue = parseFloat(value.replace('%', '') || 0);
-      const color = numValue <= 10 ? 'var(--ant-color-success)' : numValue <= 20 ? 'var(--ant-color-warning)' : 'var(--ant-color-error)';
+      const color =
+        numValue <= 10
+          ? 'var(--ant-color-success)'
+          : numValue <= 20
+            ? 'var(--ant-color-warning)'
+            : 'var(--ant-color-error)';
       return <span style={{ color }}>{value}</span>;
     },
   },
@@ -133,7 +143,12 @@ export const existingRatesColumnsMobile = [
     render: (value) => {
       if (!value) return '0.00%';
       const numValue = parseFloat(value.replace('%', '') || 0);
-      const color = numValue >= 5 ? 'var(--ant-color-success)' : numValue >= 2 ? 'var(--ant-color-warning)' : 'var(--ant-color-error)';
+      const color =
+        numValue >= 5
+          ? 'var(--ant-color-success)'
+          : numValue >= 2
+            ? 'var(--ant-color-warning)'
+            : 'var(--ant-color-error)';
       return <span style={{ color }}>{value}</span>;
     },
   },

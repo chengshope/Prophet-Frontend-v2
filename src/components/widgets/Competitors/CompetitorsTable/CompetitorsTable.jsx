@@ -52,7 +52,12 @@ const CompetitorsTable = ({ data, loading, onCompetitorUpdate, onRowHover }) => 
         key: 'store_name',
         sorter: (a, b) => (a.store_name || '').localeCompare(b.store_name || ''),
         render: (_, record) => (
-          <a href={record.source_url} target="_blank" rel="noreferrer" style={{ color: 'var(--ant-color-primary)' }}>
+          <a
+            href={record.source_url}
+            target="_blank"
+            rel="noreferrer"
+            style={{ color: 'var(--ant-color-primary)' }}
+          >
             {record.store_name} {record.address}
           </a>
         ),
@@ -113,7 +118,13 @@ const CompetitorsTable = ({ data, loading, onCompetitorUpdate, onRowHover }) => 
                 color: 'var(--ant-color-text-tertiary)',
               }}
             >
-              <ShopOutlined style={{ fontSize: '48px', marginBottom: '16px', color: 'var(--ant-color-text-quaternary)' }} />
+              <ShopOutlined
+                style={{
+                  fontSize: '48px',
+                  marginBottom: '16px',
+                  color: 'var(--ant-color-text-quaternary)',
+                }}
+              />
               <div
                 style={{
                   fontSize: '16px',

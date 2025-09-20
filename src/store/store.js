@@ -3,6 +3,8 @@ import { authApi } from '@/api/authApi';
 import { facilitiesApi } from '@/api/facilitiesApi';
 import { reportingApi } from '@/api/reportingApi';
 import { streetRatesApi } from '@/api/streetRatesApi';
+import { settingsApi } from '@/api/settingsApi';
+import { syncDataApi } from '@/api/syncDataApi';
 import existingCustomersApi from '@/api/existingCustomersApi';
 import competitorsApi from '@/api/competitorsApi';
 import authReducer from '@/features/auth/authSlice';
@@ -18,6 +20,8 @@ export const store = configureStore({
     [reportingApi.reducerPath]: reportingApi.reducer,
     [facilitiesApi.reducerPath]: facilitiesApi.reducer,
     [streetRatesApi.reducerPath]: streetRatesApi.reducer,
+    [settingsApi.reducerPath]: settingsApi.reducer,
+    [syncDataApi.reducerPath]: syncDataApi.reducer,
     [existingCustomersApi.reducerPath]: existingCustomersApi.reducer,
     [competitorsApi.reducerPath]: competitorsApi.reducer,
     auth: authReducer,
@@ -33,6 +37,8 @@ export const store = configureStore({
       reportingApi.middleware,
       facilitiesApi.middleware,
       streetRatesApi.middleware,
+      settingsApi.middleware,
+      syncDataApi.middleware,
       existingCustomersApi.middleware,
       competitorsApi.middleware
     ),

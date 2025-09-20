@@ -8,9 +8,7 @@ const PageFrame = ({ children, title = 'Page', extra = [] }) => {
     <PageContainer
       className="page-container"
       header={{
-        breadcrumb: {
-          items: [{ title: 'Home' }, { title: 'Users' }, { title: 'Profile' }],
-        },
+        breadcrumb: false, // Breadcrumb is now in the main header
       }}
     >
       <Card className="page-container-card">

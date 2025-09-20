@@ -7,6 +7,7 @@ import PublicRoute from './guards/PublicRoute';
 import Competitors from '@/pages/Competitors';
 import ExistingCustomers from '@/pages/ExistingCustomers';
 import ForgotPassword from '@/pages/ForgotPassword';
+import Loading from '@/pages/Loading';
 import Login from '@/pages/Login';
 import NotFound from '@/pages/NotFound';
 import Portfolio from '@/pages/Portfolio';
@@ -40,12 +41,14 @@ export const routeConfig = [
     ),
     children: [
       { index: true, element: <StreetRates /> },
+      { path: 'loading', element: <Loading /> },
       { path: 'street-rates', element: <StreetRates /> },
       { path: 'existing-customer-rate-increases', element: <ExistingCustomers /> },
       { path: 'competitors', element: <Competitors /> },
       { path: 'competitors/:id', element: <Competitors /> },
       { path: 'reporting/*', element: <Reporting /> },
       { path: 'settings', element: <Settings /> },
+      { path: 'settings/:id', element: <Settings /> },
       { path: 'portfolio', element: <Portfolio /> },
       { path: 'portfolio/:id', element: <Portfolio /> },
 

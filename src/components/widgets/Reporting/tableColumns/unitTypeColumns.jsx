@@ -32,7 +32,12 @@ export const unitTypeColumns = [
     render: (value) => {
       if (!value) return '0.00%';
       const numValue = parseFloat(value.replace('%', '') || 0);
-      const color = numValue >= 90 ? 'var(--ant-color-success)' : numValue >= 80 ? 'var(--ant-color-warning)' : 'var(--ant-color-error)';
+      const color =
+        numValue >= 90
+          ? 'var(--ant-color-success)'
+          : numValue >= 80
+            ? 'var(--ant-color-warning)'
+            : 'var(--ant-color-error)';
       return <span style={{ color }}>{value}</span>;
     },
   },
@@ -52,7 +57,12 @@ export const unitTypeColumns = [
     render: (value) => {
       if (!value) return '0.00%';
       const numValue = parseFloat(value.replace('%', '') || 0);
-      const color = numValue >= 90 ? 'var(--ant-color-success)' : numValue >= 80 ? 'var(--ant-color-warning)' : 'var(--ant-color-error)';
+      const color =
+        numValue >= 90
+          ? 'var(--ant-color-success)'
+          : numValue >= 80
+            ? 'var(--ant-color-warning)'
+            : 'var(--ant-color-error)';
       return <span style={{ color }}>{value}</span>;
     },
   },

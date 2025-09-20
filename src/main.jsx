@@ -9,8 +9,8 @@ import './index.css';
 import AppProvider from './providers/AppProvider.jsx';
 import AppRouter from './router/AppRouter';
 import { store } from './store/store.js';
-import './styles/global.css';
-import './styles/pagination.css';
+import './styles/global.less';
+import './styles/pagination.less';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

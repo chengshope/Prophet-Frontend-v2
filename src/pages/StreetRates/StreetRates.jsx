@@ -6,6 +6,7 @@
  */
 
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { Row, Space, Col, Input, Button, message } from 'antd';
 import { CloudUploadOutlined, ReloadOutlined, DownloadOutlined } from '@ant-design/icons';
 import moment from 'moment';
@@ -13,7 +14,6 @@ import moment from 'moment';
 import {
   useGetStreetRatesFacilitiesQuery,
   useSubmitAllRatesMutation,
-  useRunPythonModelMutation,
   useLazyExportCSVQuery,
 } from '@/api/streetRatesApi';
 import { selectSavedRateUnits, selectStreetTotal } from '@/features/street/streetSelector';
@@ -46,8 +46,9 @@ import './StreetRates.less';
 const { Search } = Input;
 
 const StreetRates = () => {
-  // Redux state
+  // Redux state and navigation
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const apiParams = useSelector(selectStreetRatesApiParams);
   const search = useSelector(selectSearch);
   const sort = useSelector(selectSort);
@@ -65,7 +66,6 @@ const StreetRates = () => {
 
   const [triggerExportCSV] = useLazyExportCSVQuery();
   const [submitAllRates, { isLoading: isSubmitting }] = useSubmitAllRatesMutation();
-  const [runPythonModel, { isLoading: isRefreshing }] = useRunPythonModelMutation();
 
   // Event Handlers - Using Redux actions
   const handleSearch = (value) => {
@@ -80,15 +80,13 @@ const StreetRates = () => {
     dispatch(setCurrentPage(page));
   };
 
-  // Handle refresh model
-  const handleRefreshModel = async () => {
-    try {
-      await runPythonModel().unwrap();
-      message.success('Model refreshed successfully');
-      refetch();
-    } catch (error) {
-      console.log(error);
-    }
+  // Handle refresh model - redirect to loading page like v1
+  const handleRefreshModel = () => {
+    // Clear any saved rate changes before refreshing
+    dispatch(clearSavedRateChanges());
+    removeSavedRateUnits();
+    // Navigate to loading page with redirect parameter
+    navigate('/loading?redirect=street-rates');
   };
 
   // Handle publish all rates
@@ -145,7 +143,7 @@ const StreetRates = () => {
             color="danger"
             variant="filled"
             icon={<ReloadOutlined />}
-            loading={isRefreshing}
+            loading={false}
             onClick={handleRefreshModel}
           >
             Refresh Model
