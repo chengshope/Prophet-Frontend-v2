@@ -43,12 +43,9 @@ const Reporting = () => {
     [location.pathname]
   );
 
-  // Sync URL with Redux store
   useEffect(() => {
-    if (currentKey !== activeTabFromStore) {
-      dispatch(setActiveTab(currentKey));
-    }
-  }, [currentKey, activeTabFromStore, dispatch]);
+    dispatch(setActiveTab(currentKey));
+  }, [currentKey, dispatch]);
 
   const CurrentComponent =
     tabItems.find((t) => t.key === currentKey)?.component ?? ExecutiveSummaryTab;
@@ -61,10 +58,8 @@ const Reporting = () => {
   const handleTabChange = (key) => {
     const tab = tabItems.find((t) => t.key === key);
     if (tab) {
-      // Update Redux store
       dispatch(setActiveTab(key));
-      // Navigate to new route
-      navigate(tab.path);
+      navigate(tab.path, { replace: true });
     }
   };
 
@@ -74,7 +69,7 @@ const Reporting = () => {
       extra={[
         <Segmented
           size="middle"
-          value={currentKey}
+          value={activeTabFromStore}
           onChange={handleTabChange}
           options={segmentedOptions}
         />,
