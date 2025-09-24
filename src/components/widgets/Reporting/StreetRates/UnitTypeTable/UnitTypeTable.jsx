@@ -1,8 +1,3 @@
-/**
- * Unit Type Table component for Street Rates reporting
- * Following Rule #4: components/widgets/Reporting/StreetRates/UnitTypeTable
- */
-
 import { Table, Card, Alert } from 'antd';
 import { useGetUnitTypeAnalysisQuery } from '@/api/reportingApi';
 import { getUnitTypeColumns, transformUnitTypeData } from '../../tableColumns/unitTypeColumns';

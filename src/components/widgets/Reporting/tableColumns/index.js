@@ -1,9 +1,4 @@
-/**
- * Centralized exports for all reporting table columns
- * Following Rule #4: Table Header Column extraction
- */
-
-export { existingRatesColumns, existingRatesColumnsMobile } from './existingRatesColumns';
+export { existingRatesColumns } from './existingRatesColumns';
 
 export {
   unitTypeColumns,

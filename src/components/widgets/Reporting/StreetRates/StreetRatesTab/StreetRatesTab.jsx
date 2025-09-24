@@ -1,32 +1,46 @@
 import { Row, Space } from 'antd';
-import dayjs from 'dayjs';
-import { useMemo, useState } from 'react';
-import Filters from '@/components/common/Filters';
+import { useDispatch, useSelector } from 'react-redux';
+import ReportingFilters from '@/components/common/ReportingFilters';
 import OccupancyChart from '../OccupancyChart';
 import FacilitiesChart from '../FacilitiesChart';
 import UnitTypeTable from '../UnitTypeTable';
+import {
+  setStreetRatesFilters,
+  resetStreetRatesFilters,
+} from '@/features/reporting/reportingSlice';
+import {
+  selectStreetRatesFilters,
+  selectStreetRatesApiParams,
+} from '@/features/reporting/reportingSelector';
 
 const StreetRatesTab = () => {
-  const [range, setRange] = useState([dayjs().subtract(30, 'day'), dayjs()]);
-  const [facility, setFacility] = useState([]);
+  const dispatch = useDispatch();
 
-  const apiParams = useMemo(() => {
-    const params = {};
-    if (range?.[0]) params.startDate = range[0].format('YYYY-MM-DD');
-    if (range?.[1]) params.endDate = range[1].format('YYYY-MM-DD');
-    if (facility && facility.length > 0) {
-      params.facilityIds = facility;
-    }
-    return params;
-  }, [range, facility]);
+  // Get filters from Redux store
+  const filters = useSelector(selectStreetRatesFilters);
+  const apiParams = useSelector(selectStreetRatesApiParams);
+
+  const handleDateRangeChange = (dateRange) => {
+    dispatch(setStreetRatesFilters({ dateRange }));
+  };
+
+  const handleFacilityChange = (facilityIds) => {
+    dispatch(setStreetRatesFilters({ facilityIds }));
+  };
+
+  const handleReset = () => {
+    dispatch(resetStreetRatesFilters());
+  };
 
   return (
     <Space direction="vertical" size="large" style={{ width: '100%' }}>
-      <Filters
-        dateRange={range}
-        onDateRangeChange={setRange}
-        facility={facility}
-        onFacilityChange={setFacility}
+      <ReportingFilters
+        dateRange={filters.dateRange}
+        onDateRangeChange={handleDateRangeChange}
+        facility={filters.facilityIds}
+        onFacilityChange={handleFacilityChange}
+        onReset={handleReset}
+        placeholder="All facilities"
       />
 
       <Row gutter={[16, 16]}>

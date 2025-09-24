@@ -1,11 +1,6 @@
-/**
- * Existing Rates Table component
- * Following Rule #4: components/widgets/Reporting/ExistingRates/ExistingRatesTable
- */
-
 import { Table, Card, Alert } from 'antd';
 import { useGetExistingCustomersReportQuery } from '@/api/reportingApi';
-import { existingRatesColumns } from '../../tableColumns/existingRatesColumns';
+import { existingRatesColumns as columns } from '../../tableColumns/existingRatesColumns';
 import { sanitizeTableData, shouldShowLoading } from '@/utils/reportingHelpers';
 
 const ExistingRatesTable = ({ apiParams }) => {
@@ -18,9 +13,6 @@ const ExistingRatesTable = ({ apiParams }) => {
     skip: !apiParams,
   });
 
-  // Transform API data to match table column expectations
-  // Handle case where reportData might be null, undefined, or not an array
-  // API returns data in reportData.result array
   const rawData = reportData?.data || reportData || [];
   const transformedData = Array.isArray(rawData)
     ? rawData.map((item, index) => ({
@@ -45,7 +37,6 @@ const ExistingRatesTable = ({ apiParams }) => {
     : [];
 
   const tableData = sanitizeTableData(transformedData);
-  const columns = existingRatesColumns;
   const showLoading = shouldShowLoading(isLoading, isFetching, tableData.length > 0);
 
   if (error) {
