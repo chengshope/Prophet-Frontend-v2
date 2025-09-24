@@ -9,7 +9,6 @@ import existingCustomersApi from '@/api/existingCustomersApi';
 import competitorsApi from '@/api/competitorsApi';
 import authReducer from '@/features/auth/authSlice';
 import streetReducer from '@/features/street/streetSlice';
-import streetRateReducer from '@/features/streetRate/streetRateSlice';
 import existingCustomersReducer from '@/features/existingCustomers/existingCustomersSlice';
 import reportingReducer from '@/features/reporting/reportingSlice';
 import competitorsReducer from '@/features/competitors/competitorsSlice';
@@ -26,7 +25,6 @@ export const store = configureStore({
     [competitorsApi.reducerPath]: competitorsApi.reducer,
     auth: authReducer,
     street: streetReducer,
-    streetRate: streetRateReducer,
     existingCustomers: existingCustomersReducer,
     reporting: reportingReducer,
     competitors: competitorsReducer,

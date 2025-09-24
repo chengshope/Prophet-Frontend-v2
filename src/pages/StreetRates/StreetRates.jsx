@@ -1,10 +1,4 @@
-/**
- * StreetRates Page Component
- * Following Rule #4: Main code structure should be pages/{PageName}/{PageComponent}.jsx
- * Following Rule #10: Keep under 120 lines
- * Following Rule #28: Do not change layout or logic
- */
-
+import { useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Row, Space, Col, Input, Button, message } from 'antd';
@@ -20,25 +14,6 @@ import { selectSavedRateUnits, selectStreetTotal } from '@/features/street/stree
 import { clearSavedRateChanges } from '@/features/street/streetSlice';
 import { removeSavedRateUnits } from '@/utils/localStorage';
 import { handleCSVExport } from '@/utils/csvExport';
-import {
-  selectStreetRatesApiParams,
-  selectSearch,
-  selectSort,
-  selectOrderBy,
-  selectPublishModalOpen,
-  selectErrorModalOpen,
-  selectErrorLog,
-  selectLatestPublishedDate,
-  selectPaginationConfig,
-} from '@/features/streetRate/streetRateSelector';
-import {
-  setSearch,
-  setSort,
-  setCurrentPage,
-  setPublishModalOpen,
-  setLatestPublishedDate,
-  closeErrorModal,
-} from '@/features/streetRate/streetRateSlice';
 import PageFrame from '@/components/common/PageFrame';
 import { StreetRatesTable, PublishConfirmModal, ErrorModal } from '@/components/widgets/StreetRate';
 import './StreetRates.less';
@@ -46,52 +21,63 @@ import './StreetRates.less';
 const { Search } = Input;
 
 const StreetRates = () => {
-  // Redux state and navigation
+  const [search, setSearchState] = useState('');
+  const [sort, setSortState] = useState('facility_name');
+  const [orderby, setOrderByState] = useState('asc');
+  const [currentPage, setCurrentPageState] = useState(1);
+  const [publishModalOpen, setPublishModalOpen] = useState(false);
+  const [errorModalOpen, setErrorModalOpen] = useState(false);
+  const [errorLog, setErrorLog] = useState('');
+  const [latestPublishedDate, setLatestPublishedDate] = useState('');
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const apiParams = useSelector(selectStreetRatesApiParams);
-  const search = useSelector(selectSearch);
-  const sort = useSelector(selectSort);
-  const orderby = useSelector(selectOrderBy);
   const totalFacilities = useSelector(selectStreetTotal);
   const savedRateChangedUnits = useSelector(selectSavedRateUnits);
-  const publishModalOpen = useSelector(selectPublishModalOpen);
-  const errorModalOpen = useSelector(selectErrorModalOpen);
-  const errorLog = useSelector(selectErrorLog);
-  const latestPublishedDate = useSelector(selectLatestPublishedDate);
-  const paginationConfig = useSelector(selectPaginationConfig);
 
-  // API queries and mutations
-  const { isLoading, isFetching, refetch } = useGetStreetRatesFacilitiesQuery(apiParams);
+  const apiParams = useMemo(() => ({
+    search,
+    sort,
+    orderby,
+    page: currentPage,
+    limit: 10,
+  }), [search, sort, orderby, currentPage]);
+
+  const paginationConfig = useMemo(() => ({
+    current: currentPage,
+    pageSize: 10,
+    showSizeChanger: false,
+    showQuickJumper: true,
+    showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} facilities`,
+  }), [currentPage]);
+
+  const { isLoading, isFetching } = useGetStreetRatesFacilitiesQuery(apiParams);
 
   const [triggerExportCSV] = useLazyExportCSVQuery();
   const [submitAllRates, { isLoading: isSubmitting }] = useSubmitAllRatesMutation();
 
-  // Event Handlers - Using Redux actions
   const handleSearch = (value) => {
-    dispatch(setSearch(value));
+    setSearchState(value);
+    setCurrentPageState(1);
   };
 
   const handleSort = (column, direction) => {
-    dispatch(setSort({ column, direction }));
+    setSortState(column);
+    setOrderByState(direction);
   };
 
   const handlePagination = (page) => {
-    dispatch(setCurrentPage(page));
+    setCurrentPageState(page);
   };
 
-  // Handle refresh model - redirect to loading page like v1
   const handleRefreshModel = () => {
-    // Clear any saved rate changes before refreshing
     dispatch(clearSavedRateChanges());
     removeSavedRateUnits();
-    // Navigate to loading page with redirect parameter
     navigate('/loading?redirect=street-rates');
   };
 
-  // Handle publish all rates
   const handlePublishNewRates = () => {
-    dispatch(setPublishModalOpen(true));
+    setPublishModalOpen(true);
   };
 
   const confirmPublishAllRates = async () => {
@@ -102,21 +88,19 @@ const StreetRates = () => {
         return;
       }
 
-      // Use only SAVED rate changes for publishing
       await submitAllRates(savedRateChangedUnits).unwrap();
-      dispatch(setLatestPublishedDate(moment(new Date()).format('MM/DD/YYYY, hh:mm A')));
+      setLatestPublishedDate(moment(new Date()).format('MM/DD/YYYY, hh:mm A'));
       message.success('Rates published successfully');
-      dispatch(setPublishModalOpen(false));
+      setPublishModalOpen(false);
 
-      // Clear the saved rate changes after successful publishing
       removeSavedRateUnits();
       dispatch(clearSavedRateChanges());
-    } catch {
-      // handled by RTK
+    } catch (error) {
+      setErrorLog(error?.data?.message || 'An error occurred while publishing rates');
+      setErrorModalOpen(true);
     }
   };
 
-  // CSV Export functionality (matching v1 - uses API endpoint)
   const exportCSV = () => {
     handleCSVExport(
       () => triggerExportCSV().unwrap(),
@@ -126,9 +110,9 @@ const StreetRates = () => {
     );
   };
 
-  // Close error modal
   const closeModalError = () => {
-    dispatch(closeErrorModal());
+    setErrorModalOpen(false);
+    setErrorLog('');
   };
 
   return (
@@ -136,7 +120,7 @@ const StreetRates = () => {
       title="Street Rates"
       extra={[
         <Space>
-          <Button color="primary" variant="filled" icon={<DownloadOutlined />} onClick={exportCSV}>
+          <Button color="blue" variant="filled" icon={<DownloadOutlined />} onClick={exportCSV}>
             Export CSV
           </Button>
           <Button
@@ -152,7 +136,6 @@ const StreetRates = () => {
       ]}
     >
       <Space direction="vertical" size="large" className="street-rates-management">
-        {/* Header Controls */}
         <Row gutter={[16, 8]} align="middle" justify="space-between">
           <Col xs={24} md={8}>
             <Search
@@ -175,7 +158,6 @@ const StreetRates = () => {
           </Col>
         </Row>
 
-        {/* Street Rates Table */}
         <StreetRatesTable
           loading={isLoading || isFetching}
           sortColumn={sort}
@@ -190,16 +172,14 @@ const StreetRates = () => {
           savedRateChangedUnitsCount={savedRateChangedUnits.length}
         />
 
-        {/* Publish Confirmation Modal */}
         <PublishConfirmModal
           open={publishModalOpen}
           onOk={confirmPublishAllRates}
-          onCancel={() => dispatch(setPublishModalOpen(false))}
+          onCancel={() => setPublishModalOpen(false)}
           confirmLoading={isSubmitting}
           savedRateChangedUnitsCount={savedRateChangedUnits.length}
         />
 
-        {/* Error Modal */}
         <ErrorModal open={errorModalOpen} onCancel={closeModalError} errorLog={errorLog} />
       </Space>
     </PageFrame>
