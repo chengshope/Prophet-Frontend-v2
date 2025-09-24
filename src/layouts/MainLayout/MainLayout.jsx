@@ -1,17 +1,18 @@
 import { useLogoutMutation } from '@/api/authApi';
 import { useThemeContext } from '@/contexts/ThemeContext';
 import { clearToken } from '@/features/auth/authSlice';
+import { selectPortfolioName, selectUsername } from '@/features/auth/authSelector';
 import {
   AppstoreOutlined,
   BookOutlined,
-  BulbOutlined,
+
   HomeOutlined,
   LineChartOutlined,
   LogoutOutlined,
   SettingOutlined,
   ShopOutlined,
   TeamOutlined,
-  UserOutlined,
+
 } from '@ant-design/icons';
 import { Layout } from 'antd';
 import HeaderBar from './Header';
@@ -32,6 +33,8 @@ const MainLayout = () => {
   const { user } = useSelector((state) => state.auth);
   const isIntegrator = user?.role?.name === 'integrator' || user?.user?.role?.name === 'integrator';
   const { isDarkMode } = useThemeContext();
+  const portfolioName = useSelector(selectPortfolioName);
+  const username = useSelector(selectUsername);
 
   const [logoutApi] = useLogoutMutation();
   const handleLogout = async () => {
@@ -89,20 +92,27 @@ const MainLayout = () => {
 
   const userMenuItems = [
     {
-      key: 'profile',
-      icon: <UserOutlined />,
-      label: 'Profile',
-      onClick: () => navigate('/profile'),
-    },
-    {
-      key: 'settings',
-      icon: <SettingOutlined />,
-      label: 'Settings',
-      onClick: () => navigate('/settings'),
-    },
-
-    {
-      type: 'divider',
+      key: 'user-info',
+      label: (
+        <div style={{
+          padding: '8px 0',
+          borderBottom: '1px solid var(--ant-color-border)',
+          marginBottom: '8px',
+          pointerEvents: 'none'
+        }}>
+          <div style={{ fontWeight: 'bold', fontSize: '14px' }}>
+            {username || 'User'}
+          </div>
+          <div style={{
+            fontSize: '12px',
+            color: 'var(--ant-color-text-secondary)',
+            marginTop: '2px'
+          }}>
+            {portfolioName}
+          </div>
+        </div>
+      ),
+      disabled: true,
     },
     {
       key: 'logout',
@@ -125,20 +135,17 @@ const MainLayout = () => {
       profile: 'Profile',
     };
 
-    // Start with Home icon that navigates to the default page (Street Rates)
+    // Start with Home icon (no navigation)
     const items = [{
-      title: <HomeOutlined />,
-      href: '/street-rates'
+      title: <HomeOutlined />
     }];
 
-    // Add breadcrumb items for each path segment
-    pathSegments.forEach((segment, index) => {
-      const path = `/${pathSegments.slice(0, index + 1).join('/')}`;
+    // Add breadcrumb items for each path segment (no navigation)
+    pathSegments.forEach((segment) => {
       const title = labelMap[segment] || segment.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 
       items.push({
-        title,
-        href: path
+        title
       });
     });
 

@@ -2,6 +2,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { PageHeader } from '@ant-design/pro-layout/es';
 import { Card } from 'antd';
 import './PageFrame.less';
+import AppFooter from '@/layouts/MainLayout/Footer';
 
 const PageFrame = ({ children, title = 'Page', extra = [] }) => {
   return (
@@ -15,6 +16,7 @@ const PageFrame = ({ children, title = 'Page', extra = [] }) => {
         <PageHeader title={title} className="page-container-header" extra={extra} />
         {children}
       </Card>
+      <AppFooter />
     </PageContainer>
   );
 };

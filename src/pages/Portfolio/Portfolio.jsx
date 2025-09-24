@@ -330,10 +330,13 @@ const Portfolio = () => {
     {
       title: 'Action',
       key: 'action',
+      align: 'center',
+      width: 150,
       render: (_, record) => (
         <Button
-          type="primary"
-          danger
+          color="primary"
+          variant='outlined'
+          size='small'
           icon={<DeleteOutlined />}
           onClick={() => handleDeleteUserClick(record)}
         >

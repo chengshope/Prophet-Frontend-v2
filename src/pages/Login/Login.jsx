@@ -67,19 +67,17 @@ const Login = () => {
           </Button>
         </Form.Item>
       </Form>
-
+{/* 
       <Divider style={{ margin: '0 0 14px' }}>Or</Divider>
 
-      <Space direction="vertical">
-        <Button
-          icon={<GoogleIcon size={16} />}
-          onClick={() => showInfo('Google login not implemented yet')}
-          block
-          size="large"
-        >
-          Continue with Google
-        </Button>
-      </Space>
+      <Button
+        icon={<GoogleIcon size={16} />}
+        onClick={() => showInfo('Google login not implemented yet')}
+        block
+        size="large"
+      >
+        Continue with Google
+      </Button> */}
     </Flex>
   );
 };

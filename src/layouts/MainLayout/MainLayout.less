@@ -57,6 +57,29 @@
   height: 40px;
 }
 
+.theme-toggle-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 0;
+}
+
+/* Fix disabled input styling in dark mode */
+[data-theme='dark'] {
+  .ant-input:disabled,
+  .ant-input-number:disabled,
+  .ant-input-number-input:disabled {
+    background-color: rgba(255, 255, 255, 0.04) !important;
+    color: rgba(255, 255, 255, 0.25) !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+  }
+
+  .ant-input-number:disabled .ant-input-number-input {
+    background-color: transparent !important;
+    color: rgba(255, 255, 255, 0.25) !important;
+  }
+}
+
 .sider-bottom {
   padding: 4px 8px;
   border-top: 1px solid var(--ant-colorBorder);

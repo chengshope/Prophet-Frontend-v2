@@ -2,11 +2,11 @@
 export const lightTheme = {
   token: {
     // Primary colors
-    colorPrimary: '#1890ff',
+    colorPrimary: '#ef4444',
     colorSuccess: '#52c41a',
     colorWarning: '#faad14',
     colorError: '#ff4d4f',
-    colorInfo: '#1890ff',
+    colorInfo: '#ef4444', // Match primary color
 
     // Background colors
     colorBgContainer: '#ffffff',
@@ -126,11 +126,11 @@ export const lightTheme = {
     // Menu customization
     Menu: {
       itemBg: 'transparent',
-      itemSelectedBg: '#e6f7ff',
-      itemSelectedColor: '#1890ff',
+      itemSelectedBg: '#fef2f2',
+      itemSelectedColor: '#ef4444',
       itemHoverBg: '#f5f5f5',
-      itemHoverColor: '#1890ff',
-      itemActiveBg: '#e6f7ff',
+      itemHoverColor: '#ef4444',
+      itemActiveBg: '#fef2f2',
       itemPaddingInline: 16,
       itemMarginInline: 8,
       itemBorderRadius: 8,
@@ -139,16 +139,16 @@ export const lightTheme = {
     },
 
     // Table customization
-    Table: {
-      borderRadius: 8,
-      headerBg: '#fafafa',
-      headerColor: 'rgba(0, 0, 0, 0.85)',
-      headerSortActiveBg: '#f0f0f0',
-      bodySortBg: '#fafafa',
-      rowHoverBg: '#f5f5f5',
-      cellPaddingBlock: 16,
-      cellPaddingInline: 16,
-    },
+    // Table: {
+    //   borderRadius: 8,
+    //   headerBg: '#fafafa',
+    //   headerColor: 'rgba(0, 0, 0, 0.85)',
+    //   headerSortActiveBg: '#f0f0f0',
+    //   bodySortBg: '#fafafa',
+    //   rowHoverBg: '#f5f5f5',
+    //   cellPaddingBlock: 16,
+    //   cellPaddingInline: 16,
+    // },
 
     // Modal customization
     Modal: {
@@ -237,12 +237,12 @@ export const lightTheme = {
       controlHeight: 40,
       controlHeightLG: 48,
       controlHeightSM: 32,
-      itemSelectedBg: '#1890ff',
+      itemSelectedBg: '#ef4444',
       itemSelectedColor: '#ffffff',
       itemHoverBg: '#f5f5f5',
       itemHoverColor: 'rgba(0, 0, 0, 0.88)',
-      itemActiveBg: '#e6f7ff',
-      itemActiveColor: '#1890ff',
+      itemActiveBg: '#fef2f2',
+      itemActiveColor: '#ef4444',
       trackBg: '#f5f5f5',
       trackPadding: 2,
     },
@@ -357,17 +357,20 @@ export const darkTheme = {
       colorTextPlaceholder: 'rgba(255, 255, 255, 0.45)',
       colorIcon: 'rgba(255, 255, 255, 0.45)',
       colorIconHover: 'rgba(255, 255, 255, 0.65)',
+      colorBgContainerDisabled: 'rgba(255, 255, 255, 0.04)',
+      colorTextDisabled: 'rgba(255, 255, 255, 0.25)',
+      colorBorderBg: 'rgba(255, 255, 255, 0.08)',
     },
     Select: {
       ...lightTheme.components.Select,
     },
     Segmented: {
       ...lightTheme.components.Segmented,
-      itemSelectedBg: '#1890ff',
+      itemSelectedBg: '#ef4444',
       itemSelectedColor: '#ffffff',
       itemHoverBg: '#262626',
       itemHoverColor: 'rgba(255, 255, 255, 0.88)',
-      itemActiveBg: '#1890ff',
+      itemActiveBg: '#00000085',
       itemActiveColor: '#ffffff',
       trackBg: '#262626',
     },
@@ -379,6 +382,9 @@ export const darkTheme = {
     },
     InputNumber: {
       ...lightTheme.components.InputNumber,
+      colorBgContainerDisabled: 'rgba(255, 255, 255, 0.04)',
+      colorTextDisabled: 'rgba(255, 255, 255, 0.25)',
+      colorBorderBg: 'rgba(255, 255, 255, 0.08)',
     },
     AutoComplete: {
       ...lightTheme.components.AutoComplete,
@@ -402,30 +408,36 @@ export const darkTheme = {
     Menu: {
       ...lightTheme.components.Menu,
       itemBg: 'transparent',
-      itemSelectedBg: '#1890ff',
+      itemSelectedBg: '#ef4444',
       itemSelectedColor: '#ffffff',
       itemHoverBg: '#262626',
       itemHoverColor: 'rgba(255, 255, 255, 0.88)',
-      itemActiveBg: '#1890ff',
+      itemActiveBg: '#ef4444',
       itemActiveColor: '#ffffff',
     },
     Card: {
       ...lightTheme.components.Card,
       headerBg: 'transparent',
     },
-    Table: {
-      ...lightTheme.components.Table,
-      headerBg: '#1f1f1f',
-      headerColor: 'rgba(255, 255, 255, 0.85)',
-      headerSortActiveBg: '#262626',
-      bodySortBg: '#1f1f1f',
-      rowHoverBg: '#262626',
-    },
+    // Table: {
+    //   ...lightTheme.components.Table,
+    //   headerBg: '#1f1f1f',
+    //   headerColor: 'rgba(255, 255, 255, 0.85)',
+    //   headerSortActiveBg: '#262626',
+    //   bodySortBg: '#1f1f1f',
+    //   rowHoverBg: '#262626',
+    // },
     Form: {
       ...lightTheme.components.Form,
       labelColor: 'rgba(255, 255, 255, 0.85)',
       labelFontSize: 14,
       labelRequiredMarkColor: '#ff4d4f',
+    },
+    Breadcrumb: {
+      ...lightTheme.components.Breadcrumb,
+      linkColor: 'rgba(255, 255, 255, 0.65)',
+      linkHoverColor: '#40a9ff',
+      separatorColor: 'rgba(255, 255, 255, 0.45)',
     },
   },
 };
