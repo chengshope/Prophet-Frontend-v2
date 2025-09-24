@@ -1,5 +1,4 @@
 import { Space } from 'antd';
-import dayjs from 'dayjs';
 import { useDispatch, useSelector } from 'react-redux';
 import ReportingFilters from '@/components/common/ReportingFilters';
 import ExistingRatesTable from '../ExistingRatesTable';

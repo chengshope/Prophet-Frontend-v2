@@ -1,4 +1,4 @@
-import { useMemo, useRef, useEffect, useState } from 'react';
+import { useMemo, useRef } from 'react';
 import { Card } from 'antd';
 import {
   Chart as ChartJS,
