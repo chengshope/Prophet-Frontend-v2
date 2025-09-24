@@ -33,7 +33,6 @@ export default function CompetitorMap({
     (map) => {
       mapRef.current = map;
 
-      // 1. Show facility location on first load
       if (facilityCoords) {
         map.setCenter(facilityCoords);
         map.setZoom(defaultZoom);
@@ -42,7 +41,6 @@ export default function CompetitorMap({
     [facilityCoords]
   );
 
-  // Handle facility coordinates change after map load
   useEffect(() => {
     if (mapRef.current && facilityCoords) {
       mapRef.current.setCenter(facilityCoords);
@@ -50,12 +48,6 @@ export default function CompetitorMap({
     }
   }, [facilityCoords]);
 
-  /**
-   * Flexible pan/zoom animation:
-   * - First render: set center directly.
-   * - Subsequent updates: if distance > 5 km, zoom out then smooth pan and zoom back.
-   * - Otherwise just pan.
-   */
   useEffect(() => {
     if (!mapRef.current || !mapCenter) return;
     const map = mapRef.current;
@@ -82,7 +74,6 @@ export default function CompetitorMap({
     setPrevLocation(mapCenter);
   }, [mapCenter]);
 
-  // MarkerF icons - location pin design with circular hole like the attached image
   const facilityIcon = useMemo(
     () => ({
       path: 'M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z',
@@ -140,7 +131,6 @@ export default function CompetitorMap({
 
   return (
     <div>
-      {/* Legend */}
       <div style={{ marginBottom: '16px' }}>
         <Space>
           <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -171,7 +161,6 @@ export default function CompetitorMap({
       </div>
 
       <GoogleMap mapContainerStyle={mapContainerStyle} zoom={defaultZoom} onLoad={onMapLoad}>
-        {/* Facility markerF */}
         {facilityCoords && selectedFacility && (
           <MarkerF
             position={facilityCoords}
@@ -180,7 +169,6 @@ export default function CompetitorMap({
           />
         )}
 
-        {/* Competitors */}
         {competitors.map((c, i) => {
           if (!c.latitude || !c.longitude) return null;
           const pos = { lat: parseFloat(c.latitude), lng: parseFloat(c.longitude) };
@@ -203,7 +191,6 @@ export default function CompetitorMap({
             color="blue"
             style={{ cursor: 'pointer' }}
             onMouseEnter={() => {
-              // 2. Pan to facility when hovering facility card
               if (mapRef.current && facilityCoords) {
                 mapRef.current.panTo(facilityCoords);
               }

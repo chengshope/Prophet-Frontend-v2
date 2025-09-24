@@ -1,19 +1,11 @@
-/**
- * CompetitorsTable Component
- * Following Rule #4: components/widgets/Competitors/CompetitorsTable
- * Matching v1 table structure with warning icons, competitor types, and proper columns
- */
-
-import { useMemo } from 'react';
-import { Table, Tag } from 'antd';
+import { Table } from 'antd';
 import { useUpdateCompetitorMutation } from '@/api/competitorsApi';
-import CompetitorTypeSelect from '../CompetitorTypeSelect';
+import { getCompetitorsTableColumns } from '../tableColumns';
 import { ShopOutlined } from '@ant-design/icons';
 
 const CompetitorsTable = ({ data, loading, onCompetitorUpdate, onRowHover }) => {
   const [updateCompetitor] = useUpdateCompetitorMutation();
 
-  // Handle competitor type change (matching v1)
   const handleCompetitorTypeChange = async (competitorId, newType) => {
     try {
       await updateCompetitor({
@@ -30,58 +22,10 @@ const CompetitorsTable = ({ data, loading, onCompetitorUpdate, onRowHover }) => 
     }
   };
 
-  // Table columns matching v1 structure exactly
-  const columns = useMemo(
-    () => [
-      {
-        title: '',
-        dataIndex: 'comp_type',
-        key: 'warning',
-        width: 40,
-        render: (val) =>
-          !val ? (
-            <Tag color="red" style={{ margin: 0 }}>
-              !
-            </Tag>
-          ) : null,
-      },
-      {
-        title: 'Competitor',
-        dataIndex: 'store_name',
-        key: 'store_name',
-        sorter: (a, b) => (a.store_name || '').localeCompare(b.store_name || ''),
-        render: (_, record) => (
-          <a
-            href={record.source_url}
-            target="_blank"
-            rel="noreferrer"
-            style={{ color: 'var(--ant-color-primary)' }}
-          >
-            {record.store_name} {record.address}
-          </a>
-        ),
-      },
-      {
-        title: 'Distance (Miles)',
-        dataIndex: 'distance',
-        key: 'distance',
-        sorter: (a, b) => (parseFloat(a.distance) || 0) - (parseFloat(b.distance) || 0),
-        render: (distance) => (distance ? `${distance}` : '-'),
-      },
-      {
-        title: 'Type',
-        dataIndex: 'comp_type',
-        key: 'comp_type',
-        render: (value, record) => (
-          <CompetitorTypeSelect
-            selected={value}
-            onChange={(newType) => handleCompetitorTypeChange(record.id, newType)}
-          />
-        ),
-      },
-    ],
-    []
-  );
+  // Get table columns using extracted function
+  const columns = getCompetitorsTableColumns({
+    onCompetitorTypeChange: handleCompetitorTypeChange,
+  });
 
   return (
     <div>

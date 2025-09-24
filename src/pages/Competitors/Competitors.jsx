@@ -5,8 +5,7 @@ import { Row, Col, Input, Select, Segmented, Space, Card, Flex } from 'antd';
 import { ShopOutlined } from '@ant-design/icons';
 
 import PageFrame from '@/components/common/PageFrame';
-import CompetitorsTable from '@/components/widgets/Competitors/CompetitorsTable/CompetitorsTable';
-import CompetitorMap from '@/components/widgets/Competitors/CompetitorMap';
+import { CompetitorsTable, CompetitorMap } from '@/components/widgets/Competitors';
 
 import { useGetCompetitorsQuery, useUpdateFacilityMutation } from '@/api/competitorsApi';
 import { useGetFacilityByIdQuery } from '@/api/streetRatesApi';

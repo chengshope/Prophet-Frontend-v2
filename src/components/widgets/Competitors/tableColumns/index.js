@@ -1,0 +1,1 @@
+export { getCompetitorsTableColumns } from './competitorsTableColumns';
