@@ -4,21 +4,9 @@ import { createSelector } from '@reduxjs/toolkit';
 export const selectExistingCustomersFacilities = (state) => state.existingCustomers.facilities;
 export const selectChangedFacilities = (state) => state.existingCustomers.changedFacilities;
 
-// UI selectors (still used by ExistingCustomersTable)
-export const selectExpandedRowKeys = createSelector(
-  [(state) => state.existingCustomers.ui],
-  (ui) => ui.expandedRowKeys
-);
-export const selectSelectedFacility = createSelector(
-  [(state) => state.existingCustomers.ui],
-  (ui) => ui.selectedFacility
-);
-
-// Tenant changes selectors (used by components)
 export const selectNewTenantChanges = (state) => state.existingCustomers.newTenantChanges;
 export const selectSavedTenantChanges = (state) => state.existingCustomers.savedTenantChanges;
 
-// Get changed tenants by facility ID (used by ExistingCustomersTable)
 export const getChangedTenantsByFacilityId = createSelector(
   [selectChangedFacilities],
   (changedFacilities) =>
@@ -28,18 +16,15 @@ export const getChangedTenantsByFacilityId = createSelector(
     }, {})
 );
 
-// Get ECRI IDs of saved tenant changes (used by ExistingCustomers page)
 export const getSavedEcriIds = createSelector([selectSavedTenantChanges], (savedTenantChanges) => {
   return savedTenantChanges.map((tenant) => tenant.ecri_id);
 });
 
-// Get facilities with changes count (used by ExistingCustomers page)
 export const getFacilitiesWithChangesCount = createSelector(
   [selectChangedFacilities],
   (changedFacilities) => changedFacilities.length
 );
 
-// Check if facility has saved changes (used by table columns)
 export const getFacilityHasSavedChanges = createSelector(
   [selectSavedTenantChanges, (state, facilityId) => facilityId],
   (savedTenantChanges, facilityId) => {
@@ -47,7 +32,6 @@ export const getFacilityHasSavedChanges = createSelector(
   }
 );
 
-// Calculate summary statistics from facilities data (used by ExistingCustomers page)
 export const getFormattedSummaryData = createSelector(
   [selectExistingCustomersFacilities],
   (facilities) => {

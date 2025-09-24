@@ -10,8 +10,6 @@ import {
 import {
   selectExistingCustomersFacilities,
   selectSavedTenantChanges,
-  selectExpandedRowKeys,
-  selectSelectedFacility,
   getChangedTenantsByFacilityId,
   selectNewTenantChanges,
 } from '@/features/existingCustomers/existingCustomersSelector';
@@ -20,8 +18,6 @@ import {
   clearChangedTenantsByFacilityId,
   mergeToSavedTenantChanges,
   updateTenant,
-  setExpandedRowKeys,
-  setSelectedFacility,
 } from '@/features/existingCustomers/existingCustomersSlice';
 import {
   removeSavedTenantChangesByIds,
@@ -41,13 +37,12 @@ const ExistingCustomersTable = ({
   latestPublishedDate,
   savedChangesCount,
 }) => {
-  // modal state (local to this component)
   const [publishModalOpen, setPublishModalOpen] = useState(false);
+  const [expandedRowKeys, setExpandedRowKeys] = useState([]);
+  const [selectedFacility, setSelectedFacility] = useState(null);
 
   // Redux selectors - using centralized state
   const facilities = useSelector(selectExistingCustomersFacilities);
-  const expandedRowKeys = useSelector(selectExpandedRowKeys);
-  const selectedFacility = useSelector(selectSelectedFacility);
   const changedTenantsByFacility = useSelector(getChangedTenantsByFacilityId);
   const newTenantChanges = useSelector(selectNewTenantChanges);
 
@@ -58,18 +53,16 @@ const ExistingCustomersTable = ({
     usePublishIndividualRateChangesMutation();
   const [bulkUpdateTenants] = useBulkUpdateTenantsMutation();
 
-  // Handle row expansion using Redux
   const handleExpand = (expanded, record) => {
     if (expanded) {
-      dispatch(setExpandedRowKeys([...expandedRowKeys, record.facility_id]));
+      setExpandedRowKeys([...expandedRowKeys, record.facility_id]);
     } else {
-      dispatch(setExpandedRowKeys(expandedRowKeys.filter((key) => key !== record.facility_id)));
+      setExpandedRowKeys(expandedRowKeys.filter((key) => key !== record.facility_id));
     }
   };
 
-  // Handle close expanded row
   const handleClose = (facility) => {
-    dispatch(setExpandedRowKeys(expandedRowKeys.filter((key) => key !== facility.facility_id)));
+    setExpandedRowKeys(expandedRowKeys.filter((key) => key !== facility.facility_id));
   };
 
   // Handle save changes for current facility (similar to street rates)
@@ -113,7 +106,6 @@ const ExistingCustomersTable = ({
       message.success('Changes saved successfully');
     } catch (error) {
       console.error('Error saving tenant changes:', error);
-      message.error('Failed to save changes');
     }
   };
 
@@ -161,7 +153,6 @@ const ExistingCustomersTable = ({
       setSelectedFacility(null);
     } catch (error) {
       console.error('Error publishing individual rates:', error);
-      message.error('Failed to publish rate changes');
       setPublishModalOpen(false);
     }
   };
@@ -180,7 +171,6 @@ const ExistingCustomersTable = ({
     );
   };
 
-  // Get table columns using extracted function
   const columns = getExistingCustomersTableColumns({
     expandedRowKeys,
     onExpand: handleExpand,
@@ -190,7 +180,6 @@ const ExistingCustomersTable = ({
     navigate,
   });
 
-  // Handle table sorting
   const handleTableChange = (_, __, sorter) => {
     if (sorter && sorter.field) {
       const direction = sorter.order === 'ascend' ? 'asc' : 'desc';
@@ -198,7 +187,6 @@ const ExistingCustomersTable = ({
     }
   };
 
-  // Expanded row render with inline tenant editing
   const expandedRowRender = (record) => {
     return (
       <TenantEditingTable

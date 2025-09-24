@@ -1,7 +1,6 @@
 import { existingCustomersApi } from '@/api/existingCustomersApi';
 import { createSlice } from '@reduxjs/toolkit';
 
-// Load saved tenant changes from localStorage for initialState
 const loadSavedTenantChangesFromStorage = () => {
   try {
     const saved = localStorage.getItem('savedTenantChanges');
@@ -12,32 +11,16 @@ const loadSavedTenantChangesFromStorage = () => {
 };
 
 const initialState = {
-  // Data (API responses - Rule #29: Use redux for api responses)
   facilities: [],
   changedFacilities: [],
   newTenantChanges: [], // Array of full tenant objects with unsaved changes
   savedTenantChanges: loadSavedTenantChangesFromStorage(), // Array of full tenant objects with saved changes (loaded from localStorage)
-
-  // UI State (only for components that need shared state)
-  ui: {
-    expandedRowKeys: [], // Shared between table components
-    selectedFacility: null, // Shared state for facility selection
-  },
 };
 
 const existingCustomersSlice = createSlice({
   name: 'existingCustomers',
   initialState,
   reducers: {
-    // UI State Actions (only for shared state between components)
-    setExpandedRowKeys: (state, action) => {
-      state.ui.expandedRowKeys = action.payload;
-    },
-
-    setSelectedFacility: (state, action) => {
-      state.ui.selectedFacility = action.payload;
-    },
-    // Update tenant data (similar to updateFacility in street rates)
     updateTenant: (state, action) => {
       const { facilityId, tenant, hasChanges = false } = action.payload;
 
@@ -86,7 +69,6 @@ const existingCustomersSlice = createSlice({
       }
     },
 
-    // Clear changed tenants for a facility
     clearChangedTenantsByFacilityId: (state, action) => {
       const facilityId = action.payload;
 
@@ -103,7 +85,6 @@ const existingCustomersSlice = createSlice({
       }
     },
 
-    // Add tenant to changed list
     addChangedTenant: (state, action) => {
       const tenant = action.payload; // Full tenant object
       const existingIndex = state.newTenantChanges.findIndex((t) => t.ecri_id === tenant.ecri_id);
@@ -114,7 +95,6 @@ const existingCustomersSlice = createSlice({
       }
     },
 
-    // Remove tenant from changed list
     removeChangedTenant: (state, action) => {
       const tenantId = action.payload;
       state.newTenantChanges = state.newTenantChanges.filter(
@@ -122,13 +102,11 @@ const existingCustomersSlice = createSlice({
       );
     },
 
-    // Clear all changed tenants
     clearAllChangedTenants: (state) => {
       state.newTenantChanges = [];
       state.changedFacilities = [];
     },
 
-    // Actions for saved tenant changes (ready for publishing)
     mergeToSavedTenantChanges: (state, action) => {
       const newTenantChanges = action.payload; // Array of tenant objects from newTenantChanges
 
@@ -155,12 +133,10 @@ const existingCustomersSlice = createSlice({
       );
     },
 
-    // Clear saved tenant changes
     clearSavedTenantChanges: (state) => {
       state.savedTenantChanges = [];
     },
 
-    // Clear saved tenant changes by IDs
     clearSavedTenantChangesByIds: (state, action) => {
       const tenantIds = action.payload;
       state.savedTenantChanges = state.savedTenantChanges.filter(
@@ -169,7 +145,6 @@ const existingCustomersSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // Handle API responses (Rule #29: Use redux for api responses)
     builder.addMatcher(
       existingCustomersApi.endpoints.getExistingCustomers.matchFulfilled,
       (state, action) => {
@@ -180,11 +155,6 @@ const existingCustomersSlice = createSlice({
 });
 
 export const {
-  // UI State Actions (only for shared state between components)
-  setExpandedRowKeys,
-  setSelectedFacility,
-
-  // Tenant Management Actions (still needed for data management)
   updateTenant,
   clearChangedTenantsByFacilityId,
   addChangedTenant,

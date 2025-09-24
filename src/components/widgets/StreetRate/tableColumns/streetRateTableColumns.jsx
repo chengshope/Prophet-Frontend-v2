@@ -118,7 +118,7 @@ export const getStreetRateTableColumns = ({
           sorter: true,
           render: (value) => (value != null ? formatCurrency(value) : '$0.00'),
         },
-      ]
+      ],
     },
 
     // Actions Column
