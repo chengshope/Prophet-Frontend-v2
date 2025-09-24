@@ -5,15 +5,24 @@ import {
 } from '@/api/syncDataApi';
 import { selectUser } from '@/features/auth/authSelector';
 import { showError } from '@/utils/messageService';
-import { useCallback, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import './Loading.less';
+
+// Helper function for consistent error handling
+const handleSyncError = (error, redirectPath) => {
+  console.error('Sync error:', error);
+  const message = error?.data?.errors || error.message || String(error);
+  showError(`Error refreshing data: ${message}`);
+  return redirectPath || '/street-rates';
+};
 
 const Loading = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const redirectParam = searchParams.get('redirect');
+
   const user = useSelector(selectUser);
   const isAuthenticated = Boolean(user);
   const hasExecuted = useRef(false);
@@ -22,85 +31,50 @@ const Loading = () => {
   const [runStreetRatesPython] = useRunStreetRatesPythonMutation();
   const [runECRIPython] = useRunECRIPythonMutation();
 
+  const [loadingText, setLoadingText] = useState('Calculating Your Rate Recommendations...');
+
+  // Redirect to login if not authenticated
   useEffect(() => {
     if (!isAuthenticated) {
       navigate('/login');
     }
   }, [isAuthenticated, navigate]);
 
-  const handleSyncData = useCallback(async () => {
-    try {
-      await syncData().unwrap();
-      navigate('/street-rates');
-    } catch (error) {
-      console.error('Sync data error:', error);
-      const errorMessage = error?.data?.errors || error.message || error.toString();
-      showError(`Error refreshing data: ${errorMessage}`);
-      navigate('/street-rates'); // Navigate anyway to prevent being stuck
-    }
-  }, [syncData, navigate]);
-
-  const handleSyncStreetRatesData = useCallback(async () => {
-    try {
-      await runStreetRatesPython().unwrap();
-      navigate(`/${redirectParam}`);
-    } catch (error) {
-      console.error('Street rates sync error:', error);
-      const errorMessage = error?.data?.errors || error.message || error.toString();
-      showError(`Error refreshing data: ${errorMessage}`);
-      navigate(`/${redirectParam}`); // Navigate anyway to prevent being stuck
-    }
-  }, [runStreetRatesPython, navigate, redirectParam]);
-
-  const handleSyncECRIData = useCallback(async () => {
-    try {
-      // First call sync-data
-      await syncData().unwrap();
-      // Then call ecri/run-python
-      await runECRIPython().unwrap();
-      navigate(`/${redirectParam}`);
-    } catch (error) {
-      console.error('ECRI sync error:', error);
-      const errorMessage = error?.data?.errors || error.message || error.toString();
-      showError(`Error refreshing data: ${errorMessage}`);
-      navigate(`/${redirectParam}`); // Navigate anyway to prevent being stuck
-    }
-  }, [syncData, runECRIPython, navigate, redirectParam]);
-
-  // Execute appropriate sync function based on redirect parameter
   useEffect(() => {
     if (!isAuthenticated) return;
-    if (hasExecuted.current) return; // Prevent double execution in React Strict Mode
-
-    console.log('Loading useEffect triggered with redirectParam:', redirectParam);
+    if (hasExecuted.current) return; // Prevent double execution in Strict Mode
     hasExecuted.current = true;
 
-    if (!redirectParam) {
-      // No redirect param - default sync data and go to street-rates
-      handleSyncData();
-      return;
-    }
+    const executeSync = async () => {
+      try {
+        if (!redirectParam || redirectParam === 'sign-in') {
+          setLoadingText('Syncing data...');
+          await syncData().unwrap();
+          navigate('/street-rates');
+        } else if (redirectParam === 'street-rates') {
+          setLoadingText('Calculating Your Street Rate Recommendations...');
+          await runStreetRatesPython().unwrap();
+          navigate('/street-rates');
+        } else if (redirectParam === 'existing-customer-rate-increases') {
+          setLoadingText('Syncing data...');
+          await syncData().unwrap();
+          setLoadingText('Calculating Your Rate Recommendations...');
+          await runECRIPython().unwrap();
+          navigate(`/${redirectParam}`);
+        }
+      } catch (error) {
+        const path = handleSyncError(error, redirectParam || '/street-rates');
+        navigate(path);
+      }
+    };
 
-    switch (redirectParam) {
-      case 'street-rates':
-        handleSyncStreetRatesData();
-        break;
-      case 'existing-customer-rate-increases':
-        handleSyncECRIData();
-        break;
-      case 'sign-in':
-      default:
-        handleSyncData();
-        break;
-    }
-  }, [redirectParam, isAuthenticated, handleSyncData, handleSyncStreetRatesData, handleSyncECRIData]);
+    executeSync();
+  }, [redirectParam, isAuthenticated, syncData, runStreetRatesPython, runECRIPython, navigate]);
 
-  if (!isAuthenticated) {
-    return null;
-  }
+  if (!isAuthenticated) return null;
 
   return (
-    <div className="loading-container">
+    <div className="loading-container" role="status" aria-live="polite">
       <div className="loading-content">
         <div className="loading-animation">
           <img
@@ -109,7 +83,7 @@ const Loading = () => {
             className="loading-svg"
           />
         </div>
-        <p className="loading-text">Calculating Your Rate Recommendations...</p>
+        <p className="loading-text">{loadingText}</p>
       </div>
     </div>
   );
