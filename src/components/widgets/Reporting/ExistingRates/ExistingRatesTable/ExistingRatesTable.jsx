@@ -1,7 +1,7 @@
 import { Table, Card, Alert } from 'antd';
 import { useGetExistingCustomersReportQuery } from '@/api/reportingApi';
 import { existingRatesColumns as columns } from '../../tableColumns/existingRatesColumns';
-import { sanitizeTableData, shouldShowLoading } from '@/utils/reportingHelpers';
+import { sanitizeTableData } from '@/utils/reportingHelpers';
 
 const ExistingRatesTable = ({ apiParams }) => {
   const {
@@ -37,7 +37,6 @@ const ExistingRatesTable = ({ apiParams }) => {
     : [];
 
   const tableData = sanitizeTableData(transformedData);
-  const showLoading = shouldShowLoading(isLoading, isFetching, tableData.length > 0);
 
   if (error) {
     return (
@@ -56,7 +55,7 @@ const ExistingRatesTable = ({ apiParams }) => {
     <Table
       columns={columns}
       dataSource={tableData}
-      loading={showLoading}
+      loading={isLoading || isFetching}
       bordered
       pagination={{
         pageSize: 50,

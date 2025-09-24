@@ -213,14 +213,6 @@ export const getErrorMessage = (error) => {
   return 'An unexpected error occurred';
 };
 
-/**
- * Loading state utilities
- */
-export const shouldShowLoading = (isLoading, isFetching, hasData = false) => {
-  // Show loading if actively loading/fetching and no data exists
-  return (isLoading || isFetching) && !hasData;
-};
-
 export const shouldShowSkeleton = (isLoading, hasData = false) => {
   // Show skeleton only on initial load
   return isLoading && !hasData;

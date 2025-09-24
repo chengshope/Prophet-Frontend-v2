@@ -1,7 +1,6 @@
 import { Table, Card, Alert } from 'antd';
 import { useGetUnitTypeAnalysisQuery } from '@/api/reportingApi';
 import { getUnitTypeColumns, transformUnitTypeData } from '../../tableColumns/unitTypeColumns';
-import { shouldShowLoading } from '@/utils/reportingHelpers';
 import { useResponsive } from '@/hooks/useResponsive';
 
 const UnitTypeTable = ({ apiParams }) => {
@@ -18,7 +17,6 @@ const UnitTypeTable = ({ apiParams }) => {
 
   const tableData = transformUnitTypeData(unitTypeAnalysis);
   const columns = getUnitTypeColumns(isMobile);
-  const showLoading = shouldShowLoading(isLoading, isFetching, tableData.length > 0);
 
   if (error) {
     return (
@@ -38,7 +36,7 @@ const UnitTypeTable = ({ apiParams }) => {
       columns={columns}
       dataSource={tableData}
       bordered
-      loading={showLoading}
+      loading={isLoading || isFetching}
       pagination={{
         pageSize: 20,
         showSizeChanger: true,
