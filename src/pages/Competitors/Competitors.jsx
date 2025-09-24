@@ -3,20 +3,15 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Row, Col, Input, Select, Segmented, Space, Card, Flex } from 'antd';
 import { ShopOutlined } from '@ant-design/icons';
-
 import PageFrame from '@/components/common/PageFrame';
 import { CompetitorsTable, CompetitorMap } from '@/components/widgets/Competitors';
-
 import { useGetCompetitorsQuery, useUpdateFacilityMutation } from '@/api/competitorsApi';
 import { useGetFacilityByIdQuery } from '@/api/streetRatesApi';
-
 import { setCachedFacilities } from '@/features/competitors/competitorsSlice';
 import { selectFacilityOptions } from '@/features/competitors/competitorsSelector';
-
 import { createValidatedStrategySetter } from '@/utils/strategyValidation';
-
-import './Competitors.less';
 import { useGetFacilitiesListQuery } from '@/api/facilitiesApi';
+import './Competitors.less';
 
 const { Search } = Input;
 
@@ -64,10 +59,10 @@ const Competitors = () => {
   const {
     data: competitorsData,
     isLoading: competitorsLoading,
+    isFetching: competitorsFetching,
     refetch,
   } = useGetCompetitorsQuery(competitorsApiParams, { skip: !competitorsApiParams });
 
-  // When there's no stortrack_id, competitors should be empty
   const competitors = useMemo(() => {
     if (!selectedFacility?.stortrack_id) {
       return [];
@@ -77,11 +72,12 @@ const Competitors = () => {
 
   const isLoadingCompetitors = useMemo(() => {
     if (isFacilityLoading) return true;
+    if (competitorsFetching) return true;
     if (selectedFacility?.stortrack_id && competitorsLoading) return true;
-    if (selectedFacility?.stortrack_id && search !== debouncedSearch && search.length > 0) return true;
+    if (selectedFacility?.stortrack_id && search !== debouncedSearch) return true;
 
     return false;
-  }, [isFacilityLoading, selectedFacility?.stortrack_id, competitorsLoading, search, debouncedSearch]);
+  }, [isFacilityLoading, selectedFacility?.stortrack_id, competitorsLoading, search, debouncedSearch, competitorsFetching]);
 
   const facilityOptions = useSelector(selectFacilityOptions);
 
@@ -174,7 +170,6 @@ const Competitors = () => {
   const handleRowHover = useCallback((competitor) => {
     setHoveredCompetitor(competitor);
 
-    // Clear any pending hover timeout
     if (hoverTimeoutRef.current) {
       clearTimeout(hoverTimeoutRef.current);
     }
