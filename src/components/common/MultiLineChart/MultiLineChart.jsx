@@ -98,60 +98,63 @@ const MultiLineChart = ({
     return { labels: sortedDates, datasets };
   }, [data, dataKey]);
 
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    layout: { padding: { top: 10, bottom: 10, left: 10, right: 10 } },
-    plugins: {
-      legend: {
-        position: 'top',
-        labels: { usePointStyle: true, pointStyle: 'rect' },
-      },
-      tooltip: {
-        mode: 'index',
-        intersect: false,
-        backgroundColor: 'white',
-        titleColor: '#262626',
-        bodyColor: '#262626',
-        borderColor: '#d9d9d9',
-        borderWidth: 1,
-        callbacks: {
-          label: (context) => `${context.dataset.label || ''}: ${formatter(context.parsed.y)}`,
+  const chartOptions = useMemo(
+    () => ({
+      responsive: true,
+      maintainAspectRatio: false,
+      layout: { padding: 10 },
+      plugins: {
+        legend: {
+          position: 'top',
+          labels: { usePointStyle: true, pointStyle: 'rect' },
+        },
+        tooltip: {
+          mode: 'index',
+          intersect: false,
+          backgroundColor: 'white',
+          titleColor: '#262626',
+          bodyColor: '#262626',
+          borderColor: '#d9d9d9',
+          borderWidth: 1,
+          callbacks: {
+            label: (context) => `${context.dataset.label || ''}: ${formatter(context.parsed.y)}`,
+          },
         },
       },
-    },
-    interaction: { mode: 'index', intersect: false },
-    scales: {
-      x: {
-        grid: { drawBorder: true, drawOnChartArea: true, color: '#bbbbbb60' },
-        ticks: { color: '#bbbbbb60', fontSize: 12 },
-        border: { color: '#bbbbbb60', width: 1 },
-      },
-      y: {
-        min: domain?.[0] ?? 0,
-        suggestedMax: domain?.[1] && domain[1] !== 'dataMax + 4' ? domain[1] : undefined,
-        beginAtZero: true,
-        grid: {
-          drawBorder: true,
-          drawOnChartArea: true,
-          lineWidth: (ctx) => (ctx.tick.value === 0 ? 2 : 1),
-          color: (ctx) => (ctx.tick.value === 0 ? '#999999' : '#bbbbbb60'),
+      interaction: { mode: 'index', intersect: false },
+      scales: {
+        x: {
+          grid: { color: '#bbbbbb60', drawBorder: true },
+          ticks: { color: '#595959', font: { size: 12 } },
+          border: { color: '#bbbbbb60', width: 1 },
         },
-        ticks: {
-          color: '#bbbbbb60',
-          fontSize: 12,
-          callback: (value) => formatter(value),
+        y: {
+          min: domain?.[0] ?? 0,
+          beginAtZero: true,
+          suggestedMax: domain?.[1] && domain[1] !== 'dataMax + 4' ? domain[1] : 100,
+          grid: {
+            drawBorder: true,
+            drawOnChartArea: true,
+            lineWidth: (ctx) => (ctx.tick.value === 0 ? 2 : 1),
+            color: (ctx) => (ctx.tick.value === 0 ? '#999999' : '#bbbbbb60'),
+          },
+          ticks: {
+            color: '#595959',
+            font: { size: 12 },
+            callback: (value) => formatter(value),
+          },
+          border: { color: '#bbbbbb60', width: 1 },
         },
-        border: { color: '#bbbbbb60', width: 1 },
       },
-    },
-  };
+    }),
+    [formatter, domain]
+  );
 
   return (
     <Card
       title={title}
       style={{ height: '100%', ...style }}
-      styles={{ body: { padding: '16px' } }}
+      styles={{ padding: 16 }}
       className="multi-line-chart-container"
       {...props}
     >
