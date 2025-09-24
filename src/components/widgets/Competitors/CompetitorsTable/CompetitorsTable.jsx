@@ -6,7 +6,6 @@
 
 import { useMemo } from 'react';
 import { Table, Tag } from 'antd';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { useUpdateCompetitorMutation } from '@/api/competitorsApi';
 import CompetitorTypeSelect from '../CompetitorTypeSelect';
 import { ShopOutlined } from '@ant-design/icons';
@@ -90,8 +89,8 @@ const CompetitorsTable = ({ data, loading, onCompetitorUpdate, onRowHover }) => 
         columns={columns}
         dataSource={data}
         loading={loading}
+        size='small'
         rowKey="id"
-        size="small"
         bordered
         pagination={{
           pageSize: 10,
@@ -105,7 +104,6 @@ const CompetitorsTable = ({ data, loading, onCompetitorUpdate, onRowHover }) => 
               onRowHover(record);
             }
           },
-          // Removed onMouseLeave from individual rows for better UX
         })}
         locale={{
           emptyText: (
