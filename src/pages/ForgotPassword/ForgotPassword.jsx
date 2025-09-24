@@ -1,8 +1,8 @@
+import { useForgotPasswordMutation } from '@/api/authApi';
 import { ArrowLeftOutlined, MailOutlined } from '@ant-design/icons';
 import { Button, Flex, Form, Input, Result, Typography } from 'antd';
 import { useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
-import { useForgotPasswordMutation } from '../../api/authApi';
+import { Link } from 'react-router-dom';
 
 const { Title, Text } = Typography;
 
@@ -26,11 +26,11 @@ const ForgotPassword = () => {
         title="Check Your Email"
         subTitle="We've sent a password reset link to your email address. Please check your inbox and follow the instructions."
         extra={[
-          <RouterLink to="/login" key="login">
+          <Link to="/login" key="login">
             <Button type="primary" icon={<ArrowLeftOutlined />}>
               Back to Login
             </Button>
-          </RouterLink>,
+          </Link>,
         ]}
       />
     );
@@ -38,14 +38,14 @@ const ForgotPassword = () => {
 
   return (
     <Flex vertical>
-      <div style={{ marginBottom: '24px', textAlign: 'center' }}>
+      <Flex vertical align="center" gap="small" style={{ marginBottom: 30, textAlign: 'center' }}>
         <Title level={2} style={{ marginBottom: '8px' }}>
           Forgot Password?
         </Title>
         <Text type="secondary">
           Enter your email address and we'll send you a link to reset your password.
         </Text>
-      </div>
+      </Flex>
 
       <Form
         name="forgot-password"
@@ -55,7 +55,6 @@ const ForgotPassword = () => {
         size="large"
       >
         <Form.Item
-          label="Email Address"
           name="email"
           rules={[
             { required: true, message: 'Please input your email!' },
@@ -78,14 +77,14 @@ const ForgotPassword = () => {
         </Form.Item>
       </Form>
 
-      <div style={{ textAlign: 'center', marginTop: '24px' }}>
+      <Flex justify='center' style={{ textAlign: 'center', marginTop: 6 }}>
         <Text type="secondary">
           Remember your password?{' '}
-          <RouterLink to="/login" style={{ color: '#1890ff' }}>
+          <Link to="/login">
             Back to Login
-          </RouterLink>
+          </Link>
         </Text>
-      </div>
+      </Flex>
     </Flex>
   );
 };

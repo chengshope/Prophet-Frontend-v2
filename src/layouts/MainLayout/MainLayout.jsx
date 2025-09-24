@@ -1,18 +1,15 @@
 import { useLogoutMutation } from '@/api/authApi';
-import { useThemeContext } from '@/contexts/ThemeContext';
-import { clearToken } from '@/features/auth/authSlice';
 import { selectPortfolioName, selectUsername } from '@/features/auth/authSelector';
+import { clearToken } from '@/features/auth/authSlice';
 import {
   AppstoreOutlined,
   BookOutlined,
-
   HomeOutlined,
   LineChartOutlined,
   LogoutOutlined,
   SettingOutlined,
   ShopOutlined,
   TeamOutlined,
-
 } from '@ant-design/icons';
 import { Layout } from 'antd';
 import HeaderBar from './Header';
@@ -32,7 +29,6 @@ const MainLayout = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const isIntegrator = user?.role?.name === 'integrator' || user?.user?.role?.name === 'integrator';
-  const { isDarkMode } = useThemeContext();
   const portfolioName = useSelector(selectPortfolioName);
   const username = useSelector(selectUsername);
 
@@ -80,13 +76,13 @@ const MainLayout = () => {
     },
     ...(isIntegrator
       ? [
-          {
-            key: '/portfolio',
-            icon: <BookOutlined />,
-            label: 'Portfolio',
-            onClick: () => navigate('/portfolio'),
-          },
-        ]
+        {
+          key: '/portfolio',
+          icon: <BookOutlined />,
+          label: 'Portfolio',
+          onClick: () => navigate('/portfolio'),
+        },
+      ]
       : []),
   ];
 

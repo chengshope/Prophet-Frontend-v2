@@ -1,14 +1,13 @@
-import { useEffect, useCallback, useRef } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { Spin } from 'antd';
+import {
+  useRunECRIPythonMutation,
+  useRunStreetRatesPythonMutation,
+  useSyncDataMutation,
+} from '@/api/syncDataApi';
 import { selectUser } from '@/features/auth/authSelector';
 import { showError } from '@/utils/messageService';
-import {
-  useSyncDataMutation,
-  useRunStreetRatesPythonMutation,
-  useRunECRIPythonMutation,
-} from '@/api/syncDataApi';
+import { useCallback, useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import './Loading.less';
 
 const Loading = () => {
@@ -19,19 +18,16 @@ const Loading = () => {
   const isAuthenticated = Boolean(user);
   const hasExecuted = useRef(false);
 
-  // RTK Query hooks
   const [syncData] = useSyncDataMutation();
   const [runStreetRatesPython] = useRunStreetRatesPythonMutation();
   const [runECRIPython] = useRunECRIPythonMutation();
 
-  // Redirect to login if not authenticated
   useEffect(() => {
     if (!isAuthenticated) {
       navigate('/login');
     }
   }, [isAuthenticated, navigate]);
 
-  // Sync data function - calls /sync-data API
   const handleSyncData = useCallback(async () => {
     try {
       await syncData().unwrap();
@@ -44,7 +40,6 @@ const Loading = () => {
     }
   }, [syncData, navigate]);
 
-  // Sync street rates data - calls /street_rates/run-python API
   const handleSyncStreetRatesData = useCallback(async () => {
     try {
       await runStreetRatesPython().unwrap();
@@ -57,7 +52,6 @@ const Loading = () => {
     }
   }, [runStreetRatesPython, navigate, redirectParam]);
 
-  // Sync ECRI data - calls /sync-data then /ecri/run-python APIs
   const handleSyncECRIData = useCallback(async () => {
     try {
       // First call sync-data
@@ -102,7 +96,7 @@ const Loading = () => {
   }, [redirectParam, isAuthenticated, handleSyncData, handleSyncStreetRatesData, handleSyncECRIData]);
 
   if (!isAuthenticated) {
-    return null; // Will redirect to login
+    return null;
   }
 
   return (

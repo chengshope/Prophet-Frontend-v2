@@ -1,9 +1,7 @@
-import { showInfo } from '@/utils/messageService';
+import { useLoginMutation } from '@/api/authApi';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Divider, Flex, Form, Input, Space, Typography } from 'antd';
-import { Link as RouterLink } from 'react-router-dom';
-import { useLoginMutation } from '../../api/authApi';
-import GoogleIcon from '@/components/common/GoogleIcon';
+import { Button, Checkbox, Flex, Form, Input, Typography } from 'antd';
+import { Link } from 'react-router-dom';
 
 const { Title, Text } = Typography;
 
@@ -18,20 +16,19 @@ const Login = () => {
         remember: !!values.remember,
       }).unwrap();
     } catch {
-      // Auto
+      // Auto catched
     }
   };
 
   return (
     <Flex vertical>
-      <Flex vertical align="center" gap="small" style={{ marginBottom: '24px' }}>
-        <Title level={2}>Welcome Back</Title>
-        <Text type="secondary">Sign in to your account</Text>
+      <Flex vertical align="center" gap="small" style={{ marginBottom: 30, textAlign: 'center' }}>
+        <Title level={2} style={{ marginBottom: '8px' }}>Welcome Back</Title>
+        <Text type="secondary">Secure access to AI-driven recommendations for street rates and existing-customer rate increases.</Text>
       </Flex>
 
       <Form name="login" onFinish={onFinish} autoComplete="off" layout="vertical" size="large">
         <Form.Item
-          label="Email"
           name="email"
           rules={[
             { required: true, message: 'Please input your email!' },
@@ -42,7 +39,6 @@ const Login = () => {
         </Form.Item>
 
         <Form.Item
-          label="Password"
           name="password"
           rules={[
             { required: true, message: 'Please input your password!' },
@@ -57,7 +53,7 @@ const Login = () => {
             <Form.Item name="remember" valuePropName="checked" noStyle>
               <Checkbox>Remember me</Checkbox>
             </Form.Item>
-            <RouterLink to="/forgot-password">Forgot password?</RouterLink>
+            <Link to="/forgot-password">Forgot password?</Link>
           </Flex>
         </Form.Item>
 
@@ -67,17 +63,6 @@ const Login = () => {
           </Button>
         </Form.Item>
       </Form>
-{/* 
-      <Divider style={{ margin: '0 0 14px' }}>Or</Divider>
-
-      <Button
-        icon={<GoogleIcon size={16} />}
-        onClick={() => showInfo('Google login not implemented yet')}
-        block
-        size="large"
-      >
-        Continue with Google
-      </Button> */}
     </Flex>
   );
 };

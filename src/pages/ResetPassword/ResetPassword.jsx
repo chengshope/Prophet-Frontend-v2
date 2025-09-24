@@ -1,8 +1,8 @@
+import { useResetPasswordMutation } from '@/api/authApi';
 import { ArrowLeftOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
 import { Button, Flex, Form, Input, Result, Typography } from 'antd';
 import { useState } from 'react';
-import { Link as RouterLink, useSearchParams } from 'react-router-dom';
-import { useResetPasswordMutation } from '../../api/authApi';
+import { Link, useSearchParams } from 'react-router-dom';
 
 const { Title, Text } = Typography;
 
@@ -35,20 +35,20 @@ const ResetPassword = () => {
         title="Password Reset Successful"
         subTitle="Your password has been updated. You can now log in with your new password."
         extra={[
-          <RouterLink to="/login" key="login">
+          <Link to="/login" key="login">
             <Button type="primary" icon={<ArrowLeftOutlined />}>
               Back to Login
             </Button>
-          </RouterLink>,
+          </Link>,
         ]}
       />
     );
   }
 
   return (
-    <Flex vertical gap="middle">
-      <Flex vertical align="center" gap="small">
-        <Title level={2}>Reset Password</Title>
+    <Flex vertical>
+      <Flex vertical align="center" gap="small" style={{ marginBottom: 30, textAlign: 'center' }}>
+        <Title level={2} style={{ marginBottom: '8px' }}>Reset Password</Title>
         <Text type="secondary">Enter your new password below.</Text>
       </Flex>
 
@@ -59,12 +59,11 @@ const ResetPassword = () => {
         layout="vertical"
         size="large"
       >
-        <Form.Item label="Email" name="email" initialValue={emailParam}>
+        <Form.Item name="email" initialValue={emailParam}>
           <Input prefix={<MailOutlined />} disabled />
         </Form.Item>
 
         <Form.Item
-          label="New Password"
           name="password"
           rules={[{ required: true, message: 'Please input your new password!' }]}
         >
@@ -72,7 +71,6 @@ const ResetPassword = () => {
         </Form.Item>
 
         <Form.Item
-          label="Confirm Password"
           name="confirmPassword"
           dependencies={['password']}
           rules={[
@@ -89,17 +87,18 @@ const ResetPassword = () => {
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" htmlType="submit" loading={isLoading} block>
+          <Button type="primary" htmlType="submit" loading={isLoading} block style={{ marginTop: 12 }}>
             Update Password
           </Button>
         </Form.Item>
       </Form>
 
-      <Flex justify="center" align="center" gap="small">
-        <Text type="secondary">Remembered your password?</Text>
-        <RouterLink to="/login">
-          <Button type="link">Back to Login</Button>
-        </RouterLink>
+      <Flex justify="center" style={{ textAlign: 'center', marginTop: 6 }}>
+        <Text type="secondary">Remembered your password?{' '}
+          <Link to="/login">
+            Back to Login
+          </Link>
+        </Text>
       </Flex>
     </Flex>
   );
