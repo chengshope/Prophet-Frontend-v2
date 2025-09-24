@@ -22,7 +22,6 @@ import {
   Switch,
   TimePicker,
   Tooltip,
-  Alert,
   Upload,
   Spin,
   Space,
@@ -31,7 +30,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import dayjs from 'dayjs';
-import { selectUser, selectPortfolioId, selectCustomerId } from '@/features/auth/authSelector';
+import { selectPortfolioId, selectCustomerId } from '@/features/auth/authSelector';
 import {
   useGetPortfolioSettingsQuery,
   useUpdatePortfolioSettingsMutation,
@@ -39,25 +38,53 @@ import {
   useUpdateFacilitySettingsMutation,
   useUpdatePortfolioEcriSettingsMutation,
   useUpdateFacilityEcriSettingsMutation,
-  useUpdatePortfolioValuePricingMutation,
-  useUpdateFacilityValuePricingMutation,
-  useUpdatePortfolioStrategiesMutation,
-  useUpdateFacilityStrategiesMutation,
   useUploadUnitRankingMutation,
   useLazyDownloadSampleXLSXQuery,
   useLazyExportUnitRankingQuery,
   useGetFacilitiesListQuery,
   useGetCronJobSettingsQuery,
   useUpdateCronJobSettingsMutation,
-  useGetPortfolioStrategiesQuery,
   useSavePortfolioStrategiesMutation,
   useSaveFacilityStrategiesMutation,
-  useGetPortfolioValuePricingQuery,
   useSavePortfolioValuePricingMutation,
   useSaveFacilityValuePricingMutation,
+  useToggleFacilityProfileMutation,
 } from '@/api/settingsApi';
 import './Settings.less';
 const { Option } = Select;
+
+// Constants for strategy and value pricing options
+const STRATEGY_OPTIONS = [
+  { label: 'Mirror Competitors', value: 'mirror' },
+  { label: 'Maverick', value: 'maverick' },
+  { label: 'Happy Medium', value: 'happy_medium' },
+  { label: 'Maverick+', value: 'maverick_plus' },
+];
+
+const PORTFOLIO_STRATEGY_OPTIONS = [
+  ...STRATEGY_OPTIONS,
+  { label: 'Multiple', value: 'multiple' },
+];
+
+const VALUE_PRICING_OPTIONS = [
+  { label: 'On', value: 'on' },
+  { label: 'Off', value: 'off' },
+];
+
+const PORTFOLIO_VALUE_PRICING_OPTIONS = [
+  ...VALUE_PRICING_OPTIONS,
+  { label: 'Multiple', value: 'multiple' },
+];
+
+const WEEKDAY_OPTIONS = [
+  { label: 'Mon', value: 'Mon' },
+  { label: 'Tue', value: 'Tue' },
+  { label: 'Wed', value: 'Wed' },
+  { label: 'Thu', value: 'Thu' },
+  { label: 'Fri', value: 'Fri' },
+  { label: 'Sat', value: 'Sat' },
+  { label: 'Sun', value: 'Sun' },
+];
 
 const Settings = () => {
   const { id: facilityId } = useParams();
@@ -65,12 +92,11 @@ const Settings = () => {
   const [scope, setScope] = useState(facilityId ? 'facility' : 'portfolio');
   const [form] = Form.useForm();
   const [frequency, setFrequency] = useState('Daily');
-  const [selectedFacility, setSelectedFacility] = useState(null);
+
   const [currentStrategy, setCurrentStrategy] = useState('happy_medium');
   const [currentValuePricing, setCurrentValuePricing] = useState('off');
 
   // Get user data from Redux
-  const user = useSelector(selectUser);
   const portfolioId = useSelector(selectPortfolioId);
   const customerId = useSelector(selectCustomerId);
 
@@ -109,10 +135,6 @@ const Settings = () => {
   const [updateFacilitySettings] = useUpdateFacilitySettingsMutation();
   const [updatePortfolioEcri] = useUpdatePortfolioEcriSettingsMutation();
   const [updateFacilityEcri] = useUpdateFacilityEcriSettingsMutation();
-  const [updatePortfolioValuePricing] = useUpdatePortfolioValuePricingMutation();
-  const [updateFacilityValuePricing] = useUpdateFacilityValuePricingMutation();
-  const [updatePortfolioStrategies] = useUpdatePortfolioStrategiesMutation();
-  const [updateFacilityStrategies] = useUpdateFacilityStrategiesMutation();
   const [uploadUnitRanking] = useUploadUnitRankingMutation();
   const [downloadSampleXLSX] = useLazyDownloadSampleXLSXQuery();
   const [exportUnitRanking] = useLazyExportUnitRankingQuery();
@@ -123,6 +145,7 @@ const Settings = () => {
   const [saveFacilityStrategies] = useSaveFacilityStrategiesMutation();
   const [savePortfolioValuePricing] = useSavePortfolioValuePricingMutation();
   const [saveFacilityValuePricing] = useSaveFacilityValuePricingMutation();
+  const [toggleFacilityProfile] = useToggleFacilityProfileMutation();
 
   // Combined loading state
   const isLoading =
@@ -203,12 +226,11 @@ const Settings = () => {
       const ecriSettings = facilitySettings.ecri_settings || {};
 
       form.setFieldsValue({
+        ...facilitySettings,
         ...streetRateSettings,
         ...ecriSettings,
         profile: facilitySettings.profile || 'stabilized',
       });
-
-      setSelectedFacility(facilitySettings);
     }
   }, [portfolioSettings, facilitySettings, cronJobSettings, scope, form]);
 
@@ -230,21 +252,38 @@ const Settings = () => {
     return value ? Number(value) : null;
   };
 
+  // Helper function to prepare ECRI settings (reduces duplication)
+  const prepareEcriSettings = (values) => ({
+    averagePercentIncrease: convertPercentageToDecimal(values.averagePercentIncrease),
+    maxDollarIncrease: convertToNumber(values.maxDollarIncrease),
+    minDollarIncrease: convertToNumber(values.minDollarIncrease),
+    maxPercentIncrease: convertPercentageToDecimal(values.maxPercentIncrease),
+    minPercentIncrease: convertPercentageToDecimal(values.minPercentIncrease),
+    storeOccupancyThreshold: convertPercentageToDecimal(values.storeOccupancyThreshold),
+    timeSinceLastIncrease: convertToNumber(values.timeSinceLastIncrease),
+    timeSinceMoveIn: convertToNumber(values.timeSinceMoveIn),
+    limitAboveStreetRate: convertToNumber(values.limitAboveStreetRate),
+    maxMoveOutProbability: convertPercentageToDecimal(values.maxMoveOutProbability),
+    ...(scope === 'portfolio' && { notificationDays: convertToNumber(values.notificationDays) }),
+  });
+
+  // Helper function to save ECRI settings (reduces duplication)
+  const saveEcriSettings = async (ecriSettings) => {
+    const hasEcriSettings = Object.values(ecriSettings).some(
+      (val) => val !== null && val !== undefined && val !== ''
+    );
+    if (hasEcriSettings) {
+      if (scope === 'portfolio') {
+        await updatePortfolioEcri({ portfolioId, ecri_settings: ecriSettings }).unwrap();
+      } else {
+        await updateFacilityEcri({ facilityId, ecri_settings: ecriSettings }).unwrap();
+      }
+    }
+  };
+
   const handlePortfolioSave = async (values) => {
-    // Prepare ECRI settings (matching v1 structure)
-    const ecriSettings = {
-      averagePercentIncrease: convertPercentageToDecimal(values.averagePercentIncrease),
-      maxDollarIncrease: convertToNumber(values.maxDollarIncrease),
-      minDollarIncrease: convertToNumber(values.minDollarIncrease),
-      maxPercentIncrease: convertPercentageToDecimal(values.maxPercentIncrease),
-      minPercentIncrease: convertPercentageToDecimal(values.minPercentIncrease),
-      storeOccupancyThreshold: convertPercentageToDecimal(values.storeOccupancyThreshold),
-      timeSinceLastIncrease: convertToNumber(values.timeSinceLastIncrease),
-      timeSinceMoveIn: convertToNumber(values.timeSinceMoveIn),
-      limitAboveStreetRate: convertToNumber(values.limitAboveStreetRate),
-      maxMoveOutProbability: convertPercentageToDecimal(values.maxMoveOutProbability),
-      notificationDays: convertToNumber(values.notificationDays),
-    };
+    // Prepare ECRI settings using helper function
+    const ecriSettings = prepareEcriSettings(values);
 
     // Prepare street rate settings
     const streetRateSettings = {
@@ -261,13 +300,8 @@ const Settings = () => {
       emails: values.emails,
     };
 
-    // Save ECRI settings
-    const hasEcriSettings = Object.values(ecriSettings).some(
-      (val) => val !== null && val !== undefined && val !== ''
-    );
-    if (hasEcriSettings) {
-      await updatePortfolioEcri({ portfolioId, ecri_settings: ecriSettings }).unwrap();
-    }
+    // Save ECRI settings using helper function
+    await saveEcriSettings(ecriSettings);
 
     // Save portfolio settings
     await updatePortfolioSettings({
@@ -296,19 +330,8 @@ const Settings = () => {
   };
 
   const handleFacilitySave = async (values) => {
-    // Prepare ECRI settings (matching v1 structure)
-    const ecriSettings = {
-      averagePercentIncrease: convertPercentageToDecimal(values.averagePercentIncrease),
-      maxDollarIncrease: convertToNumber(values.maxDollarIncrease),
-      minDollarIncrease: convertToNumber(values.minDollarIncrease),
-      maxPercentIncrease: convertPercentageToDecimal(values.maxPercentIncrease),
-      minPercentIncrease: convertPercentageToDecimal(values.minPercentIncrease),
-      storeOccupancyThreshold: convertPercentageToDecimal(values.storeOccupancyThreshold),
-      timeSinceLastIncrease: convertToNumber(values.timeSinceLastIncrease),
-      timeSinceMoveIn: convertToNumber(values.timeSinceMoveIn),
-      limitAboveStreetRate: convertToNumber(values.limitAboveStreetRate),
-      maxMoveOutProbability: convertPercentageToDecimal(values.maxMoveOutProbability),
-    };
+    // Prepare ECRI settings using helper function
+    const ecriSettings = prepareEcriSettings(values);
 
     // Prepare street rate settings
     const streetRateSettings = {
@@ -317,23 +340,16 @@ const Settings = () => {
       override_portfolio_rate_setting: values.overridePortfolio,
     };
 
-    // Save ECRI settings
-    const hasEcriSettings = Object.values(ecriSettings).some(
-      (val) => val !== null && val !== undefined && val !== ''
-    );
-    if (hasEcriSettings) {
-      await updateFacilityEcri({ facilityId, ecri_settings: ecriSettings }).unwrap();
-    }
+    // Save ECRI settings using helper function
+    await saveEcriSettings(ecriSettings);
 
     // Save facility settings
     await updateFacilitySettings({
       facilityId,
       street_rate_settings: streetRateSettings,
-      profile: values.profile,
     }).unwrap();
   };
 
-  // Handle strategy changes (immediate save like v1)
   const handleStrategyChange = async (strategyValue) => {
     try {
       if (scope === 'portfolio') {
@@ -342,12 +358,10 @@ const Settings = () => {
         await saveFacilityStrategies({ facilityId, strategyValue }).unwrap();
       }
 
-      // Update local state immediately for UI feedback
       setCurrentStrategy(strategyValue);
       showSuccess('Strategy updated successfully!');
     } catch (error) {
       console.error('Strategy update error:', error);
-      showError('Failed to update strategy');
     }
   };
 
@@ -369,6 +383,21 @@ const Settings = () => {
     } catch (error) {
       console.error('Value pricing update error:', error);
       showError('Failed to update value pricing');
+    }
+  };
+
+  // Handle profile toggle (immediate save like v1)
+  const handleProfileToggle = async () => {
+    if (!facilityId) {
+      showError('No facility selected');
+      return;
+    }
+
+    try {
+      await toggleFacilityProfile(facilityId).unwrap();
+      showSuccess('Profile updated successfully!');
+    } catch (error) {
+      console.error('Profile update error:', error);
     }
   };
 
@@ -484,28 +513,13 @@ const Settings = () => {
             layout="vertical"
             onFinish={onFinish}
             initialValues={{
-              scope: 'portfolio',
               frequency: 'Daily',
               weekday: 'Mon',
               dayOfMonth: 1,
-              timeOfDay: null,
-              emails: [],
               overridePortfolio: false,
               web_rate: false,
               street_rate: true,
               rate_hold_on_occupancy: false,
-              averagePercentIncrease: null,
-              maxDollarIncrease: null,
-              minDollarIncrease: null,
-              maxPercentIncrease: null,
-              minPercentIncrease: null,
-              storeOccupancyThreshold: null,
-              timeSinceLastIncrease: null,
-              timeSinceMoveIn: null,
-              limitAboveStreetRate: null,
-              maxMoveOutProbability: null,
-              status: 'enabled',
-              profile: 'stabilized',
             }}
           >
             {/* Profile - only show for facility scope */}
@@ -528,10 +542,12 @@ const Settings = () => {
                     >
                       <Segmented
                         size="middle"
+                        value={facilitySettings?.profile || 'stabilized'}
                         options={[
                           { label: 'Stabilized', value: 'stabilized' },
-                          { label: 'Lease Up', value: 'lease_up' },
+                          { label: 'Lease Up', value: 'leaseup' },
                         ]}
+                        onChange={handleProfileToggle}
                       />
                     </Form.Item>
                   </Col>
@@ -542,12 +558,6 @@ const Settings = () => {
             <Divider orientation="left">Street Rate Strategy</Divider>
 
             {/* Strategy Selection with Hint */}
-            <Alert
-              message="Your selection will apply to all facilities."
-              type="info"
-              showIcon
-              style={{ marginBottom: 16 }}
-            />
 
             <Row gutter={[16, 16]}>
               <Col xs={24}>
@@ -561,27 +571,12 @@ const Settings = () => {
                       </Tooltip>
                     </span>
                   }
-                  name="strategy"
+                  name="street_rate_strategy"
                 >
                   <Segmented
                     size="middle"
                     value={currentStrategy}
-                    options={
-                      scope === 'portfolio'
-                        ? [
-                            { label: 'Mirror Competitors', value: 'mirror' },
-                            { label: 'Maverick', value: 'maverick' },
-                            { label: 'Happy Medium', value: 'happy_medium' },
-                            { label: 'Maverick+', value: 'maverick_plus' },
-                            { label: 'Multiple', value: 'multiple' },
-                          ]
-                        : [
-                            { label: 'Mirror Competitors', value: 'mirror' },
-                            { label: 'Maverick', value: 'maverick' },
-                            { label: 'Happy Medium', value: 'happy_medium' },
-                            { label: 'Maverick+', value: 'maverick_plus' },
-                          ]
-                    }
+                    options={scope === 'portfolio' ? PORTFOLIO_STRATEGY_OPTIONS : STRATEGY_OPTIONS}
                     onChange={handleStrategyChange}
                   />
                 </Form.Item>
@@ -597,23 +592,12 @@ const Settings = () => {
                       </Tooltip>
                     </span>
                   }
-                  name="valuePricing"
+                  name="value_pricing"
                 >
                   <Segmented
                     size="middle"
                     value={currentValuePricing}
-                    options={
-                      scope === 'portfolio'
-                        ? [
-                            { label: 'On', value: 'on' },
-                            { label: 'Off', value: 'off' },
-                            { label: 'Multiple', value: 'multiple' },
-                          ]
-                        : [
-                            { label: 'On', value: 'on' },
-                            { label: 'Off', value: 'off' },
-                          ]
-                    }
+                    options={scope === 'portfolio' ? PORTFOLIO_VALUE_PRICING_OPTIONS : VALUE_PRICING_OPTIONS}
                     onChange={handleValuePricingChange}
                   />
                 </Form.Item>
@@ -693,15 +677,7 @@ const Settings = () => {
                       <Form.Item label="Day of Week" name="weekday">
                         <Segmented
                           size="middle"
-                          options={[
-                            { label: 'Mon', value: 'Mon' },
-                            { label: 'Tue', value: 'Tue' },
-                            { label: 'Wed', value: 'Wed' },
-                            { label: 'Thu', value: 'Thu' },
-                            { label: 'Fri', value: 'Fri' },
-                            { label: 'Sat', value: 'Sat' },
-                            { label: 'Sun', value: 'Sun' },
-                          ]}
+                          options={WEEKDAY_OPTIONS}
                         />
                       </Form.Item>
                     </Col>

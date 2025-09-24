@@ -346,6 +346,17 @@ export const settingsApi = createApi({
       ],
     }),
 
+    // Toggle facility profile (matching v1: PUT /facility_profile/toggle-profile/{id})
+    toggleFacilityProfile: builder.mutation({
+      query: (facilityId) => ({
+        url: `/facility_profile/toggle-profile/${facilityId}`,
+        method: 'PUT',
+      }),
+      invalidatesTags: (result, error, facilityId) => [
+        { type: 'FacilitySettings', id: facilityId },
+      ],
+    }),
+
     // Cron Job Settings
     getCronJobSettings: builder.query({
       query: (customerId) => `/cron-job/${customerId}`,
@@ -460,6 +471,7 @@ export const {
   useLookupStorTrackMutation,
   useUpdateFacilityStorTrackMutation,
   useUpdateCompetitorStoreMutation,
+  useToggleFacilityProfileMutation,
 
   // Cron Job Settings
   useGetCronJobSettingsQuery,
