@@ -1,6 +1,6 @@
 import { selectPortfolioName, selectUsername } from '@/features/auth/authSelector';
 import { UserOutlined } from '@ant-design/icons';
-import { Avatar, Button, Dropdown, Layout, Space, Breadcrumb } from 'antd';
+import { Avatar, Breadcrumb, Dropdown, Layout, Space } from 'antd';
 import { useSelector } from 'react-redux';
 
 const { Header } = Layout;

@@ -1,5 +1,4 @@
-import { useLogoutMutation } from '@/api/authApi';
-import { selectPortfolioName, selectUsername } from '@/features/auth/authSelector';
+import { selectUserEmail } from '@/features/auth/authSelector';
 import { clearToken } from '@/features/auth/authSlice';
 import {
   AppstoreOutlined,
@@ -10,6 +9,7 @@ import {
   SettingOutlined,
   ShopOutlined,
   TeamOutlined,
+  UserOutlined
 } from '@ant-design/icons';
 import { Layout } from 'antd';
 import HeaderBar from './Header';
@@ -29,18 +29,10 @@ const MainLayout = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const isIntegrator = user?.role?.name === 'integrator' || user?.user?.role?.name === 'integrator';
-  const portfolioName = useSelector(selectPortfolioName);
-  const username = useSelector(selectUsername);
+  const email = useSelector(selectUserEmail);
 
-  const [logoutApi] = useLogoutMutation();
   const handleLogout = async () => {
-    try {
-      await logoutApi().unwrap();
-    } catch {
-      // ignore API failure and still clear local state
-    } finally {
-      dispatch(clearToken());
-    }
+    dispatch(clearToken());
   };
 
   const menuItems = [
@@ -89,25 +81,8 @@ const MainLayout = () => {
   const userMenuItems = [
     {
       key: 'user-info',
-      label: (
-        <div style={{
-          padding: '8px 0',
-          borderBottom: '1px solid var(--ant-color-border)',
-          marginBottom: '8px',
-          pointerEvents: 'none'
-        }}>
-          <div style={{ fontWeight: 'bold', fontSize: '14px' }}>
-            {username || 'User'}
-          </div>
-          <div style={{
-            fontSize: '12px',
-            color: 'var(--ant-color-text-secondary)',
-            marginTop: '2px'
-          }}>
-            {portfolioName}
-          </div>
-        </div>
-      ),
+      icon: <UserOutlined />,
+      label: email,
       disabled: true,
     },
     {
@@ -131,12 +106,10 @@ const MainLayout = () => {
       profile: 'Profile',
     };
 
-    // Start with Home icon (no navigation)
     const items = [{
       title: <HomeOutlined />
     }];
 
-    // Add breadcrumb items for each path segment (no navigation)
     pathSegments.forEach((segment) => {
       const title = labelMap[segment] || segment.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 
@@ -148,11 +121,9 @@ const MainLayout = () => {
     return items;
   };
 
-  // Get the selected menu key based on current path
   const getSelectedMenuKey = () => {
     const currentPath = location.pathname;
 
-    // Handle sub-routes by checking if current path starts with any menu item key
     const matchingMenuItem = menuItems.find(
       (item) => currentPath === item.key || currentPath.startsWith(item.key + '/')
     );

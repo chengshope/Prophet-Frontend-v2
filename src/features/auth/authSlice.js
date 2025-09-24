@@ -25,10 +25,6 @@ const authSlice = createSlice({
       const remember = !!action?.meta?.arg?.originalArgs?.remember;
       saveAuth(action.payload.accessToken, action.payload.user, remember);
     });
-
-    builder.addMatcher(authApi.endpoints.login.matchRejected, (_, action) => {
-      console.error('Login failed:', action.error);
-    });
   },
 });
 
