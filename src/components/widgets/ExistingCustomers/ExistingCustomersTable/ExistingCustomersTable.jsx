@@ -29,8 +29,7 @@ import {
   setSavedTenantChanges,
 } from '@/utils/localStorage';
 import { getExistingCustomersTableColumns } from '../tableColumns';
-
-import TenantEditingTable from './TenantEditingTable';
+import TenantEditingTable from '../TenantEditingTable';
 import './ExistingCustomersTable.less';
 
 const { Text } = Typography;
@@ -70,7 +69,7 @@ const ExistingCustomersTable = ({
 
   // Handle close expanded row
   const handleClose = (facility) => {
-    setExpandedRowKeys(expandedRowKeys.filter((key) => key !== facility.facility_id));
+    dispatch(setExpandedRowKeys(expandedRowKeys.filter((key) => key !== facility.facility_id)));
   };
 
   // Handle save changes for current facility (similar to street rates)
@@ -267,7 +266,6 @@ const ExistingCustomersTable = ({
         }}
       />
 
-      {/* Publish Individual Modal */}
       <Modal
         title={`Publish Rate Changes - ${selectedFacility?.facility_name}`}
         open={publishModalOpen}

@@ -118,7 +118,7 @@ export const getStreetRateTableColumns = ({
           sorter: true,
           render: (value) => (value != null ? formatCurrency(value) : '$0.00'),
         },
-      ],
+      ]
     },
 
     // Actions Column
@@ -127,7 +127,7 @@ export const getStreetRateTableColumns = ({
       key: 'actions',
       align: 'center',
       width: 140,
-      fixed: 'center',
+      fixed: 'right',
       render: (_, record) => {
         const isExpanded = expandedRowKeys.includes(record.id);
         const hasChanges = changedUnits.some((unit) =>

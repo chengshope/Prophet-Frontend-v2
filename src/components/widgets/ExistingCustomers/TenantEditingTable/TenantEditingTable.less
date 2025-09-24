@@ -1,0 +1,40 @@
+// TenantEditingTable styles - Original styling preserved
+.tenant-row-modified {
+  background-color: #fff7e6 !important;
+}
+
+.excluded-tenant-row {
+  background-color: #f9f9f9 !important;
+  opacity: 0.7;
+}
+
+.exclude-wrap {
+  .ant-collapse-header {
+    padding: 8px 16px !important;
+    background-color: #fafafa;
+    border-top: 1px solid #f0f0f0;
+  }
+  
+  .ant-collapse-content-box {
+    padding: 0 !important;
+  }
+}
+
+// Dark theme support
+[data-theme='dark'] {
+  .tenant-row-modified {
+    background-color: #2d2a1f !important;
+  }
+
+  .excluded-tenant-row {
+    background-color: #262626 !important;
+    opacity: 0.7;
+  }
+
+  .exclude-wrap {
+    .ant-collapse-header {
+      background-color: #1f1f1f;
+      border-top: 1px solid #303030;
+    }
+  }
+}

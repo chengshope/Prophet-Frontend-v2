@@ -1,9 +1,9 @@
 // Table components
-export { default as ExistingCustomersTable } from './ExistingCustomersTable/ExistingCustomersTable';
-export { default as TenantEditingTable } from './ExistingCustomersTable/TenantEditingTable';
+export { default as ExistingCustomersTable } from './ExistingCustomersTable';
+export { default as TenantEditingTable } from './TenantEditingTable';
 
 // Table columns
-export { getExistingCustomersTableColumns } from './tableColumns';
+export { getExistingCustomersTableColumns, getTenantEditingTableColumns } from './tableColumns';
 
 // Modal components
 export { PublishAllModal, ErrorModal, PublishIndividualModal } from './Modal';
