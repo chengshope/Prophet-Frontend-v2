@@ -8,7 +8,7 @@ import { syncDataApi } from '@/api/syncDataApi';
 import existingCustomersApi from '@/api/existingCustomersApi';
 import competitorsApi from '@/api/competitorsApi';
 import authReducer from '@/features/auth/authSlice';
-import streetReducer from '@/features/street/streetSlice';
+import streetRatesReducer from '@/features/streetRates/streetRatesSlice';
 import existingCustomersReducer from '@/features/existingCustomers/existingCustomersSlice';
 import reportingReducer from '@/features/reporting/reportingSlice';
 import competitorsReducer from '@/features/competitors/competitorsSlice';
@@ -24,7 +24,7 @@ export const store = configureStore({
     [existingCustomersApi.reducerPath]: existingCustomersApi.reducer,
     [competitorsApi.reducerPath]: competitorsApi.reducer,
     auth: authReducer,
-    street: streetReducer,
+    streetRates: streetRatesReducer,
     existingCustomers: existingCustomersReducer,
     reporting: reportingReducer,
     competitors: competitorsReducer,

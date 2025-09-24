@@ -1,10 +1,10 @@
 import { createSelector } from '@reduxjs/toolkit';
 
-export const selectStreetFacilities = (state) => state.street.facilities;
+export const selectStreetRatesFacilities = (state) => state.streetRates.facilities;
 
-export const selectStreetTotal = (state) => state.street.total;
+export const selectStreetRatesTotal = (state) => state.streetRates.total;
 
-export const selectChangedFacilities = (state) => state.street.changedFacilities;
+export const selectChangedFacilities = (state) => state.streetRates.changedFacilities;
 
 export const getChangedUnitsByFacilityId = createSelector(
   [selectChangedFacilities],
@@ -20,10 +20,10 @@ export const getChangedUnits = createSelector([selectChangedFacilities], (change
 });
 
 // Select the unsaved rate changed units (full objects)
-export const selectNewRateUnits = (state) => state.street.newRateUnits;
+export const selectNewRateUnits = (state) => state.streetRates.newRateUnits;
 
 // Select the saved rate changed units (full objects, ready for publishing)
-export const selectSavedRateUnits = (state) => state.street.savedRateUnits;
+export const selectSavedRateUnits = (state) => state.streetRates.savedRateUnits;
 
 // Get unsaved rate changed units (direct access, no filtering needed)
 export const getRateChangedUnits = createSelector(

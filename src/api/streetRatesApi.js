@@ -7,24 +7,8 @@ export const streetRatesApi = createApi({
   tagTypes: ['StreetRates', 'UnitTypes', 'FacilityRates'],
   endpoints: (builder) => ({
     getStreetRatesFacilities: builder.query({
-      query: (params = {}) => {
-        const searchParams = new URLSearchParams();
-
-        if (params.page) searchParams.append('page', params.page);
-        if (params.limit) searchParams.append('limit', params.limit);
-        if (params.search) searchParams.append('search', params.search);
-        if (params.sort) searchParams.append('sort', params.sort);
-        if (params.orderby) searchParams.append('orderby', params.orderby);
-        if (params.status) searchParams.append('status', params.status);
-
-        return `street_rates?${searchParams.toString()}`;
-      },
-      providesTags: ['StreetRates'],
-    }),
-
-    // Get simple list of facilities (for dropdowns)
-    getStreetRatesFacilitiesList: builder.query({
-      query: () => 'street_rates/list',
+      query: (params = {}) =>
+        ({ url: 'street_rates/', params }),
       providesTags: ['StreetRates'],
     }),
 
@@ -117,9 +101,8 @@ export const streetRatesApi = createApi({
 
 export const {
   useGetStreetRatesFacilitiesQuery,
-  useGetStreetRatesFacilitiesListQuery,
-  useGetFacilityByIdQuery,
-  useGetUnitTypesQuery,
+  useGetFacilityByIdQuery, // To Do
+  useGetUnitTypesQuery, // TO DO
   useSaveRateChangesMutation,
   useSubmitAllRatesMutation,
   useSubmitIndividualRatesMutation,

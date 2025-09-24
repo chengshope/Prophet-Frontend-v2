@@ -1,20 +1,9 @@
-/**
- * StreetRate table columns definition
- * Following Rule #4: One file is for one table header's columns
- * Following Rule #28: Do not change layout or logic
- */
-
 import { Button, Flex, Space, Typography } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { formatPercent, formatCurrency } from '@/utils/formatters';
 
 const { Text } = Typography;
 
-/**
- * Get all columns for StreetRate table
- * @param {Object} props - Column configuration props
- * @returns {Array} Complete columns array for the table
- */
 export const getStreetRateTableColumns = ({
   expandedRowKeys,
   changedUnits,
@@ -70,64 +59,75 @@ export const getStreetRateTableColumns = ({
       render: (value) => (value != null ? `${parseFloat(value).toFixed(2)}%` : '0.00%'),
     },
 
-    // Average Rate Change Percentage Column
     {
-      title: 'Avg Rate Change %',
-      dataIndex: 'avr_rate_change_percent',
-      key: 'avr_rate_change_percent',
-      width: 130,
-      align: 'right',
-      sorter: true,
-      render: (value) => {
-        if (value == null) return '0.00%';
-        const numValue = parseFloat(value);
-        const color = numValue >= 0 ? '#52c41a' : '#ff4d4f';
-        return <span style={{ color }}>{formatPercent(numValue / 100)}</span>;
-      },
-    },
+      title: 'New',
+      className: 'new-group-header',
+      children: [
+        // Average Rate Change Percentage Column
+        {
+          title: 'Avg Rate Change %',
+          dataIndex: 'avr_rate_change_percent',
+          key: 'avr_rate_change_percent',
+          width: 130,
+          align: 'right',
+          className: 'new-group-header',
+          sorter: true,
+          render: (value) => {
+            if (value == null) return '0.00%';
+            const numValue = parseFloat(value);
+            const color = numValue >= 0 ? '#52c41a' : '#ff4d4f';
+            return <span style={{ color }}>{formatPercent(numValue / 100)}</span>;
+          },
+        },
 
-    // Average Rate Change Amount Column
-    {
-      title: 'Avg Rate Change $',
-      dataIndex: 'avr_rate_change_amount',
-      key: 'avr_rate_change_amount',
-      width: 130,
-      align: 'right',
-      sorter: true,
-      render: (value) => {
-        if (value == null) return '$0.00';
-        const numValue = parseFloat(value);
-        const color = numValue >= 0 ? '#52c41a' : '#ff4d4f';
-        return <span style={{ color }}>{formatCurrency(numValue)}</span>;
-      },
-    },
+        // Average Rate Change Amount Column
+        {
+          title: 'Avg Rate Change $',
+          dataIndex: 'avr_rate_change_amount',
+          key: 'avr_rate_change_amount',
+          width: 130,
+          align: 'right',
+          className: 'new-group-header',
+          sorter: true,
+          render: (value) => {
+            if (value == null) return '$0.00';
+            const numValue = parseFloat(value);
+            const color = numValue >= 0 ? '#52c41a' : '#ff4d4f';
+            return <span style={{ color }}>{formatCurrency(numValue)}</span>;
+          },
+        },
 
-    // Largest Increase Column
-    {
-      title: 'Largest Increase',
-      dataIndex: 'largest_increase',
-      key: 'largest_increase',
-      width: 120,
-      align: 'right',
-      sorter: true,
-      render: (value) => (value != null ? formatCurrency(value) : '$0.00'),
-    },
+        // Largest Increase Column
+        {
+          title: 'Largest Increase',
+          dataIndex: 'largest_increase',
+          key: 'largest_increase',
+          width: 120,
+          align: 'right',
+          className: 'new-group-header',
+          sorter: true,
+          render: (value) => (value != null ? formatCurrency(value) : '$0.00'),
+        },
 
-    // Largest Decrease Column
-    {
-      title: 'Largest Decrease',
-      dataIndex: 'largest_decrease',
-      key: 'largest_decrease',
-      width: 120,
-      align: 'right',
-      sorter: true,
-      render: (value) => (value != null ? formatCurrency(value) : '$0.00'),
+        // Largest Decrease Column
+        {
+          title: 'Largest Decrease',
+          dataIndex: 'largest_decrease',
+          key: 'largest_decrease',
+          width: 120,
+          align: 'right',
+          className: 'new-group-header',
+          sorter: true,
+          render: (value) => (value != null ? formatCurrency(value) : '$0.00'),
+        },
+      ]
     },
 
     // Actions Column
     {
       title: 'Actions',
       key: 'actions',
+      align: 'center',
       width: 140,
       fixed: 'right',
       render: (_, record) => {

@@ -2,7 +2,6 @@ import { streetRatesApi } from '@/api/streetRatesApi';
 import { addOrUpdateUnitInFacility, trackChangedFacility } from '@/utils/facilityHelpers';
 import { createSlice } from '@reduxjs/toolkit';
 
-// Load saved rate units from localStorage for initialState
 const loadSavedRateUnitsFromStorage = () => {
   try {
     const saved = localStorage.getItem('savedRateUnits');
@@ -20,7 +19,7 @@ const initialState = {
   savedRateUnits: loadSavedRateUnitsFromStorage(), // Array of full unit objects with saved rate changes (loaded from localStorage)
 };
 
-const streetSlice = createSlice({
+const streetRatesSlice = createSlice({
   name: 'streetRates',
   initialState,
   reducers: {
@@ -137,5 +136,5 @@ export const {
   mergeToSavedRateChanges,
   clearSavedRateChanges,
   clearSavedRateChangesByIds,
-} = streetSlice.actions;
-export default streetSlice.reducer;
+} = streetRatesSlice.actions;
+export default streetRatesSlice.reducer;

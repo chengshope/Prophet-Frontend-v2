@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Row, Space, Col, Input, Button, message } from 'antd';
@@ -10,8 +10,8 @@ import {
   useSubmitAllRatesMutation,
   useLazyExportCSVQuery,
 } from '@/api/streetRatesApi';
-import { selectSavedRateUnits, selectStreetTotal } from '@/features/street/streetSelector';
-import { clearSavedRateChanges } from '@/features/street/streetSlice';
+import { selectSavedRateUnits, selectStreetRatesTotal } from '@/features/streetRates/streetRatesSelector';
+import { clearSavedRateChanges } from '@/features/streetRates/streetRatesSlice';
 import { removeSavedRateUnits } from '@/utils/localStorage';
 import { handleCSVExport } from '@/utils/csvExport';
 import PageFrame from '@/components/common/PageFrame';
@@ -21,7 +21,9 @@ import './StreetRates.less';
 const { Search } = Input;
 
 const StreetRates = () => {
-  const [search, setSearchState] = useState('');
+  // Local state management (Rule #29: Use useState for local state)
+  const [searchInput, setSearchInput] = useState(''); // User input
+  const [search, setSearchState] = useState(''); // Debounced search value
   const [sort, setSortState] = useState('facility_name');
   const [orderby, setOrderByState] = useState('asc');
   const [currentPage, setCurrentPageState] = useState(1);
@@ -32,16 +34,36 @@ const StreetRates = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const totalFacilities = useSelector(selectStreetTotal);
+  const totalFacilities = useSelector(selectStreetRatesTotal);
   const savedRateChangedUnits = useSelector(selectSavedRateUnits);
 
-  const apiParams = useMemo(() => ({
-    search,
-    sort,
-    orderby,
-    page: currentPage,
-    limit: 10,
-  }), [search, sort, orderby, currentPage]);
+  const apiParams = useMemo(() => {
+    const params = {
+      sort,
+      orderby,
+      page: currentPage,
+      limit: 10,
+    };
+
+    if (search && search.trim()) {
+      params.search = search.trim();
+    }
+
+    return params;
+  }, [search, sort, orderby, currentPage]);
+
+  const { isLoading, isFetching } = useGetStreetRatesFacilitiesQuery(apiParams, {
+    refetchOnMountOrArgChange: true,
+  });
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setSearchState(searchInput);
+      setCurrentPageState(1);
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchInput]);
 
   const paginationConfig = useMemo(() => ({
     current: currentPage,
@@ -51,14 +73,11 @@ const StreetRates = () => {
     showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} facilities`,
   }), [currentPage]);
 
-  const { isLoading, isFetching } = useGetStreetRatesFacilitiesQuery(apiParams);
-
   const [triggerExportCSV] = useLazyExportCSVQuery();
   const [submitAllRates, { isLoading: isSubmitting }] = useSubmitAllRatesMutation();
 
   const handleSearch = (value) => {
-    setSearchState(value);
-    setCurrentPageState(1);
+    setSearchInput(value);
   };
 
   const handleSort = (column, direction) => {
@@ -140,8 +159,9 @@ const StreetRates = () => {
           <Col xs={24} md={8}>
             <Search
               placeholder="Search or filter..."
-              value={search}
+              value={searchInput}
               onChange={(e) => handleSearch(e.target.value)}
+              onSearch={(value) => setSearchInput(value)}
               allowClear
             />
           </Col>
@@ -160,8 +180,6 @@ const StreetRates = () => {
 
         <StreetRatesTable
           loading={isLoading || isFetching}
-          sortColumn={sort}
-          sortDirection={orderby}
           onSortChanged={handleSort}
           pagination={{
             ...paginationConfig,

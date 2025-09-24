@@ -7,15 +7,15 @@ import { useSubmitIndividualRatesMutation, useSaveRateChangesMutation } from '@/
 import {
   getChangedUnits,
   getChangedUnitsByFacilityId,
-  selectStreetFacilities,
+  selectStreetRatesFacilities,
   selectNewRateUnits,
   selectSavedRateUnits,
-} from '@/features/street/streetSelector';
+} from '@/features/streetRates/streetRatesSelector';
 import {
   clearChangedUnitByFacilityId,
   mergeToSavedRateChanges,
   clearSavedRateChangesByIds,
-} from '@/features/street/streetSlice';
+} from '@/features/streetRates/streetRatesSlice';
 import {
   mergeSavedRateUnits,
   removeSavedRateUnitsByIds,
@@ -28,15 +28,13 @@ import './StreetRatesTable.less';
 
 const StreetRatesTable = ({
   loading,
-  sortColumn,
-  sortDirection,
   onSortChanged,
   pagination,
   portfolioSettings,
   latestPublishedDate,
   savedRateChangedUnitsCount,
 }) => {
-  const facilities = useSelector(selectStreetFacilities);
+  const facilities = useSelector(selectStreetRatesFacilities);
   const dispatch = useDispatch();
 
   const [expandedRowKeys, setExpandedRowKeys] = useState([]);
@@ -52,7 +50,6 @@ const StreetRatesTable = ({
     useSubmitIndividualRatesMutation();
   const [saveRateChanges, { isLoading: isSavingChanges }] = useSaveRateChangesMutation();
 
-  // Handle row expansion
   const handleExpand = (expanded, record) => {
     if (expanded) {
       setExpandedRowKeys([...expandedRowKeys, record.id]);
@@ -61,7 +58,6 @@ const StreetRatesTable = ({
     }
   };
 
-  // Handle save changes for current facility
   const handleSaveChanges = async (facility) => {
     try {
       // Get all changed units for this facility
@@ -149,8 +145,6 @@ const StreetRatesTable = ({
 
   // Get columns using extracted column definitions
   const columns = getStreetRateTableColumns({
-    sortColumn,
-    sortDirection,
     expandedRowKeys,
     changedUnits,
     savedRateUnits,
@@ -237,7 +231,6 @@ const StreetRatesTable = ({
         }}
       />
 
-      {/* Individual Publish Modal */}
       <Modal
         title={`Publish Rates - ${selectedFacility?.facility_name}`}
         open={publishModalOpen}
