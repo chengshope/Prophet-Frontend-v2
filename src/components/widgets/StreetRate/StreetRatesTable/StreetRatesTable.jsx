@@ -177,7 +177,7 @@ const StreetRatesTable = ({
         className="street-rates-table"
         title={() => (
           <Row justify="space-between" className="street-rates-status-row">
-            <Col>{`Last Updated: ${latestPublishedDate}`}</Col>
+            <Col>{latestPublishedDate? `Last Updated: ${latestPublishedDate}` : 'No updates yet'}</Col>
             <Col>Rate Changes Ready to Publish: {savedRateChangedUnitsCount}</Col>
           </Row>
         )}
