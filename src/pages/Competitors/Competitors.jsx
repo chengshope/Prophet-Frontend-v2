@@ -77,7 +77,14 @@ const Competitors = () => {
     if (selectedFacility?.stortrack_id && search !== debouncedSearch) return true;
 
     return false;
-  }, [isFacilityLoading, selectedFacility?.stortrack_id, competitorsLoading, search, debouncedSearch, competitorsFetching]);
+  }, [
+    isFacilityLoading,
+    selectedFacility?.stortrack_id,
+    competitorsLoading,
+    search,
+    debouncedSearch,
+    competitorsFetching,
+  ]);
 
   const facilityOptions = useSelector(selectFacilityOptions);
 
@@ -241,7 +248,7 @@ const Competitors = () => {
               loading={isLoadingCompetitors && selectedFacility?.stortrack_id}
             />
           </Col>
-          <Col xs={24} md={12} style={{ display: 'flex', justifyContent: 'flex-end'}}>
+          <Col xs={24} md={12} style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <Segmented
               size="middle"
               value={strategy}

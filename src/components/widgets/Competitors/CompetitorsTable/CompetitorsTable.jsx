@@ -33,7 +33,7 @@ const CompetitorsTable = ({ data, loading, onCompetitorUpdate, onRowHover }) => 
         columns={columns}
         dataSource={data}
         loading={loading}
-        size='small'
+        size="small"
         rowKey="id"
         bordered
         pagination={{
