@@ -9,7 +9,7 @@ import {
   SettingOutlined,
   ShopOutlined,
   TeamOutlined,
-  UserOutlined
+  UserOutlined,
 } from '@ant-design/icons';
 import { Layout } from 'antd';
 import HeaderBar from './Header';
@@ -68,13 +68,13 @@ const MainLayout = () => {
     },
     ...(isIntegrator
       ? [
-        {
-          key: '/portfolio',
-          icon: <BookOutlined />,
-          label: 'Portfolio',
-          onClick: () => navigate('/portfolio'),
-        },
-      ]
+          {
+            key: '/portfolio',
+            icon: <BookOutlined />,
+            label: 'Portfolio',
+            onClick: () => navigate('/portfolio'),
+          },
+        ]
       : []),
   ];
 
@@ -106,15 +106,18 @@ const MainLayout = () => {
       profile: 'Profile',
     };
 
-    const items = [{
-      title: <HomeOutlined />
-    }];
+    const items = [
+      {
+        title: <HomeOutlined />,
+      },
+    ];
 
     pathSegments.forEach((segment) => {
-      const title = labelMap[segment] || segment.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+      const title =
+        labelMap[segment] || segment.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 
       items.push({
-        title
+        title,
       });
     });
 
@@ -140,10 +143,7 @@ const MainLayout = () => {
         items={menuItems}
       />
       <Layout>
-        <HeaderBar
-          breadcrumbItems={getBreadcrumbItems()}
-          userMenuItems={userMenuItems}
-        />
+        <HeaderBar breadcrumbItems={getBreadcrumbItems()} userMenuItems={userMenuItems} />
         <Content className="page-content">
           <div className="content-area">
             <Outlet />

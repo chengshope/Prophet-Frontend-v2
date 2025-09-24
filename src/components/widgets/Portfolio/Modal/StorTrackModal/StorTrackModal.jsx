@@ -40,7 +40,7 @@ const StorTrackModal = ({
     // Pre-select existing store if available
     if (nearbyStores.length > 0 && selectedFacility?.comp_stores_info?.s_id) {
       const existingStore = nearbyStores.find(
-        store => store.storeid === selectedFacility.comp_stores_info.s_id
+        (store) => store.storeid === selectedFacility.comp_stores_info.s_id
       );
       if (existingStore) {
         setSelectedStore(existingStore.storeid);
@@ -55,7 +55,7 @@ const StorTrackModal = ({
 
   const handleStoreChange = (storeId) => {
     setSelectedStore(storeId);
-    const store = nearbyStores.find(s => s.storeid === storeId);
+    const store = nearbyStores.find((s) => s.storeid === storeId);
     if (store) {
       // Auto-set radius based on existing facility data if available
       const existingRadius = selectedFacility?.comp_stores_info?.distance;
@@ -72,7 +72,7 @@ const StorTrackModal = ({
 
   const handleConfirm = () => {
     form.validateFields().then((values) => {
-      const selectedStoreData = nearbyStores.find(store => store.storeid === values.store_id);
+      const selectedStoreData = nearbyStores.find((store) => store.storeid === values.store_id);
       onConfirm({
         facility: selectedFacility,
         store: selectedStoreData,
@@ -90,9 +90,9 @@ const StorTrackModal = ({
         <Button key="cancel" onClick={onCancel}>
           Cancel
         </Button>,
-        <Button 
-          key="confirm" 
-          type="primary" 
+        <Button
+          key="confirm"
+          type="primary"
           onClick={handleConfirm}
           loading={confirmLoading}
           disabled={!selectedStore || !radius}
@@ -110,7 +110,7 @@ const StorTrackModal = ({
           rules={[{ required: true, message: 'Please select a store' }]}
         >
           <Select
-            placeholder={loadingStores ? "Loading nearby stores..." : "Select a nearby store"}
+            placeholder={loadingStores ? 'Loading nearby stores...' : 'Select a nearby store'}
             value={selectedStore}
             onChange={handleStoreChange}
             showSearch
@@ -119,16 +119,20 @@ const StorTrackModal = ({
             filterOption={(input, option) =>
               option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
             }
-            notFoundContent={loadingStores ? (
-              <div style={{ textAlign: 'center', padding: '12px' }}>
-                <Spin size="small" />
-                <div style={{ marginTop: 8 }}>
-                  <Text type="secondary" style={{ fontSize: '12px' }}>Loading nearby stores...</Text>
+            notFoundContent={
+              loadingStores ? (
+                <div style={{ textAlign: 'center', padding: '12px' }}>
+                  <Spin size="small" />
+                  <div style={{ marginTop: 8 }}>
+                    <Text type="secondary" style={{ fontSize: '12px' }}>
+                      Loading nearby stores...
+                    </Text>
+                  </div>
                 </div>
-              </div>
-            ) : (
-              <Text type="secondary">No nearby stores found</Text>
-            )}
+              ) : (
+                <Text type="secondary">No nearby stores found</Text>
+              )
+            }
           >
             {nearbyStores.map((store) => (
               <Option key={store.storeid} value={store.storeid}>
@@ -159,9 +163,18 @@ const StorTrackModal = ({
         </Form.Item>
 
         {selectedFacility && !selectedFacility.latitude && (
-          <div style={{ marginTop: 16, padding: 12, backgroundColor: '#fff2e8', border: '1px solid #ffbb96', borderRadius: 4 }}>
+          <div
+            style={{
+              marginTop: 16,
+              padding: 12,
+              backgroundColor: '#fff2e8',
+              border: '1px solid #ffbb96',
+              borderRadius: 4,
+            }}
+          >
             <Text type="warning">
-              This facility doesn't have latitude/longitude coordinates. Please add coordinates to enable StorTrack lookup.
+              This facility doesn't have latitude/longitude coordinates. Please add coordinates to
+              enable StorTrack lookup.
             </Text>
           </div>
         )}

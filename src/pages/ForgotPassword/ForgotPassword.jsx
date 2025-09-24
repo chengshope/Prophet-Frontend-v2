@@ -77,12 +77,9 @@ const ForgotPassword = () => {
         </Form.Item>
       </Form>
 
-      <Flex justify='center' style={{ textAlign: 'center', marginTop: 6 }}>
+      <Flex justify="center" style={{ textAlign: 'center', marginTop: 6 }}>
         <Text type="secondary">
-          Remember your password?{' '}
-          <Link to="/login">
-            Back to Login
-          </Link>
+          Remember your password? <Link to="/login">Back to Login</Link>
         </Text>
       </Flex>
     </Flex>

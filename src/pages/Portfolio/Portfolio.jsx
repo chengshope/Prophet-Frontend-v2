@@ -9,19 +9,7 @@ import {
   UserOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import {
-  Button,
-  Card,
-  Col,
-  Form,
-  Input,
-  Modal,
-  Row,
-  Select,
-  Table,
-  Space,
-  Spin,
-} from 'antd';
+import { Button, Card, Col, Form, Input, Modal, Row, Select, Table, Space, Spin } from 'antd';
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -38,7 +26,6 @@ import {
   useLookupStorTrackMutation,
   useUpdateFacilityStorTrackMutation,
   useSyncPortfolioFacilitiesMutation,
-
 } from '@/api/settingsApi';
 import CreatePortfolio from '@/components/widgets/Portfolio/Modal/CreatePortfolio';
 import DeleteUserModal from '@/components/widgets/Portfolio/Modal/DeleteUserModal';
@@ -91,9 +78,12 @@ const Portfolio = () => {
   });
 
   // Get portfolio-specific facilities (matching v1: /portfolio/{portfolioId}/facility/list)
-  const { data: facilitiesList } = useGetPortfolioFacilitiesQuery(portfolioId || currentPortfolioId, {
-    skip: !portfolioId && !currentPortfolioId,
-  });
+  const { data: facilitiesList } = useGetPortfolioFacilitiesQuery(
+    portfolioId || currentPortfolioId,
+    {
+      skip: !portfolioId && !currentPortfolioId,
+    }
+  );
 
   // Get portfolio-specific users (matching v1: /customers/users?portfolio_id={portfolioId}&role_id=1)
   const { data: usersList } = useGetPortfolioCustomerUsersQuery(portfolioId || currentPortfolioId, {
@@ -262,27 +252,30 @@ const Portfolio = () => {
     // Note: performStorTrackLookup will be called automatically by the modal's useEffect
   };
 
-  const performStorTrackLookup = useCallback(async (facility) => {
-    setLoadingStores(true);
+  const performStorTrackLookup = useCallback(
+    async (facility) => {
+      setLoadingStores(true);
 
-    try {
-      // Call real API matching v1: POST /portfolio/lookupStorTrack
-      const payload = {
-        latitude: facility.latitude,
-        longitude: facility.longitude,
-        radius: 1,
-      };
+      try {
+        // Call real API matching v1: POST /portfolio/lookupStorTrack
+        const payload = {
+          latitude: facility.latitude,
+          longitude: facility.longitude,
+          radius: 1,
+        };
 
-      const result = await lookupStorTrack(payload).unwrap();
-      setNearbyStores(result.stores || []);
-    } catch (error) {
-      console.error('Lookup error:', error);
-      showError('Failed to lookup stores');
-      setNearbyStores([]);
-    } finally {
-      setLoadingStores(false);
-    }
-  }, [lookupStorTrack, showError]);
+        const result = await lookupStorTrack(payload).unwrap();
+        setNearbyStores(result.stores || []);
+      } catch (error) {
+        console.error('Lookup error:', error);
+        showError('Failed to lookup stores');
+        setNearbyStores([]);
+      } finally {
+        setLoadingStores(false);
+      }
+    },
+    [lookupStorTrack, showError]
+  );
 
   const handleStorTrackConfirm = async ({ facility, store, radius }) => {
     try {
@@ -315,7 +308,7 @@ const Portfolio = () => {
       key: 'index',
       render: (_, __, index) => index + 1,
       width: 60,
-      align: 'center'
+      align: 'center',
     },
     {
       title: 'Full Name',
@@ -335,8 +328,8 @@ const Portfolio = () => {
       render: (_, record) => (
         <Button
           color="primary"
-          variant='outlined'
-          size='small'
+          variant="outlined"
+          size="small"
           icon={<DeleteOutlined />}
           onClick={() => handleDeleteUserClick(record)}
         >
@@ -353,7 +346,7 @@ const Portfolio = () => {
       key: 'index',
       render: (_, __, index) => index + 1,
       width: 60,
-      align: 'center'
+      align: 'center',
     },
     {
       title: 'Facility Name',
@@ -453,10 +446,16 @@ const Portfolio = () => {
         className="page-card"
         style={{ marginBottom: 24 }}
       >
-        <Spin spinning={portfolioLoading || savingPortfolio} tip={
-          portfolioLoading ? 'Loading portfolio settings...' :
-            savingPortfolio ? 'Saving portfolio...' : 'Loading...'
-        }>
+        <Spin
+          spinning={portfolioLoading || savingPortfolio}
+          tip={
+            portfolioLoading
+              ? 'Loading portfolio settings...'
+              : savingPortfolio
+                ? 'Saving portfolio...'
+                : 'Loading...'
+          }
+        >
           <Form form={form} layout="vertical" onFinish={handlePortfolioSave}>
             <Row gutter={[16, 16]}>
               <Col xs={24} md={12} lg={8}>
@@ -574,17 +573,19 @@ const Portfolio = () => {
           style={{ marginBottom: 24 }}
           styles={{ body: { padding: '1px 0 0' } }}
         >
-          <Spin spinning={portfolioLoading || addingUser || deletingUser} tip={
-            portfolioLoading ? 'Loading users...' :
-              addingUser ? 'Adding user...' :
-                deletingUser ? 'Deleting user...' : 'Loading...'
-          }>
-            <Table
-              columns={userColumns}
-              dataSource={users}
-              rowKey="id"
-              pagination={false}
-            />
+          <Spin
+            spinning={portfolioLoading || addingUser || deletingUser}
+            tip={
+              portfolioLoading
+                ? 'Loading users...'
+                : addingUser
+                  ? 'Adding user...'
+                  : deletingUser
+                    ? 'Deleting user...'
+                    : 'Loading...'
+            }
+          >
+            <Table columns={userColumns} dataSource={users} rowKey="id" pagination={false} />
           </Spin>
         </Card>
       )}
@@ -592,10 +593,16 @@ const Portfolio = () => {
       {/* StorTrack Integration */}
       {selectedPortfolio && (
         <Card title="StorTrack" className="page-card" styles={{ body: { padding: '1px 0 0' } }}>
-          <Spin spinning={portfolioLoading || updatingStorTrack} tip={
-            portfolioLoading ? 'Loading facilities...' :
-              updatingStorTrack ? 'Updating StorTrack settings...' : 'Loading...'
-          }>
+          <Spin
+            spinning={portfolioLoading || updatingStorTrack}
+            tip={
+              portfolioLoading
+                ? 'Loading facilities...'
+                : updatingStorTrack
+                  ? 'Updating StorTrack settings...'
+                  : 'Loading...'
+            }
+          >
             <Table
               columns={facilityColumns}
               dataSource={facilities}
@@ -658,11 +665,7 @@ const Portfolio = () => {
         footer={null}
         width={500}
       >
-        <Form
-          form={userForm}
-          layout="vertical"
-          onFinish={handleAddUser}
-        >
+        <Form form={userForm} layout="vertical" onFinish={handleAddUser}>
           <Form.Item
             label="First Name"
             name="firstName"
@@ -689,18 +692,15 @@ const Portfolio = () => {
           </Form.Item>
           <Form.Item style={{ marginBottom: 0, textAlign: 'right' }}>
             <Space>
-              <Button onClick={() => {
-                setAddUserModalVisible(false);
-                userForm.resetFields();
-              }}>
+              <Button
+                onClick={() => {
+                  setAddUserModalVisible(false);
+                  userForm.resetFields();
+                }}
+              >
                 Cancel
               </Button>
-              <Button
-                type="primary"
-                htmlType="submit"
-                icon={<PlusOutlined />}
-                loading={addingUser}
-              >
+              <Button type="primary" htmlType="submit" icon={<PlusOutlined />} loading={addingUser}>
                 Add User
               </Button>
             </Space>

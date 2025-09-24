@@ -31,7 +31,11 @@ const CreatePortfolio = ({ visible, onCancel, onSuccess }) => {
   const [form] = Form.useForm();
   const [users, setUsers] = useState([]);
   const [createPortfolio, { isLoading }] = useCreatePortfolioAndUsersMutation();
-  const { data: companies, isLoading: companiesLoading, error: companiesError } = useGetPortfolioCompaniesQuery();
+  const {
+    data: companies,
+    isLoading: companiesLoading,
+    error: companiesError,
+  } = useGetPortfolioCompaniesQuery();
 
   // Reset form when modal opens/closes
   useEffect(() => {
@@ -266,11 +270,12 @@ const CreatePortfolio = ({ visible, onCancel, onSuccess }) => {
                   loading={companiesLoading}
                   notFoundContent={companiesLoading ? 'Loading...' : 'No companies found'}
                 >
-                  {Array.isArray(companies) && companies.map((company) => (
-                    <Option key={company.id} value={company.id}>
-                      {company.name}
-                    </Option>
-                  ))}
+                  {Array.isArray(companies) &&
+                    companies.map((company) => (
+                      <Option key={company.id} value={company.id}>
+                        {company.name}
+                      </Option>
+                    ))}
                 </Select>
               </Form.Item>
             </Col>
@@ -280,12 +285,7 @@ const CreatePortfolio = ({ visible, onCancel, onSuccess }) => {
         <Divider orientation="left">Users</Divider>
 
         <div style={{ marginBottom: 16 }}>
-          <Button
-            type="dashed"
-            onClick={addUser}
-            icon={<PlusOutlined />}
-            style={{ width: '100%' }}
-          >
+          <Button type="dashed" onClick={addUser} icon={<PlusOutlined />} style={{ width: '100%' }}>
             Add User
           </Button>
         </div>

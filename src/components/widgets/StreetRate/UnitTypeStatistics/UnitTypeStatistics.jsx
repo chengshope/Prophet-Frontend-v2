@@ -1,9 +1,6 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  Table,
-  message,
-} from 'antd';
+import { Table, message } from 'antd';
 import { useGetUnitTypesQuery, useUpdateUnitTypeMutation } from '@/api/streetRatesApi';
 import { selectPmsType } from '@/features/auth/authSelector';
 import { updateFacility } from '@/features/streetRates/streetRatesSlice';

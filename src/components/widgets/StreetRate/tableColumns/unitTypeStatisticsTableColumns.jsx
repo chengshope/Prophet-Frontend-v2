@@ -1,13 +1,4 @@
-import {
-  Input,
-  Button,
-  Space,
-  Typography,
-  Tag,
-  Tooltip,
-  Flex,
-  Checkbox,
-} from 'antd';
+import { Input, Button, Space, Typography, Tag, Tooltip, Flex, Checkbox } from 'antd';
 import {
   EditOutlined,
   InfoCircleOutlined,

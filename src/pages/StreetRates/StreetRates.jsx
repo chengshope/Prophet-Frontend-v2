@@ -10,7 +10,10 @@ import {
   useSubmitAllRatesMutation,
   useLazyExportCSVQuery,
 } from '@/api/streetRatesApi';
-import { selectSavedRateUnits, selectStreetRatesTotal } from '@/features/streetRates/streetRatesSelector';
+import {
+  selectSavedRateUnits,
+  selectStreetRatesTotal,
+} from '@/features/streetRates/streetRatesSelector';
 import { clearSavedRateChanges } from '@/features/streetRates/streetRatesSlice';
 import { removeSavedRateUnits } from '@/utils/localStorage';
 import { handleCSVExport } from '@/utils/csvExport';
@@ -39,6 +42,7 @@ const StreetRates = () => {
 
   const apiParams = useMemo(() => {
     const params = {
+      status: 'enabled',
       sort,
       orderby,
       page: currentPage,
@@ -65,13 +69,16 @@ const StreetRates = () => {
     return () => clearTimeout(timeoutId);
   }, [searchInput]);
 
-  const paginationConfig = useMemo(() => ({
-    current: currentPage,
-    pageSize: 10,
-    showSizeChanger: false,
-    showQuickJumper: true,
-    showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} facilities`,
-  }), [currentPage]);
+  const paginationConfig = useMemo(
+    () => ({
+      current: currentPage,
+      pageSize: 10,
+      showSizeChanger: false,
+      showQuickJumper: true,
+      showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} facilities`,
+    }),
+    [currentPage]
+  );
 
   const [triggerExportCSV] = useLazyExportCSVQuery();
   const [submitAllRates, { isLoading: isSubmitting }] = useSubmitAllRatesMutation();

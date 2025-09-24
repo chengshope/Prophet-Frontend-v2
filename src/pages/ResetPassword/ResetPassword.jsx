@@ -48,7 +48,9 @@ const ResetPassword = () => {
   return (
     <Flex vertical>
       <Flex vertical align="center" gap="small" style={{ marginBottom: 30, textAlign: 'center' }}>
-        <Title level={2} style={{ marginBottom: '8px' }}>Reset Password</Title>
+        <Title level={2} style={{ marginBottom: '8px' }}>
+          Reset Password
+        </Title>
         <Text type="secondary">Enter your new password below.</Text>
       </Flex>
 
@@ -87,17 +89,21 @@ const ResetPassword = () => {
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" htmlType="submit" loading={isLoading} block style={{ marginTop: 12 }}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={isLoading}
+            block
+            style={{ marginTop: 12 }}
+          >
             Update Password
           </Button>
         </Form.Item>
       </Form>
 
       <Flex justify="center" style={{ textAlign: 'center', marginTop: 6 }}>
-        <Text type="secondary">Remembered your password?{' '}
-          <Link to="/login">
-            Back to Login
-          </Link>
+        <Text type="secondary">
+          Remembered your password? <Link to="/login">Back to Login</Link>
         </Text>
       </Flex>
     </Flex>

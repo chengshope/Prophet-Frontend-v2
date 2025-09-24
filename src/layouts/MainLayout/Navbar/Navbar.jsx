@@ -32,7 +32,10 @@ const Navbar = ({ collapsed, onToggleCollapsed, selectedKey, items }) => {
       <div className="sider-bottom">
         <div className="theme-toggle-container">
           {collapsed ? (
-            <Tooltip title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'} placement="right">
+            <Tooltip
+              title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+              placement="right"
+            >
               <Switch
                 checked={isDarkMode}
                 onChange={handleThemeChange}

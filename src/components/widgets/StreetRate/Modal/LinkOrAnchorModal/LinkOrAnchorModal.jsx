@@ -1,4 +1,4 @@
-import { Modal, Button, Space } from 'antd';
+import { Modal, Button } from 'antd';
 import './LinkOrAnchorModal.less';
 
 const LinkOrAnchorModal = ({ open, onCancel, onLinkClick, onAnchorClick }) => {

@@ -2,10 +2,6 @@ import { Modal, Typography } from 'antd';
 
 const { Text } = Typography;
 
-/**
- * Modal for confirming publishing individual facility rate changes
- * Following Rule #4: Modal components under ExistingCustomers/Modal/
- */
 const PublishIndividualModal = ({
   open,
   onOk,

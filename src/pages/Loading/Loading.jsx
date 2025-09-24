@@ -77,11 +77,7 @@ const Loading = () => {
     <div className="loading-container" role="status" aria-live="polite">
       <div className="loading-content">
         <div className="loading-animation">
-          <img
-            src="/assets/images/loading.svg"
-            alt="Loading Animation"
-            className="loading-svg"
-          />
+          <img src="/assets/images/loading.svg" alt="Loading Animation" className="loading-svg" />
         </div>
         <p className="loading-text">{loadingText}</p>
       </div>

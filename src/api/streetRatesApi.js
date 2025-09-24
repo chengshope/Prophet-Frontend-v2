@@ -7,8 +7,7 @@ export const streetRatesApi = createApi({
   tagTypes: ['StreetRates', 'UnitTypes', 'FacilityRates'],
   endpoints: (builder) => ({
     getStreetRatesFacilities: builder.query({
-      query: (params = {}) =>
-        ({ url: 'street_rates/', params }),
+      query: (params = {}) => ({ url: 'street_rates', params }),
       providesTags: ['StreetRates'],
     }),
 

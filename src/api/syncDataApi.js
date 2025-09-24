@@ -32,8 +32,5 @@ export const syncDataApi = createApi({
   }),
 });
 
-export const {
-  useSyncDataMutation,
-  useRunStreetRatesPythonMutation,
-  useRunECRIPythonMutation,
-} = syncDataApi;
+export const { useSyncDataMutation, useRunStreetRatesPythonMutation, useRunECRIPythonMutation } =
+  syncDataApi;

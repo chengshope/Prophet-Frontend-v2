@@ -23,7 +23,6 @@ export const getStreetRateTableColumns = ({
       dataIndex: 'facility_name',
       key: 'facility_name',
       width: 250,
-      fixed: 'left',
       sorter: true,
       render: (_, record) => (
         <Space direction="vertical" size={0}>
@@ -44,7 +43,6 @@ export const getStreetRateTableColumns = ({
       dataIndex: 'market',
       key: 'market',
       width: 140,
-      align: 'right',
       sorter: true,
     },
 
@@ -54,7 +52,7 @@ export const getStreetRateTableColumns = ({
       dataIndex: 'physical_occupancy',
       key: 'physical_occupancy',
       width: 140,
-      align: 'right',
+      align: 'center',
       sorter: true,
       render: (value) => (value != null ? `${parseFloat(value).toFixed(2)}%` : '0.00%'),
     },
@@ -69,7 +67,7 @@ export const getStreetRateTableColumns = ({
           dataIndex: 'avr_rate_change_percent',
           key: 'avr_rate_change_percent',
           width: 130,
-          align: 'right',
+          align: 'center',
           className: 'new-group-header',
           sorter: true,
           render: (value) => {
@@ -86,7 +84,7 @@ export const getStreetRateTableColumns = ({
           dataIndex: 'avr_rate_change_amount',
           key: 'avr_rate_change_amount',
           width: 130,
-          align: 'right',
+          align: 'center',
           className: 'new-group-header',
           sorter: true,
           render: (value) => {
@@ -103,7 +101,7 @@ export const getStreetRateTableColumns = ({
           dataIndex: 'largest_increase',
           key: 'largest_increase',
           width: 120,
-          align: 'right',
+          align: 'center',
           className: 'new-group-header',
           sorter: true,
           render: (value) => (value != null ? formatCurrency(value) : '$0.00'),
@@ -115,12 +113,12 @@ export const getStreetRateTableColumns = ({
           dataIndex: 'largest_decrease',
           key: 'largest_decrease',
           width: 120,
-          align: 'right',
+          align: 'center',
           className: 'new-group-header',
           sorter: true,
           render: (value) => (value != null ? formatCurrency(value) : '$0.00'),
         },
-      ]
+      ],
     },
 
     // Actions Column
@@ -129,7 +127,7 @@ export const getStreetRateTableColumns = ({
       key: 'actions',
       align: 'center',
       width: 140,
-      fixed: 'right',
+      fixed: 'center',
       render: (_, record) => {
         const isExpanded = expandedRowKeys.includes(record.id);
         const hasChanges = changedUnits.some((unit) =>

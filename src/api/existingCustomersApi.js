@@ -6,40 +6,25 @@ export const existingCustomersApi = createApi({
   baseQuery,
   tagTypes: ['ExistingCustomers', 'Summary'],
   endpoints: (builder) => ({
-    // Get existing customers with pagination and search (matching v1 API)
     getExistingCustomers: builder.query({
-      query: ({ page = 1, search = '', sort = 'facility_name', orderby = 'asc', limit = 10 }) => {
-        const searchParams = new URLSearchParams();
-
-        if (page) searchParams.append('page', page);
-        if (search) searchParams.append('search', search);
-        if (sort) searchParams.append('sort', sort);
-        if (orderby) searchParams.append('orderby', orderby);
-        if (limit) searchParams.append('limit', limit);
-        searchParams.append('status', 'enabled');
-
-        return `ecri?${searchParams.toString()}`;
-      },
+      query: (params = {}) => ({ url: 'ecri', params }),
       providesTags: ['ExistingCustomers'],
     }),
 
-    // Get summary data
     getExistingCustomersSummary: builder.query({
       query: () => 'ecri/summary',
       providesTags: ['Summary'],
     }),
 
-    // Bulk update tenants (matching v1 API format)
     bulkUpdateTenants: builder.mutation({
       query: (tenants) => ({
         url: 'ecri/bulk-update',
         method: 'POST',
-        body: tenants, // v1 sends array directly, not wrapped in object
+        body: tenants,
       }),
       invalidatesTags: ['ExistingCustomers', 'Summary'],
     }),
 
-    // Publish all rate changes
     publishAllRateChanges: builder.mutation({
       query: (ecriIds) => ({
         url: 'ecri/publish',
@@ -49,7 +34,6 @@ export const existingCustomersApi = createApi({
       invalidatesTags: ['ExistingCustomers', 'Summary'],
     }),
 
-    // Publish individual facility rate changes
     publishIndividualRateChanges: builder.mutation({
       query: ({ facilityId, ecriIds }) => ({
         url: 'ecri/publish-individual',
@@ -62,7 +46,6 @@ export const existingCustomersApi = createApi({
       invalidatesTags: ['ExistingCustomers', 'Summary'],
     }),
 
-    // Refresh model (matching v1 functionality)
     refreshModel: builder.mutation({
       query: () => ({
         url: 'ecri/refresh',

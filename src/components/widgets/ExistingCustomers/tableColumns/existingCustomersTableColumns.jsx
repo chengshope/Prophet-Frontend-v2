@@ -8,10 +8,6 @@ import {
 
 const { Text } = Typography;
 
-/**
- * Get table columns for ExistingCustomers table
- * Following Rule #4: One file for one table header's columns
- */
 export const getExistingCustomersTableColumns = ({
   expandedRowKeys = [],
   onExpand,
@@ -62,7 +58,7 @@ export const getExistingCustomersTableColumns = ({
       const color = percentage >= 0 ? '#52c41a' : '#ff4d4f';
       const sign = percentage >= 0 ? '+' : '';
       return (
-        <span style={{ color, fontWeight: 'bold' }}>
+        <span style={{ color }}>
           {sign}
           {percentage.toFixed(2)}%
         </span>
@@ -82,7 +78,7 @@ export const getExistingCustomersTableColumns = ({
       const color = avgChange >= 0 ? '#52c41a' : '#ff4d4f';
       const sign = avgChange >= 0 ? '+' : '';
       return (
-        <span style={{ color, fontWeight: 'bold' }}>
+        <span style={{ color }}>
           {sign}${avgChange.toFixed(2)}
         </span>
       );
@@ -110,7 +106,11 @@ export const getExistingCustomersTableColumns = ({
     render: (value) => {
       const percentage = value * 100 || 0;
       const color = getMoveOutProbabilityColor(percentage);
-      return <Tag color={color}>{percentage.toFixed(1)}%</Tag>;
+      return (
+        <Tag color={color} style={{ color: 'black' }}>
+          {percentage.toFixed(1)}%
+        </Tag>
+      );
     },
   },
   {
@@ -118,6 +118,7 @@ export const getExistingCustomersTableColumns = ({
     key: 'actions',
     width: 140,
     fixed: 'right',
+    align: 'center',
     render: (_, record) => (
       <FacilityActions
         facility={record}

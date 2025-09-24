@@ -638,31 +638,28 @@ const Settings = () => {
                       }
                     >
                       <Space wrap>
-                          <Upload
-                            accept=".xlsx"
-                            showUploadList={false}
-                            beforeUpload={(file) => {
-                              handleUnitRankingUpload(file);
-                              return false;
-                            }}
-                          >
-                            <Button icon={<UploadOutlined />} style={{ width: '100%' }} block>
-                              Click Here To Upload Your Unit Ranking
-                            </Button>
-                          </Upload>
-                          <Button
-                            icon={<DownloadOutlined />}
-                            onClick={handleExportRanking}
-                          >
-                            Click Here To Export Unit Ranking
+                        <Upload
+                          accept=".xlsx"
+                          showUploadList={false}
+                          beforeUpload={(file) => {
+                            handleUnitRankingUpload(file);
+                            return false;
+                          }}
+                        >
+                          <Button icon={<UploadOutlined />} style={{ width: '100%' }} block>
+                            Click Here To Upload Your Unit Ranking
                           </Button>
-                          <Button
-                            type="link"
-                            icon={<DownloadOutlined />}
-                            onClick={handleDownloadSample}
-                          >
-                            Download Sample XLSX
-                          </Button>
+                        </Upload>
+                        <Button icon={<DownloadOutlined />} onClick={handleExportRanking}>
+                          Click Here To Export Unit Ranking
+                        </Button>
+                        <Button
+                          type="link"
+                          icon={<DownloadOutlined />}
+                          onClick={handleDownloadSample}
+                        >
+                          Download Sample XLSX
+                        </Button>
                       </Space>
                     </Form.Item>
                   </Col>

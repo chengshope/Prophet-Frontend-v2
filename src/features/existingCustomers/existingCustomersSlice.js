@@ -12,54 +12,16 @@ const loadSavedTenantChangesFromStorage = () => {
 };
 
 const initialState = {
-  // Data
-  total: 0,
+  // Data (API responses - Rule #29: Use redux for api responses)
   facilities: [],
   changedFacilities: [],
   newTenantChanges: [], // Array of full tenant objects with unsaved changes
   savedTenantChanges: loadSavedTenantChangesFromStorage(), // Array of full tenant objects with saved changes (loaded from localStorage)
-  summaryData: {
-    totalTenants: 0,
-    averageRateIncrease: 0,
-    estimatedRevenueIncrease: 0,
-    averageMoveOutProbability: 0,
-  },
 
-  // Filters and Search
-  filters: {
-    search: '',
-    sort: 'facility_name',
-    orderby: 'asc',
-  },
-
-  // Pagination
-  pagination: {
-    currentPage: 1,
-    pageSize: 10,
-  },
-
-  // UI State
+  // UI State (only for components that need shared state)
   ui: {
-    publishModalOpen: false,
-    errorModalOpen: false,
-    errorLog: '',
-    latestPublishedDate: '',
-    expandedRowKeys: [],
-    selectedFacility: null,
-  },
-
-  // Loading States
-  loading: {
-    publishing: false,
-    refreshing: false,
-    exporting: false,
-  },
-
-  // Error States
-  errors: {
-    publish: null,
-    refresh: null,
-    export: null,
+    expandedRowKeys: [], // Shared between table components
+    selectedFacility: null, // Shared state for facility selection
   },
 };
 
@@ -67,86 +29,13 @@ const existingCustomersSlice = createSlice({
   name: 'existingCustomers',
   initialState,
   reducers: {
-    // Filter and Search Actions
-    setSearch: (state, action) => {
-      state.filters.search = action.payload;
-      state.pagination.currentPage = 1; // Reset to first page on search
-    },
-
-    setSort: (state, action) => {
-      const { field, direction } = action.payload;
-      state.filters.sort = field;
-      state.filters.orderby = direction;
-    },
-
-    // Pagination Actions
-    setCurrentPage: (state, action) => {
-      state.pagination.currentPage = action.payload;
-    },
-
-    setPageSize: (state, action) => {
-      state.pagination.pageSize = action.payload;
-      state.pagination.currentPage = 1; // Reset to first page on page size change
-    },
-
-    // UI State Actions
-    setPublishModalOpen: (state, action) => {
-      state.ui.publishModalOpen = action.payload;
-    },
-
-    setErrorModalOpen: (state, action) => {
-      state.ui.errorModalOpen = action.payload;
-    },
-
-    setErrorLog: (state, action) => {
-      state.ui.errorLog = action.payload;
-    },
-
-    setLatestPublishedDate: (state, action) => {
-      state.ui.latestPublishedDate = action.payload;
-    },
-
+    // UI State Actions (only for shared state between components)
     setExpandedRowKeys: (state, action) => {
       state.ui.expandedRowKeys = action.payload;
     },
 
     setSelectedFacility: (state, action) => {
       state.ui.selectedFacility = action.payload;
-    },
-
-    // Loading State Actions
-    setPublishingLoading: (state, action) => {
-      state.loading.publishing = action.payload;
-    },
-
-    setRefreshingLoading: (state, action) => {
-      state.loading.refreshing = action.payload;
-    },
-
-    setExportingLoading: (state, action) => {
-      state.loading.exporting = action.payload;
-    },
-
-    // Error State Actions
-    setPublishError: (state, action) => {
-      state.errors.publish = action.payload;
-    },
-
-    setRefreshError: (state, action) => {
-      state.errors.refresh = action.payload;
-    },
-
-    setExportError: (state, action) => {
-      state.errors.export = action.payload;
-    },
-
-    // Clear all errors
-    clearErrors: (state) => {
-      state.errors = {
-        publish: null,
-        refresh: null,
-        export: null,
-      };
     },
     // Update tenant data (similar to updateFacility in street rates)
     updateTenant: (state, action) => {
@@ -278,66 +167,24 @@ const existingCustomersSlice = createSlice({
         (tenant) => !tenantIds.includes(tenant.ecri_id)
       );
     },
-
-    // Update pagination
-    updatePagination: (state, action) => {
-      state.pagination = { ...state.pagination, ...action.payload };
-    },
   },
   extraReducers: (builder) => {
-    // Handle API responses
+    // Handle API responses (Rule #29: Use redux for api responses)
     builder.addMatcher(
       existingCustomersApi.endpoints.getExistingCustomers.matchFulfilled,
       (state, action) => {
         state.facilities = action.payload.result;
-        state.total = action.payload.pagination?.total || 0;
-      }
-    );
-
-    builder.addMatcher(
-      existingCustomersApi.endpoints.getExistingCustomersSummary.matchFulfilled,
-      (state, action) => {
-        const summary = action.payload;
-        state.summaryData = {
-          totalTenants: summary.sum_tenants || 0,
-          averageRateIncrease: summary.sum_avr_rate_inc || 0,
-          estimatedRevenueIncrease: summary.sum_rev_inc || 0,
-          averageMoveOutProbability: summary.sum_avr_mop || 0,
-        };
       }
     );
   },
 });
 
 export const {
-  // Filter and Search Actions
-  setSearch,
-  setSort,
-
-  // Pagination Actions
-  setCurrentPage,
-  setPageSize,
-
-  // UI State Actions
-  setPublishModalOpen,
-  setErrorModalOpen,
-  setErrorLog,
-  setLatestPublishedDate,
+  // UI State Actions (only for shared state between components)
   setExpandedRowKeys,
   setSelectedFacility,
 
-  // Loading State Actions
-  setPublishingLoading,
-  setRefreshingLoading,
-  setExportingLoading,
-
-  // Error State Actions
-  setPublishError,
-  setRefreshError,
-  setExportError,
-  clearErrors,
-
-  // Existing Tenant Actions
+  // Tenant Management Actions (still needed for data management)
   updateTenant,
   clearChangedTenantsByFacilityId,
   addChangedTenant,
@@ -346,7 +193,6 @@ export const {
   mergeToSavedTenantChanges,
   clearSavedTenantChanges,
   clearSavedTenantChangesByIds,
-  updatePagination,
 } = existingCustomersSlice.actions;
 
 export default existingCustomersSlice.reducer;

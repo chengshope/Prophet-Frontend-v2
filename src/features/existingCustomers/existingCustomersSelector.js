@@ -1,124 +1,24 @@
 import { createSelector } from '@reduxjs/toolkit';
 
-// Base selector
-export const selectExistingCustomersState = (state) => state.existingCustomers;
-
-// Data selectors
+// Data selectors (still used by components)
 export const selectExistingCustomersFacilities = (state) => state.existingCustomers.facilities;
-export const selectExistingCustomersTotal = (state) => state.existingCustomers.total;
 export const selectChangedFacilities = (state) => state.existingCustomers.changedFacilities;
-export const selectSummaryData = (state) => state.existingCustomers.summaryData;
 
-// Filter selectors
-export const selectExistingCustomersFilters = (state) => state.existingCustomers.filters;
-export const selectSearch = createSelector(
-  [selectExistingCustomersFilters],
-  (filters) => filters.search
-);
-export const selectSort = createSelector(
-  [selectExistingCustomersFilters],
-  (filters) => filters.sort
-);
-export const selectOrderBy = createSelector(
-  [selectExistingCustomersFilters],
-  (filters) => filters.orderby
-);
-
-// Pagination selectors
-export const selectExistingCustomersPagination = (state) => state.existingCustomers.pagination;
-export const selectCurrentPage = createSelector(
-  [selectExistingCustomersPagination],
-  (pagination) => pagination.currentPage
-);
-export const selectPageSize = createSelector(
-  [selectExistingCustomersPagination],
-  (pagination) => pagination.pageSize
-);
-
-// UI selectors
-export const selectExistingCustomersUI = (state) => state.existingCustomers.ui;
-export const selectPublishModalOpen = createSelector(
-  [selectExistingCustomersUI],
-  (ui) => ui.publishModalOpen
-);
-export const selectErrorModalOpen = createSelector(
-  [selectExistingCustomersUI],
-  (ui) => ui.errorModalOpen
-);
-export const selectErrorLog = createSelector([selectExistingCustomersUI], (ui) => ui.errorLog);
-export const selectLatestPublishedDate = createSelector(
-  [selectExistingCustomersUI],
-  (ui) => ui.latestPublishedDate
-);
+// UI selectors (still used by ExistingCustomersTable)
 export const selectExpandedRowKeys = createSelector(
-  [selectExistingCustomersUI],
+  [(state) => state.existingCustomers.ui],
   (ui) => ui.expandedRowKeys
 );
 export const selectSelectedFacility = createSelector(
-  [selectExistingCustomersUI],
+  [(state) => state.existingCustomers.ui],
   (ui) => ui.selectedFacility
 );
 
-// Loading selectors
-export const selectExistingCustomersLoading = (state) => state.existingCustomers.loading;
-export const selectPublishingLoading = createSelector(
-  [selectExistingCustomersLoading],
-  (loading) => loading.publishing
-);
-export const selectRefreshingLoading = createSelector(
-  [selectExistingCustomersLoading],
-  (loading) => loading.refreshing
-);
-export const selectExportingLoading = createSelector(
-  [selectExistingCustomersLoading],
-  (loading) => loading.exporting
-);
-
-// Error selectors
-export const selectExistingCustomersErrors = (state) => state.existingCustomers.errors;
-export const selectPublishError = createSelector(
-  [selectExistingCustomersErrors],
-  (errors) => errors.publish
-);
-export const selectRefreshError = createSelector(
-  [selectExistingCustomersErrors],
-  (errors) => errors.refresh
-);
-export const selectExportError = createSelector(
-  [selectExistingCustomersErrors],
-  (errors) => errors.export
-);
-
-// API Parameters selector (for RTK Query)
-export const selectExistingCustomersApiParams = createSelector(
-  [selectExistingCustomersFilters, selectExistingCustomersPagination],
-  (filters, pagination) => ({
-    page: pagination.currentPage,
-    search: filters.search,
-    sort: filters.sort,
-    orderby: filters.orderby,
-    limit: pagination.pageSize,
-  })
-);
-
-// Pagination configuration for Ant Design Table
-export const selectPaginationConfig = createSelector(
-  [selectExistingCustomersPagination, selectExistingCustomersTotal],
-  (pagination, total) => ({
-    current: pagination.currentPage,
-    total: total,
-    pageSize: pagination.pageSize,
-    showSizeChanger: true,
-    showQuickJumper: true,
-    showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
-  })
-);
-
-// Select tenant changes
+// Tenant changes selectors (used by components)
 export const selectNewTenantChanges = (state) => state.existingCustomers.newTenantChanges;
 export const selectSavedTenantChanges = (state) => state.existingCustomers.savedTenantChanges;
 
-// Get changed tenants by facility ID (similar to street rates)
+// Get changed tenants by facility ID (used by ExistingCustomersTable)
 export const getChangedTenantsByFacilityId = createSelector(
   [selectChangedFacilities],
   (changedFacilities) =>
@@ -128,76 +28,18 @@ export const getChangedTenantsByFacilityId = createSelector(
     }, {})
 );
 
-// Get all changed tenants (flattened)
-export const getChangedTenants = createSelector([selectChangedFacilities], (changedFacilities) => {
-  return changedFacilities.flatMap((f) => f.tenants || []);
-});
-
-// Get unsaved tenant changes (direct access)
-export const getNewTenantChanges = createSelector(
-  [selectNewTenantChanges],
-  (newTenantChanges) => newTenantChanges
-);
-
-// Get saved tenant changes (direct access, ready for publishing)
-export const getSavedTenantChanges = createSelector(
-  [selectSavedTenantChanges],
-  (savedTenantChanges) => savedTenantChanges
-);
-
-// Get unsaved tenant changes for a specific facility
-export const getNewTenantChangesByFacility = createSelector(
-  [selectNewTenantChanges, (state, facilityId) => facilityId],
-  (newTenantChanges, facilityId) => {
-    return newTenantChanges.filter((tenant) => tenant.facility_id === facilityId);
-  }
-);
-
-// Get saved tenant changes for a specific facility
-export const getSavedTenantChangesByFacility = createSelector(
-  [selectSavedTenantChanges, (state, facilityId) => facilityId],
-  (savedTenantChanges, facilityId) => {
-    return savedTenantChanges.filter((tenant) => tenant.facility_id === facilityId);
-  }
-);
-
-// Get ECRI IDs of changed tenants (for v1 compatibility)
-export const getChangedEcriIds = createSelector([selectNewTenantChanges], (newTenantChanges) => {
-  return newTenantChanges.map((tenant) => tenant.ecri_id);
-});
-
-// Get ECRI IDs of saved tenant changes (ready for publishing)
+// Get ECRI IDs of saved tenant changes (used by ExistingCustomers page)
 export const getSavedEcriIds = createSelector([selectSavedTenantChanges], (savedTenantChanges) => {
   return savedTenantChanges.map((tenant) => tenant.ecri_id);
 });
 
-// Get facilities with changes count
+// Get facilities with changes count (used by ExistingCustomers page)
 export const getFacilitiesWithChangesCount = createSelector(
   [selectChangedFacilities],
   (changedFacilities) => changedFacilities.length
 );
 
-// Get total tenants with changes count
-export const getTotalTenantsWithChangesCount = createSelector(
-  [selectNewTenantChanges],
-  (newTenantChanges) => newTenantChanges.length
-);
-
-// Get total saved tenants count
-export const getTotalSavedTenantsCount = createSelector(
-  [selectSavedTenantChanges],
-  (savedTenantChanges) => savedTenantChanges.length
-);
-
-// Check if facility has changes
-export const getFacilityHasChanges = createSelector(
-  [selectChangedFacilities, (state, facilityId) => facilityId],
-  (changedFacilities, facilityId) => {
-    return changedFacilities.some((facility) => facility.facility_id === facilityId);
-  }
-);
-
-// Check if facility has saved changes ready for publishing
+// Check if facility has saved changes (used by table columns)
 export const getFacilityHasSavedChanges = createSelector(
   [selectSavedTenantChanges, (state, facilityId) => facilityId],
   (savedTenantChanges, facilityId) => {
@@ -205,7 +47,7 @@ export const getFacilityHasSavedChanges = createSelector(
   }
 );
 
-// Calculate summary statistics from facilities data (matching v1 logic)
+// Calculate summary statistics from facilities data (used by ExistingCustomers page)
 export const getFormattedSummaryData = createSelector(
   [selectExistingCustomersFacilities],
   (facilities) => {
@@ -248,29 +90,5 @@ export const getFormattedSummaryData = createSelector(
       estimatedRevenueIncrease: sum_tenants > 0 ? (sum_rev_inc / sum_tenants).toFixed(1) : '0.0',
       averageMoveOutProbability: fc_length > 0 ? (sum_avr_mop / fc_length).toFixed(1) : '0.0',
     };
-  }
-);
-
-// Get tenants for bulk update (v1 format)
-export const getTenantsForBulkUpdate = createSelector(
-  [selectNewTenantChanges],
-  (newTenantChanges) => {
-    return newTenantChanges.map((tenant) => ({
-      id: tenant.ecri_id,
-      new_rate: parseFloat(tenant.new_rate),
-      exclude_submit: tenant.exclude_submit || false,
-    }));
-  }
-);
-
-// Get saved tenants for bulk update (v1 format)
-export const getSavedTenantsForBulkUpdate = createSelector(
-  [selectSavedTenantChanges],
-  (savedTenantChanges) => {
-    return savedTenantChanges.map((tenant) => ({
-      id: tenant.ecri_id,
-      new_rate: parseFloat(tenant.new_rate),
-      exclude_submit: tenant.exclude_submit || false,
-    }));
   }
 );

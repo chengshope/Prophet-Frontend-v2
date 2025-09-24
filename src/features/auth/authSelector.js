@@ -12,7 +12,7 @@ export const selectUsername = (state) => {
   return full || u.username || u.name || u?.user?.name || u?.user?.username || undefined;
 };
 
-export const selectUserEmail = state => state.auth.user?.email;
+export const selectUserEmail = (state) => state.auth.user?.email;
 
 export const selectPortfolioName = (state) => {
   const u = state.auth.user;

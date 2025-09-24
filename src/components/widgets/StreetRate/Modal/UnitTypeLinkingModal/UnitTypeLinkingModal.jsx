@@ -1,4 +1,4 @@
-import { Modal, Button, Select, InputNumber, Space, Spin } from 'antd';
+import { Modal, Button, Select, InputNumber, Space } from 'antd';
 import './UnitTypeLinkingModal.less';
 
 const UnitTypeLinkingModal = ({
