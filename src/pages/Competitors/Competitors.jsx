@@ -1,7 +1,7 @@
 import { useEffect, useCallback, useState, useMemo, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Row, Col, Input, Select, Segmented, Space, Card, Flex } from 'antd';
+import { Row, Col, Input, Select, Segmented, Space, Card } from 'antd';
 import { ShopOutlined } from '@ant-design/icons';
 import PageFrame from '@/components/common/PageFrame';
 import { CompetitorsTable, CompetitorMap } from '@/components/widgets/Competitors';
@@ -226,31 +226,31 @@ const Competitors = () => {
       ]}
     >
       <Space direction="vertical" size="large" className="page">
-        <Flex justify="space-between" align="center">
-          <Space direction="vertical" size="small">
+        <Row gutter={[16, 8]} align="middle" justify="space-between">
+          <Col xs={24} md={8}>
             <Search
               size="middle"
               placeholder={
                 selectedFacility?.stortrack_id
                   ? 'Search competitors...'
-                  : 'Select a facility with StorTrack ID to search competitors'
+                  : 'Select a facility to search competitors'
               }
               value={search}
               onChange={(e) => handleSearchChange(e.target.value)}
               allowClear
-              style={{ width: 400 }}
               loading={isLoadingCompetitors && selectedFacility?.stortrack_id}
-              disabled={!selectedFacility?.stortrack_id}
             />
-          </Space>
-          <Segmented
-            size="middle"
-            value={strategy}
-            onChange={handleStrategyChange}
-            options={strategyOptions}
-            disabled={!selectedFacility}
-          />
-        </Flex>
+          </Col>
+          <Col xs={24} md={12} style={{ display: 'flex', justifyContent: 'flex-end'}}>
+            <Segmented
+              size="middle"
+              value={strategy}
+              onChange={handleStrategyChange}
+              options={strategyOptions}
+              disabled={!selectedFacility}
+            />
+          </Col>
+        </Row>
 
         <Row gutter={[16, 16]}>
           <Col xs={24} lg={12}>
