@@ -346,10 +346,20 @@ export const settingsApi = createApi({
       ],
     }),
 
-    // Toggle facility profile (matching v1: PUT /facility_profile/toggle-profile/{id})
     toggleFacilityProfile: builder.mutation({
       query: (facilityId) => ({
         url: `/facility_profile/toggle-profile/${facilityId}`,
+        method: 'PUT',
+      }),
+      invalidatesTags: (result, error, facilityId) => [
+        { type: 'FacilitySettings', id: facilityId },
+      ],
+    }),
+
+    // Toggle facility status (matching v1: PUT /facility_profile/toggle-status/{id})
+    toggleFacilityStatus: builder.mutation({
+      query: (facilityId) => ({
+        url: `/facility_profile/toggle-status/${facilityId}`,
         method: 'PUT',
       }),
       invalidatesTags: (result, error, facilityId) => [
@@ -472,6 +482,7 @@ export const {
   useUpdateFacilityStorTrackMutation,
   useUpdateCompetitorStoreMutation,
   useToggleFacilityProfileMutation,
+  useToggleFacilityStatusMutation,
 
   // Cron Job Settings
   useGetCronJobSettingsQuery,

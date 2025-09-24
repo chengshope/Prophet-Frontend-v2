@@ -49,6 +49,7 @@ import {
   useSavePortfolioValuePricingMutation,
   useSaveFacilityValuePricingMutation,
   useToggleFacilityProfileMutation,
+  useToggleFacilityStatusMutation,
 } from '@/api/settingsApi';
 import './Settings.less';
 const { Option } = Select;
@@ -146,6 +147,7 @@ const Settings = () => {
   const [savePortfolioValuePricing] = useSavePortfolioValuePricingMutation();
   const [saveFacilityValuePricing] = useSaveFacilityValuePricingMutation();
   const [toggleFacilityProfile] = useToggleFacilityProfileMutation();
+  const [toggleFacilityStatus] = useToggleFacilityStatusMutation();
 
   // Combined loading state
   const isLoading =
@@ -398,6 +400,22 @@ const Settings = () => {
       showSuccess('Profile updated successfully!');
     } catch (error) {
       console.error('Profile update error:', error);
+      showError('Failed to update profile');
+    }
+  };
+
+  // Handle status toggle (immediate save like v1)
+  const handleStatusToggle = async () => {
+    if (!facilityId) {
+      showError('No facility selected');
+      return;
+    }
+
+    try {
+      await toggleFacilityStatus(facilityId).unwrap();
+      showSuccess('Status updated successfully!');
+    } catch (error) {
+      console.error('Status update error:', error);
     }
   };
 
@@ -522,9 +540,35 @@ const Settings = () => {
               rate_hold_on_occupancy: false,
             }}
           >
-            {/* Profile - only show for facility scope */}
             {scope === 'facility' && (
               <>
+                <Divider orientation="left">Status</Divider>
+                <Row gutter={[16, 16]}>
+                  <Col xs={24} md={12} lg={8}>
+                    <Form.Item
+                      label={
+                        <span>
+                          <SettingOutlined style={{ marginRight: 8, color: '#52c41a' }} />
+                          Status
+                          <Tooltip title="Enable or disable this facility.">
+                            <InfoCircleOutlined style={{ marginLeft: 8, color: '#1890ff' }} />
+                          </Tooltip>
+                        </span>
+                      }
+                      name="status"
+                    >
+                      <Segmented
+                        size="middle"
+                        value={facilitySettings?.status || 'enabled'}
+                        options={[
+                          { label: 'Enabled', value: 'enabled' },
+                          { label: 'Disabled', value: 'disabled' },
+                        ]}
+                        onChange={handleStatusToggle}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
                 <Divider orientation="left">Profile</Divider>
                 <Row gutter={[16, 16]}>
                   <Col xs={24} md={12} lg={8}>
