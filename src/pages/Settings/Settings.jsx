@@ -9,6 +9,10 @@ import {
   SettingOutlined,
   UploadOutlined,
   DownloadOutlined,
+  SoundOutlined,
+  MailOutlined,
+  PercentageOutlined,
+  DollarOutlined,
 } from '@ant-design/icons';
 import {
   Button,
@@ -715,9 +719,10 @@ const Settings = () => {
                 <Form.Item
                   label={
                     <FormLabel
-                      icon={<SettingOutlined />}
+                      icon={<BulbOutlined />}
                       label="Value Pricing"
-                      tooltip="Configure value pricing settings for your facilities."
+                      tooltip="Enable tiered pricing. Note: Your website must support this functionality."
+                      iconColor="#fa8c16"
                     />
                   }
                   name="value_pricing"
@@ -747,7 +752,7 @@ const Settings = () => {
                       <FormLabel
                         icon={<BulbOutlined />}
                         label="Unit Ranking Upload"
-                        tooltip="Upload unit ranking data for this facility."
+                        tooltip="Unit Ranking Upload."
                         iconColor="#fa8c16"
                       />
                     }
@@ -787,7 +792,16 @@ const Settings = () => {
                   title="Street Rate Update Strategy"
                   description="Configure when and how street rates should be updated."
                 >
-                  <Form.Item label="Frequency" name="frequency">
+                  <Form.Item
+                    label={
+                      <FormLabel
+                        icon={<SoundOutlined />}
+                        label="Frequency"
+                        iconColor="#fa8c16"
+                      />
+                    }
+                    name="frequency"
+                  >
                     <Segmented
                       size="middle"
                       value={frequency}
@@ -802,14 +816,32 @@ const Settings = () => {
 
                   {/* Day of Week - only show for Weekly frequency */}
                   {frequency === 'Weekly' && (
-                    <Form.Item label="Day of Week" name="weekday">
+                    <Form.Item
+                      label={
+                        <FormLabel
+                          icon={<BulbOutlined />}
+                          label="Day of Week"
+                          iconColor="#fa8c16"
+                        />
+                      }
+                      name="weekday"
+                    >
                       <Segmented size="middle" options={WEEKDAY_OPTIONS} />
                     </Form.Item>
                   )}
 
                   {/* Day of Month - only show for Monthly frequency */}
                   {frequency === 'Monthly' && (
-                    <Form.Item label="Day of Month" name="dayOfMonth">
+                    <Form.Item
+                      label={
+                        <FormLabel
+                          icon={<BulbOutlined />}
+                          label="Day of Month"
+                          iconColor="#fa8c16"
+                        />
+                      }
+                      name="dayOfMonth"
+                    >
                       <Select size="middle">
                         {Array.from({ length: 31 }, (_, i) => (
                           <Option key={i + 1} value={i + 1}>
@@ -835,7 +867,18 @@ const Settings = () => {
                     <TimePicker format="HH:mm" size="middle" style={{ width: 300 }}/>
                   </Form.Item>
 
-                  <Form.Item label="Notification Emails" name="emails" style={{ marginBottom: 0 }}>
+                  <Form.Item
+                    label={
+                      <FormLabel
+                        icon={<MailOutlined />}
+                        label="Notification Emails"
+                        tooltip="Hit ENTER to add a new email."
+                        iconColor="#fa8c16"
+                      />
+                    }
+                    name="emails"
+                    style={{ marginBottom: 0 }}
+                  >
                     <Select
                       size="middle"
                       mode="tags"
@@ -889,7 +932,14 @@ const Settings = () => {
               >
 
                 <Form.Item
-                  label="Average Percent Increase"
+                  label={
+                    <FormLabel
+                      icon={<PercentageOutlined />}
+                      label="Average Percent Increase"
+                      tooltip="Average rate increase percentage for eligible tenants. Recommended range: 5-25%"
+                      iconColor="#52c41a"
+                    />
+                  }
                   name="averagePercentIncrease"
                   className="full-width-number"
                   style={{ marginBottom: 0 }}
@@ -907,7 +957,14 @@ const Settings = () => {
                 {scope === 'portfolio' && (
 
                   <Form.Item
-                    label="Notification Days"
+                    label={
+                      <FormLabel
+                        icon={<ClockCircleOutlined />}
+                        label="Notification Days"
+                        tooltip="Number of days before rate change that notice is sent to customer"
+                        iconColor="#fa8c16"
+                      />
+                    }
                     name="notificationDays"
                     className="full-width-number"
                   >
@@ -917,7 +974,14 @@ const Settings = () => {
                 )}
 
                 <Form.Item
-                  label="Max Dollar Increase"
+                  label={
+                    <FormLabel
+                      icon={<DollarOutlined />}
+                      label="Max Dollar Increase"
+                      tooltip="The maximum incremental dollar increase any one tenant may receive."
+                      iconColor="#52c41a"
+                    />
+                  }
                   name="maxDollarIncrease"
                   className="full-width-number"
                 >
@@ -925,7 +989,14 @@ const Settings = () => {
                 </Form.Item>
 
                 <Form.Item
-                  label="Min Dollar Increase"
+                  label={
+                    <FormLabel
+                      icon={<DollarOutlined />}
+                      label="Min Dollar Increase"
+                      tooltip="The minimum incremental dollar increase any one tenant may receive."
+                      iconColor="#52c41a"
+                    />
+                  }
                   name="minDollarIncrease"
                   className="full-width-number"
                 >
@@ -933,7 +1004,14 @@ const Settings = () => {
                 </Form.Item>
 
                 <Form.Item
-                  label="Max Percent Increase"
+                  label={
+                    <FormLabel
+                      icon={<PercentageOutlined />}
+                      label="Max Percent Increase"
+                      tooltip="The maximum percentage increase any one tenant may receive."
+                      iconColor="#52c41a"
+                    />
+                  }
                   name="maxPercentIncrease"
                   className="full-width-number"
                 >
@@ -941,7 +1019,14 @@ const Settings = () => {
                 </Form.Item>
 
                 <Form.Item
-                  label="Min Percent Increase"
+                  label={
+                    <FormLabel
+                      icon={<PercentageOutlined />}
+                      label="Min Percent Increase"
+                      tooltip="The minimum percentage increase any one tenant may receive."
+                      iconColor="#52c41a"
+                    />
+                  }
                   name="minPercentIncrease"
                   className="full-width-number"
                 >
@@ -949,7 +1034,14 @@ const Settings = () => {
                 </Form.Item>
 
                 <Form.Item
-                  label="Store Occupancy Threshold"
+                  label={
+                    <FormLabel
+                      icon={<PercentageOutlined />}
+                      label="Store Occupancy Threshold"
+                      tooltip="The minimum occupancy required for any given facility to qualify for tenant rate increases."
+                      iconColor="#52c41a"
+                    />
+                  }
                   name="storeOccupancyThreshold"
                   className="full-width-number"
                 >
@@ -957,7 +1049,14 @@ const Settings = () => {
                 </Form.Item>
 
                 <Form.Item
-                  label="Time Since Last Increase (months)"
+                  label={
+                    <FormLabel
+                      icon={<ClockCircleOutlined />}
+                      label="Time Since Last Increase (months)"
+                      tooltip="The minimum time in months since a tenant's last rate increase."
+                      iconColor="#fa8c16"
+                    />
+                  }
                   name="timeSinceLastIncrease"
                   className="full-width-number"
                 >
@@ -965,7 +1064,14 @@ const Settings = () => {
                 </Form.Item>
 
                 <Form.Item
-                  label="Time Since Move-in (months)"
+                  label={
+                    <FormLabel
+                      icon={<ClockCircleOutlined />}
+                      label="Time Since Move-in (months)"
+                      tooltip="The minimum time in months since a tenant's move-in date."
+                      iconColor="#fa8c16"
+                    />
+                  }
                   name="timeSinceMoveIn"
                   className="full-width-number"
                 >
@@ -975,7 +1081,7 @@ const Settings = () => {
                 <Form.Item
                   label={
                     <FormLabel
-                      icon={<SettingOutlined />}
+                      icon={<DollarOutlined />}
                       label="Limit Above Street Rate ($)"
                       tooltip="The absolute dollar value over the unit street rate a tenant is occupying."
                     />
@@ -989,7 +1095,7 @@ const Settings = () => {
                 <Form.Item
                   label={
                     <FormLabel
-                      icon={<SettingOutlined />}
+                      icon={<PercentageOutlined />}
                       label="Limit Above Street Rate (%)"
                       tooltip="The percentage over the unit street rate a tenant is occupying."
                     />
@@ -1001,7 +1107,14 @@ const Settings = () => {
                 </Form.Item>
 
                 <Form.Item
-                  label="Max Move-Out Probability"
+                  label={
+                    <FormLabel
+                      icon={<PercentageOutlined />}
+                      label="Max Move-Out Probability"
+                      tooltip="The desired upper threshold for any given tenant's move-out probability."
+                      iconColor="#52c41a"
+                    />
+                  }
                   name="maxMoveOutProbability"
                   className="full-width-number"
                   style={{ marginBottom: 0 }}
