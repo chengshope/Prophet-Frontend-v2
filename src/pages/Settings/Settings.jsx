@@ -25,11 +25,18 @@ import {
   Upload,
   Spin,
   Space,
+  Flex,
+  Typography
 } from 'antd';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+
+const { Title, Text } = Typography;
+
+dayjs.extend(utc);
 import { selectPortfolioId, selectCustomerId } from '@/features/auth/authSelector';
 import {
   useGetPortfolioSettingsQuery,
@@ -44,6 +51,7 @@ import {
   useGetFacilitiesListQuery,
   useGetCronJobSettingsQuery,
   useUpdateCronJobSettingsMutation,
+  useGetPortfolioStrategiesQuery,
   useSavePortfolioStrategiesMutation,
   useSaveFacilityStrategiesMutation,
   useSavePortfolioValuePricingMutation,
@@ -87,6 +95,21 @@ const WEEKDAY_OPTIONS = [
   { label: 'Sun', value: 'Sun' },
 ];
 
+// WEEKDAYS array for day_of_week conversion (matching v1)
+const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const FREQUENCY_OPTIONS = ['Daily', 'Weekly', 'Monthly'];
+
+// Day of week mapping - if backend expects different numbering, adjust this
+// Current v1 logic: Mon=0, Tue=1, Wed=2, Thu=3, Fri=4, Sat=5, Sun=6
+// If backend expects: Sun=0, Mon=1, Tue=2, Wed=3, Thu=4, Fri=5, Sat=6
+// Then we need to adjust the mapping accordingly
+const getDayOfWeekNumber = (weekdayString) => {
+  const index = WEEKDAYS.indexOf(weekdayString);
+  // For now, using v1 logic. If backend expects different mapping,
+  // we can adjust this function
+  return index >= 0 ? index : 0;
+};
+
 const Settings = () => {
   const { id: facilityId } = useParams();
   const navigate = useNavigate();
@@ -103,6 +126,16 @@ const Settings = () => {
 
   // API hooks
   const { data: facilitiesList, isLoading: facilitiesLoading } = useGetFacilitiesListQuery();
+
+  // Portfolio strategies - get strategies for all facilities in portfolio
+  // API Call: GET /api/facility_profile/{customerId}/strategies
+  // Response: Array of { id, facility_id, street_rate_strategy }
+  const { data: portfolioStrategies, isLoading: strategiesLoading } = useGetPortfolioStrategiesQuery(
+    customerId,
+    {
+      skip: !customerId,
+    }
+  );
 
   // Cron job settings
   const { data: cronJobSettings, isLoading: cronJobLoading } = useGetCronJobSettingsQuery(
@@ -152,7 +185,7 @@ const Settings = () => {
   // Combined loading state
   const isLoading =
     scope === 'portfolio'
-      ? portfolioLoading || facilitiesLoading || cronJobLoading
+      ? portfolioLoading || facilitiesLoading || cronJobLoading || strategiesLoading
       : facilityLoading;
 
   // Handle scope change
@@ -168,8 +201,9 @@ const Settings = () => {
 
   // Helper function to determine strategy value
   const getStrategyValue = () => {
-    if (scope === 'portfolio' && facilitiesList) {
-      const strategies = facilitiesList.map((f) => f.street_rate_strategy).filter(Boolean);
+    if (scope === 'portfolio' && portfolioStrategies) {
+      // Use the portfolio strategies API data
+      const strategies = portfolioStrategies.map((s) => s.street_rate_strategy).filter(Boolean);
       const uniqueStrategies = [...new Set(strategies)];
       return uniqueStrategies.length === 1 ? uniqueStrategies[0] : 'multiple';
     } else if (scope === 'facility' && facilitySettings) {
@@ -204,21 +238,53 @@ const Settings = () => {
       // Merge cron job settings if available
       const cronSettings = cronJobSettings || {};
 
+      // Convert cron job data to form format (matching v1 logic)
+      let formTimeOfDay = null;
+      if (cronSettings.hour && cronSettings.minute) {
+        // Convert UTC time back to local time (matching v1 logic)
+        let hour = cronSettings.hour;
+        let minute = cronSettings.minute;
+
+        // Ensure proper formatting
+        if (parseInt(hour) < 10) {
+          hour = `0${hour}`;
+        }
+        if (parseInt(minute) < 10) {
+          minute = `0${minute}`;
+        }
+
+        let timeOfDay = `${hour}:${minute}`;
+
+        // Get the current UTC time in 'YYYY-MM-DD' format
+        const utcDate = dayjs().utc().format('YYYY-MM-DD');
+        // Combine today's date with the timeOfDay
+        const datetime = dayjs(`${utcDate}T${timeOfDay}:00Z`);
+        // Convert UTC datetime to local time
+        timeOfDay = dayjs(datetime).format('HH:mm');
+        formTimeOfDay = dayjs(timeOfDay, 'HH:mm');
+      } else if (streetRateSettings.timeOfDay) {
+        formTimeOfDay = dayjs(streetRateSettings.timeOfDay, 'HH:mm');
+      }
+
+      // Convert decimal percentage values to display percentages
+      const convertedEcriSettings = {
+        ...ecriSettings,
+        averagePercentIncrease: convertDecimalToPercentage(ecriSettings.averagePercentIncrease),
+        maxPercentIncrease: convertDecimalToPercentage(ecriSettings.maxPercentIncrease),
+        minPercentIncrease: convertDecimalToPercentage(ecriSettings.minPercentIncrease),
+        storeOccupancyThreshold: convertDecimalToPercentage(ecriSettings.storeOccupancyThreshold),
+        limitAboveStreetRate: convertToNumber(ecriSettings.limitAboveStreetRate),
+        percentAboveStreetRate: convertDecimalToPercentage(ecriSettings.percentAboveStreetRate),
+        maxMoveOutProbability: convertDecimalToPercentage(ecriSettings.maxMoveOutProbability),
+      };
+
       form.setFieldsValue({
         ...streetRateSettings,
-        ...ecriSettings,
+        ...convertedEcriSettings,
         frequency: cronSettings.frequency || streetRateSettings.frequency || 'Daily',
-        weekday: cronSettings.day_of_week || streetRateSettings.weekday || 'Mon',
+        weekday: cronSettings.day_of_week !== undefined ? WEEKDAYS[cronSettings.day_of_week] : streetRateSettings.weekday || 'Mon',
         dayOfMonth: cronSettings.day_of_month || streetRateSettings.dayOfMonth || 1,
-        timeOfDay:
-          cronSettings.hour && cronSettings.minute
-            ? dayjs(
-                `${String(cronSettings.hour).padStart(2, '0')}:${String(cronSettings.minute).padStart(2, '0')}`,
-                'HH:mm'
-              )
-            : streetRateSettings.timeOfDay
-              ? dayjs(streetRateSettings.timeOfDay, 'HH:mm')
-              : null,
+        timeOfDay: formTimeOfDay,
         emails: cronSettings.emails || streetRateSettings.emails || [],
       });
 
@@ -227,10 +293,22 @@ const Settings = () => {
       const streetRateSettings = facilitySettings.street_rate_settings || {};
       const ecriSettings = facilitySettings.ecri_settings || {};
 
+      // Convert decimal percentage values to display percentages
+      const convertedEcriSettings = {
+        ...ecriSettings,
+        averagePercentIncrease: convertDecimalToPercentage(ecriSettings.averagePercentIncrease),
+        maxPercentIncrease: convertDecimalToPercentage(ecriSettings.maxPercentIncrease),
+        minPercentIncrease: convertDecimalToPercentage(ecriSettings.minPercentIncrease),
+        storeOccupancyThreshold: convertDecimalToPercentage(ecriSettings.storeOccupancyThreshold),
+        limitAboveStreetRate: convertToNumber(ecriSettings.limitAboveStreetRate),
+        percentAboveStreetRate: convertDecimalToPercentage(ecriSettings.percentAboveStreetRate),
+        maxMoveOutProbability: convertDecimalToPercentage(ecriSettings.maxMoveOutProbability),
+      };
+
       form.setFieldsValue({
         ...facilitySettings,
         ...streetRateSettings,
-        ...ecriSettings,
+        ...convertedEcriSettings,
         profile: facilitySettings.profile || 'stabilized',
       });
     }
@@ -243,11 +321,24 @@ const Settings = () => {
 
     setCurrentStrategy(strategyValue);
     setCurrentValuePricing(valuePricingValue);
-  }, [facilitiesList, facilitySettings, scope]);
+
+    form.setFieldValue('street_rate_strategy', strategyValue);
+    form.setFieldValue('value_pricing', valuePricingValue);
+
+    // Log portfolio strategies data for debugging
+    if (portfolioStrategies && portfolioStrategies.length > 0) {
+      console.log('Portfolio Strategies API Response:', portfolioStrategies);
+      console.log('Unique strategies found:', [...new Set(portfolioStrategies.map(s => s.street_rate_strategy))]);
+    }
+  }, [portfolioStrategies, facilitiesList, facilitySettings, scope]);
 
   // Helper functions for data transformation (matching v1 logic)
   const convertPercentageToDecimal = (value) => {
     return value ? value / 100 : null;
+  };
+
+  const convertDecimalToPercentage = (value) => {
+    return value ? value * 100 : null;
   };
 
   const convertToNumber = (value) => {
@@ -265,6 +356,7 @@ const Settings = () => {
     timeSinceLastIncrease: convertToNumber(values.timeSinceLastIncrease),
     timeSinceMoveIn: convertToNumber(values.timeSinceMoveIn),
     limitAboveStreetRate: convertToNumber(values.limitAboveStreetRate),
+    percentAboveStreetRate: convertPercentageToDecimal(values.percentAboveStreetRate),
     maxMoveOutProbability: convertPercentageToDecimal(values.maxMoveOutProbability),
     ...(scope === 'portfolio' && { notificationDays: convertToNumber(values.notificationDays) }),
   });
@@ -311,23 +403,43 @@ const Settings = () => {
       street_rate_settings: streetRateSettings,
     }).unwrap();
 
-    // Save cron job settings (matching v1 logic)
+    // Save cron job settings (matching v1 logic exactly)
     if (values.timeOfDay) {
+      // Convert day of week using WEEKDAYS array (matching v1)
+      const day_of_week = getDayOfWeekNumber(values.weekday);
+
+      const updateParams = {
+        customer_id: customerId,
+        frequency: values.frequency,
+        emails: values.emails || []
+      };
+
+      // Add day_of_week for Weekly frequency (matching v1)
+      if (values.frequency === FREQUENCY_OPTIONS[1]) { // 'Weekly'
+        updateParams.day_of_week = day_of_week;
+      }
+
+      // Add day_of_month for Monthly frequency (matching v1)
+      if (values.frequency === FREQUENCY_OPTIONS[2]) { // 'Monthly'
+        updateParams.day_of_month = values.dayOfMonth;
+      }
+
+      // Time conversion logic (matching v1 exactly)
+      const today = dayjs().format('YYYY-MM-DD');
       const timeString = values.timeOfDay.format
         ? values.timeOfDay.format('HH:mm')
         : values.timeOfDay;
-      const [hour, minute] = timeString.split(':');
-      const cronJobData = {
-        customer_id: customerId,
-        frequency: values.frequency,
-        minute: parseInt(minute, 10),
-        hour: parseInt(hour, 10),
-        day_of_week: values.frequency === 'Weekly' ? values.weekday : 0,
-        day_of_month: values.frequency === 'Monthly' ? values.dayOfMonth : 1,
-        emails: values.emails || [],
-      };
 
-      await updateCronJobSettings(cronJobData).unwrap();
+      // Combine today's date with the timeOfDay
+      const datetime = dayjs(`${today}T${timeString}`);
+      // Convert to UTC and format
+      const utcTime = datetime.utc().format('HH:mm');
+
+      const [hour, minute] = utcTime.split(':');
+      updateParams.hour = hour;
+      updateParams.minute = minute;
+
+      await updateCronJobSettings(updateParams).unwrap();
     }
   };
 
@@ -421,12 +533,13 @@ const Settings = () => {
 
   // Handle file operations
   const handleUnitRankingUpload = async (file) => {
-    if (!facilityId) {
+    const { facility_id } = facilitySettings;
+    if (!facility_id) {
       showError('No facility selected');
       return;
     }
     try {
-      await uploadUnitRanking({ facilityId, file }).unwrap();
+      await uploadUnitRanking({ facilityId: facility_id, file }).unwrap();
       showSuccess('Unit ranking uploaded successfully!');
     } catch (error) {
       console.error('Upload error:', error);
@@ -435,12 +548,14 @@ const Settings = () => {
   };
 
   const handleDownloadSample = async () => {
-    if (!facilityId) {
+    const { facility_id } = facilitySettings;
+
+    if (!facility_id) {
       showError('No facility selected');
       return;
     }
     try {
-      const result = await downloadSampleXLSX(facilityId).unwrap();
+      const result = await downloadSampleXLSX(facility_id).unwrap();
       // Create download link
       const url = window.URL.createObjectURL(result);
       const a = document.createElement('a');
@@ -455,12 +570,14 @@ const Settings = () => {
   };
 
   const handleExportRanking = async () => {
-    if (!facilityId) {
+    const { facility_id } = facilitySettings;
+
+    if (!facility_id) {
       showError('No facility selected');
       return;
     }
     try {
-      const result = await exportUnitRanking(facilityId).unwrap();
+      const result = await exportUnitRanking(facility_id).unwrap();
       // Create download link
       const url = window.URL.createObjectURL(result);
       const a = document.createElement('a');
@@ -542,33 +659,30 @@ const Settings = () => {
           >
             {scope === 'facility' && (
               <>
-                <Divider orientation="left">Status</Divider>
-                <Row gutter={[16, 16]}>
-                  <Col xs={24} md={12} lg={8}>
-                    <Form.Item
-                      label={
-                        <span>
-                          <SettingOutlined style={{ marginRight: 8, color: '#52c41a' }} />
-                          Status
-                          <Tooltip title="Enable or disable this facility.">
-                            <InfoCircleOutlined style={{ marginLeft: 8, color: '#1890ff' }} />
-                          </Tooltip>
-                        </span>
-                      }
-                      name="status"
-                    >
-                      <Segmented
-                        size="middle"
-                        value={facilitySettings?.status || 'enabled'}
-                        options={[
-                          { label: 'Enabled', value: 'enabled' },
-                          { label: 'Disabled', value: 'disabled' },
-                        ]}
-                        onChange={handleStatusToggle}
-                      />
-                    </Form.Item>
-                  </Col>
-                </Row>
+                <Card.Grid style={{ width: '100%', borderRadius: 6 }} hoverable={false}>
+                  <Flex vertical gap={16}>
+                    <Flex align='center' gap={12}>
+                      <Title level={5} style={{ margin: 0}}>Status</Title>
+                      <Text style={{ paddingTop: 3 }} type='secondary'>Enable or disable this facility.</Text>
+                    </Flex>
+                    <Flex vertical>
+                      <Form.Item
+                        name="status"
+                        style={{ marginBottom: 0}}
+                      >
+                        <Segmented
+                          size="middle"
+                          value={facilitySettings?.status || 'enabled'}
+                          options={[
+                            { label: 'Enabled', value: 'enabled' },
+                            { label: 'Disabled', value: 'disabled' },
+                          ]}
+                          onChange={handleStatusToggle}
+                        />
+                      </Form.Item>
+                    </Flex>
+                  </Flex>
+                </Card.Grid>
                 <Divider orientation="left">Profile</Divider>
                 <Row gutter={[16, 16]}>
                   <Col xs={24} md={12} lg={8}>
@@ -619,7 +733,6 @@ const Settings = () => {
                 >
                   <Segmented
                     size="middle"
-                    value={currentStrategy}
                     options={scope === 'portfolio' ? PORTFOLIO_STRATEGY_OPTIONS : STRATEGY_OPTIONS}
                     onChange={handleStrategyChange}
                   />
@@ -911,11 +1024,36 @@ const Settings = () => {
               </Col>
               <Col xs={24} md={12} lg={8}>
                 <Form.Item
-                  label="Limit Above Street Rate"
+                  label={
+                    <span>
+                      <SettingOutlined style={{ marginRight: 8, color: '#52c41a' }} />
+                      Limit Above Street Rate ($)
+                      <Tooltip title="The absolute dollar value over the unit street rate a tenant is occupying.">
+                        <InfoCircleOutlined style={{ marginLeft: 8, color: '#1890ff' }} />
+                      </Tooltip>
+                    </span>
+                  }
                   name="limitAboveStreetRate"
                   className="full-width-number"
                 >
                   <InputNumber min={0} addonBefore="$" style={{ width: '100%' }} />
+                </Form.Item>
+              </Col>
+              <Col xs={24} md={12} lg={8}>
+                <Form.Item
+                  label={
+                    <span>
+                      <SettingOutlined style={{ marginRight: 8, color: '#52c41a' }} />
+                      Limit Above Street Rate (%)
+                      <Tooltip title="The percentage over the unit street rate a tenant is occupying.">
+                        <InfoCircleOutlined style={{ marginLeft: 8, color: '#1890ff' }} />
+                      </Tooltip>
+                    </span>
+                  }
+                  name="percentAboveStreetRate"
+                  className="full-width-number"
+                >
+                  <InputNumber min={0} max={100} addonBefore="%" style={{ width: '100%' }} />
                 </Form.Item>
               </Col>
               <Col xs={24} md={12} lg={8}>

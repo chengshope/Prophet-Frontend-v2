@@ -71,10 +71,10 @@ export const settingsApi = createApi({
         method: 'PUT',
         body: { ecri_settings },
       }),
-      invalidatesTags: (result, error, { portfolioId }) => [
-        { type: 'EcriSettings', id: `portfolio-${portfolioId}` },
-        { type: 'PortfolioSettings', id: portfolioId },
-      ],
+      // invalidatesTags: (result, error, { portfolioId }) => [
+      //   { type: 'EcriSettings', id: `portfolio-${portfolioId}` },
+      //   { type: 'PortfolioSettings', id: portfolioId },
+      // ],
     }),
 
     // ECRI Settings - Facility
@@ -134,44 +134,14 @@ export const settingsApi = createApi({
       ],
     }),
 
-    // Portfolio Strategies
-    getPortfolioStrategies: builder.query({
-      query: (customerId) => `/facility_profile/${customerId}/strategies`,
-      providesTags: (result, error, customerId) => [
-        { type: 'ValuePricing', id: `strategies-${customerId}` },
-      ],
-      transformResponse: (response) => response.result || response,
-    }),
-
-    updatePortfolioStrategies: builder.mutation({
-      query: ({ customerId, strategyValue }) => ({
-        url: `/facility_profile/save-portfolio-strategies/${customerId}`,
-        method: 'PUT',
-        body: { strategyValue },
-      }),
-      invalidatesTags: (result, error, { customerId }) => [
-        { type: 'ValuePricing', id: `strategies-${customerId}` },
-      ],
-    }),
-
-    updateFacilityStrategies: builder.mutation({
-      query: ({ facilityId, strategyValue }) => ({
-        url: `/facility_profile/save-facility-strategies/${facilityId}`,
-        method: 'PUT',
-        body: { strategyValue },
-      }),
-      invalidatesTags: (result, error, { facilityId }) => [
-        { type: 'FacilitySettings', id: facilityId },
-      ],
-    }),
-
     // Unit Ranking Upload/Download
     uploadUnitRanking: builder.mutation({
       query: ({ facilityId, file }) => {
         const formData = new FormData();
         formData.append('file', file);
+        formData.append('facility_id', facilityId);
         return {
-          url: `/unit/upload-xlsx/${facilityId}`,
+          url: '/unit/upload-xlsx',
           method: 'POST',
           body: formData,
         };
@@ -181,14 +151,14 @@ export const settingsApi = createApi({
 
     downloadSampleXLSX: builder.query({
       query: (facilityId) => ({
-        url: `/unit/download-sample-xlsx/${facilityId}`,
+        url: `/unit/sample-xlsx?type=excelFormat&facility_id=${facilityId}`,
         responseHandler: (response) => response.blob(),
       }),
     }),
 
     exportUnitRanking: builder.query({
       query: (facilityId) => ({
-        url: `/unit/export-xlsx/${facilityId}`,
+        url: `/unit/export-xlsx?type=excelFormat&facility_id=${facilityId}`,
         responseHandler: (response) => response.blob(),
       }),
     }),
