@@ -32,7 +32,7 @@ const SettingGroup = ({
             </Text>
           )}
         </Flex>
-        <Flex vertical>{children}</Flex>
+        <Flex vertical justify='center'>{children}</Flex>
       </Flex>
     </Card.Grid>
   );
