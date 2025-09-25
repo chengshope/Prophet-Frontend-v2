@@ -1,35 +1,16 @@
 import PageFrame from '@/components/common/PageFrame';
-import SettingGroup from '@/components/common/SettingGroup';
-import FormLabel from '@/components/common/FormLabel';
 import { showError, showSuccess } from '@/utils/messageService';
-import {
-  SaveOutlined,
-  BulbOutlined,
-  ClockCircleOutlined,
-  SettingOutlined,
-  UploadOutlined,
-  DownloadOutlined,
-  SoundOutlined,
-  MailOutlined,
-  PercentageOutlined,
-  DollarOutlined,
-} from '@ant-design/icons';
-import {
-  Button,
-  Card,
-  Col,
-  Form,
-  InputNumber,
-  Row,
-  Segmented,
-  Select,
-  Switch,
-  TimePicker,
-  Upload,
-  Spin,
-  Space,
-  Flex,
-} from 'antd';
+// Split components
+import FacilityStatus from '@/components/widgets/Settings/FacilityStatus';
+import FacilityProfile from '@/components/widgets/Settings/FacilityProfile';
+import StreetRateStrategy from '@/components/widgets/Settings/StreetRateStrategy';
+import UnitRankingUpload from '@/components/widgets/Settings/UnitRankingUpload';
+import StreetRateUpdateStrategy from '@/components/widgets/Settings/StreetRateUpdateStrategy';
+import RatesToUpdate from '@/components/widgets/Settings/RatesToUpdate';
+import RevenueGoal from '@/components/widgets/Settings/RevenueGoal';
+import RateIncreaseCriteria from '@/components/widgets/Settings/RateIncreaseCriteria';
+import { SaveOutlined } from '@ant-design/icons';
+import { Button, Card, Form, Select, Spin, Flex } from 'antd';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -45,52 +26,12 @@ import {
   useUpdateFacilitySettingsMutation,
   useUpdatePortfolioEcriSettingsMutation,
   useUpdateFacilityEcriSettingsMutation,
-  useUploadUnitRankingMutation,
-  useLazyDownloadSampleXLSXQuery,
-  useLazyExportUnitRankingQuery,
   useGetFacilitiesListQuery,
   useGetCronJobSettingsQuery,
   useUpdateCronJobSettingsMutation,
   useGetPortfolioStrategiesQuery,
-  useSavePortfolioStrategiesMutation,
-  useSaveFacilityStrategiesMutation,
-  useSavePortfolioValuePricingMutation,
-  useSaveFacilityValuePricingMutation,
-  useToggleFacilityProfileMutation,
-  useToggleFacilityStatusMutation,
 } from '@/api/settingsApi';
 import './Settings.less';
-const { Option } = Select;
-
-// Constants for strategy and value pricing options
-const STRATEGY_OPTIONS = [
-  { label: 'Mirror Competitors', value: 'mirror' },
-  { label: 'Maverick', value: 'maverick' },
-  { label: 'Happy Medium', value: 'happy_medium' },
-  { label: 'Maverick+', value: 'maverick_plus' },
-];
-
-const PORTFOLIO_STRATEGY_OPTIONS = [...STRATEGY_OPTIONS, { label: 'Multiple', value: 'multiple' }];
-
-const VALUE_PRICING_OPTIONS = [
-  { label: 'On', value: 'on' },
-  { label: 'Off', value: 'off' },
-];
-
-const PORTFOLIO_VALUE_PRICING_OPTIONS = [
-  ...VALUE_PRICING_OPTIONS,
-  { label: 'Multiple', value: 'multiple' },
-];
-
-const WEEKDAY_OPTIONS = [
-  { label: 'Mon', value: 'Mon' },
-  { label: 'Tue', value: 'Tue' },
-  { label: 'Wed', value: 'Wed' },
-  { label: 'Thu', value: 'Thu' },
-  { label: 'Fri', value: 'Fri' },
-  { label: 'Sat', value: 'Sat' },
-  { label: 'Sun', value: 'Sun' },
-];
 
 // WEEKDAYS array for day_of_week conversion (matching v1)
 const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -113,8 +54,6 @@ const Settings = () => {
   const [scope, setScope] = useState(facilityId ? 'facility' : 'portfolio');
   const [form] = Form.useForm();
   const [frequency, setFrequency] = useState('Daily');
-
-  const [currentStrategy, setCurrentStrategy] = useState('happy_medium');
   const [currentValuePricing, setCurrentValuePricing] = useState('off');
 
   // Get user data from Redux
@@ -130,6 +69,7 @@ const Settings = () => {
   const { data: portfolioStrategies, isLoading: strategiesLoading } =
     useGetPortfolioStrategiesQuery(customerId, {
       skip: !customerId,
+      refetchOnMountOrArgChange: true,
     });
 
   // Cron job settings
@@ -140,14 +80,11 @@ const Settings = () => {
     }
   );
 
-  // Note: Portfolio strategies and value pricing are now retrieved from facilitiesList
-  // instead of separate API calls, as the facilities data contains these fields directly
-
-  // Portfolio data
   const { data: portfolioSettings, isLoading: portfolioLoading } = useGetPortfolioSettingsQuery(
     portfolioId,
     {
       skip: !portfolioId || scope !== 'portfolio',
+      refetchOnMountOrArgChange: true,
     }
   );
 
@@ -156,6 +93,7 @@ const Settings = () => {
     facilityId,
     {
       skip: !facilityId || scope !== 'facility',
+      refetchOnMountOrArgChange: true,
     }
   );
 
@@ -164,18 +102,8 @@ const Settings = () => {
   const [updateFacilitySettings] = useUpdateFacilitySettingsMutation();
   const [updatePortfolioEcri] = useUpdatePortfolioEcriSettingsMutation();
   const [updateFacilityEcri] = useUpdateFacilityEcriSettingsMutation();
-  const [uploadUnitRanking] = useUploadUnitRankingMutation();
-  const [downloadSampleXLSX] = useLazyDownloadSampleXLSXQuery();
-  const [exportUnitRanking] = useLazyExportUnitRankingQuery();
-
   // New API mutations
   const [updateCronJobSettings] = useUpdateCronJobSettingsMutation();
-  const [savePortfolioStrategies] = useSavePortfolioStrategiesMutation();
-  const [saveFacilityStrategies] = useSaveFacilityStrategiesMutation();
-  const [savePortfolioValuePricing] = useSavePortfolioValuePricingMutation();
-  const [saveFacilityValuePricing] = useSaveFacilityValuePricingMutation();
-  const [toggleFacilityProfile] = useToggleFacilityProfileMutation();
-  const [toggleFacilityStatus] = useToggleFacilityStatusMutation();
 
   // Combined loading state
   const isLoading =
@@ -308,6 +236,7 @@ const Settings = () => {
         ...streetRateSettings,
         ...convertedEcriSettings,
         profile: facilitySettings.profile || 'stabilized',
+        overridePortfolio: streetRateSettings.override_portfolio_rate_setting || false,
       });
     }
   }, [portfolioSettings, facilitySettings, cronJobSettings, scope, form]);
@@ -317,7 +246,6 @@ const Settings = () => {
     const strategyValue = getStrategyValue();
     const valuePricingValue = getValuePricingValue();
 
-    setCurrentStrategy(strategyValue);
     setCurrentValuePricing(valuePricingValue);
 
     form.setFieldValue('street_rate_strategy', strategyValue);
@@ -466,133 +394,6 @@ const Settings = () => {
     }).unwrap();
   };
 
-  const handleStrategyChange = async (strategyValue) => {
-    try {
-      if (scope === 'portfolio') {
-        await savePortfolioStrategies({ customerId, strategyValue }).unwrap();
-      } else {
-        await saveFacilityStrategies({ facilityId, strategyValue }).unwrap();
-      }
-
-      setCurrentStrategy(strategyValue);
-      showSuccess('Strategy updated successfully!');
-    } catch (error) {
-      console.error('Strategy update error:', error);
-    }
-  };
-
-  // Handle value pricing changes (immediate save like v1)
-  const handleValuePricingChange = async (valuePricingValue) => {
-    try {
-      if (scope === 'portfolio') {
-        await savePortfolioValuePricing({
-          customerId,
-          valuePricing: valuePricingValue,
-        }).unwrap();
-      } else {
-        await saveFacilityValuePricing({ facilityId, valuePricing: valuePricingValue }).unwrap();
-      }
-
-      // Update local state immediately for UI feedback
-      setCurrentValuePricing(valuePricingValue);
-      showSuccess('Value pricing updated successfully!');
-    } catch (error) {
-      console.error('Value pricing update error:', error);
-      showError('Failed to update value pricing');
-    }
-  };
-
-  // Handle profile toggle (immediate save like v1)
-  const handleProfileToggle = async () => {
-    if (!facilityId) {
-      showError('No facility selected');
-      return;
-    }
-
-    try {
-      await toggleFacilityProfile(facilityId).unwrap();
-      showSuccess('Profile updated successfully!');
-    } catch (error) {
-      console.error('Profile update error:', error);
-      showError('Failed to update profile');
-    }
-  };
-
-  // Handle status toggle (immediate save like v1)
-  const handleStatusToggle = async () => {
-    if (!facilityId) {
-      showError('No facility selected');
-      return;
-    }
-
-    try {
-      await toggleFacilityStatus(facilityId).unwrap();
-      showSuccess('Status updated successfully!');
-    } catch (error) {
-      console.error('Status update error:', error);
-    }
-  };
-
-  // Handle file operations
-  const handleUnitRankingUpload = async (file) => {
-    const { facility_id } = facilitySettings;
-    if (!facility_id) {
-      showError('No facility selected');
-      return;
-    }
-    try {
-      await uploadUnitRanking({ facilityId: facility_id, file }).unwrap();
-      showSuccess('Unit ranking uploaded successfully!');
-    } catch (error) {
-      console.error('Upload error:', error);
-      showError('Failed to upload unit ranking');
-    }
-  };
-
-  const handleDownloadSample = async () => {
-    const { facility_id } = facilitySettings;
-
-    if (!facility_id) {
-      showError('No facility selected');
-      return;
-    }
-    try {
-      const result = await downloadSampleXLSX(facility_id).unwrap();
-      // Create download link
-      const url = window.URL.createObjectURL(result);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'unit_ranking_sample.xlsx';
-      a.click();
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error('Download error:', error);
-      showError('Failed to download sample');
-    }
-  };
-
-  const handleExportRanking = async () => {
-    const { facility_id } = facilitySettings;
-
-    if (!facility_id) {
-      showError('No facility selected');
-      return;
-    }
-    try {
-      const result = await exportUnitRanking(facility_id).unwrap();
-      // Create download link
-      const url = window.URL.createObjectURL(result);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'unit_ranking_export.xlsx';
-      a.click();
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error('Export error:', error);
-      showError('Failed to export unit ranking');
-    }
-  };
-
   const onFinish = async (values) => {
     try {
       if (scope === 'portfolio') {
@@ -665,464 +466,37 @@ const Settings = () => {
             <Flex vertical gap={16}>
               {scope === 'facility' && (
                 <>
-                  <SettingGroup title="Status" description="Enable or disable this facility.">
-                    <Form.Item name="status" style={{ marginBottom: 0 }}>
-                      <Segmented
-                        size="middle"
-                        value={facilitySettings?.status || 'enabled'}
-                        options={[
-                          { label: 'Enabled', value: 'enabled' },
-                          { label: 'Disabled', value: 'disabled' },
-                        ]}
-                        onChange={handleStatusToggle}
-                      />
-                    </Form.Item>
-                  </SettingGroup>
-                  <SettingGroup title="Profile" description="Select the facility profile type.">
-                    <Form.Item name="profile" style={{ marginBottom: 0 }}>
-                      <Segmented
-                        size="middle"
-                        value={facilitySettings?.profile || 'stabilized'}
-                        options={[
-                          { label: 'Stabilized', value: 'stabilized' },
-                          { label: 'Lease Up', value: 'leaseup' },
-                        ]}
-                        onChange={handleProfileToggle}
-                      />
-                    </Form.Item>
-                  </SettingGroup>
+                  <FacilityStatus facilityId={facilityId} />
+                  <FacilityProfile facilityId={facilityId} />
                 </>
               )}
 
-              <SettingGroup
-                title="Street Rate Strategy"
-                description="Configure your street rate strategy and value pricing settings."
-              >
-                <Form.Item
-                  label={
-                    <FormLabel
-                      icon={<BulbOutlined />}
-                      label="Street Rate Strategy"
-                      tooltip="Your selection will apply to all facilities."
-                      iconColor="#fa8c16"
-                    />
-                  }
-                  name="street_rate_strategy"
-                >
-                  <Segmented
-                    size="middle"
-                    options={scope === 'portfolio' ? PORTFOLIO_STRATEGY_OPTIONS : STRATEGY_OPTIONS}
-                    onChange={handleStrategyChange}
-                  />
-                </Form.Item>
+              <StreetRateStrategy
+                scope={scope}
+                customerId={customerId}
+                facilityId={facilityId}
+                currentValuePricing={currentValuePricing}
+                setCurrentValuePricing={setCurrentValuePricing}
+              />
 
-                <Form.Item
-                  label={
-                    <FormLabel
-                      icon={<BulbOutlined />}
-                      label="Value Pricing"
-                      tooltip="Enable tiered pricing. Note: Your website must support this functionality."
-                      iconColor="#fa8c16"
-                    />
-                  }
-                  name="value_pricing"
-                  style={{ marginBottom: 0 }}
-                >
-                  <Segmented
-                    size="middle"
-                    value={currentValuePricing}
-                    options={
-                      scope === 'portfolio'
-                        ? PORTFOLIO_VALUE_PRICING_OPTIONS
-                        : VALUE_PRICING_OPTIONS
-                    }
-                    onChange={handleValuePricingChange}
-                  />
-                </Form.Item>
-              </SettingGroup>
-
-              {/* Unit Ranking Upload - only show for facility scope */}
               {scope === 'facility' && (
-                <SettingGroup
-                  title="Unit Ranking Upload"
-                  description="Upload unit ranking data for this facility."
-                >
-                  <Form.Item
-                    label={
-                      <FormLabel
-                        icon={<BulbOutlined />}
-                        label="Unit Ranking Upload"
-                        tooltip="Unit Ranking Upload."
-                        iconColor="#fa8c16"
-                      />
-                    }
-                    style={{ marginBottom: 0 }}
-                  >
-                    <Space wrap>
-                      <Upload
-                        accept=".xlsx"
-                        showUploadList={false}
-                        beforeUpload={(file) => {
-                          handleUnitRankingUpload(file);
-                          return false;
-                        }}
-                      >
-                        <Button icon={<UploadOutlined />} style={{ width: '100%' }} block>
-                          Click Here To Upload Your Unit Ranking
-                        </Button>
-                      </Upload>
-                      <Button icon={<DownloadOutlined />} onClick={handleExportRanking}>
-                        Click Here To Export Unit Ranking
-                      </Button>
-                      <Button
-                        type="link"
-                        icon={<DownloadOutlined />}
-                        onClick={handleDownloadSample}
-                      >
-                        Download Sample XLSX
-                      </Button>
-                    </Space>
-                  </Form.Item>
-                </SettingGroup>
+                <UnitRankingUpload facilityId={facilityId} facilitySettings={facilitySettings} />
               )}
 
-              {/* Street Rate Update Strategy - only show for portfolio scope */}
               {scope === 'portfolio' && (
-                <SettingGroup
-                  title="Street Rate Update Strategy"
-                  description="Configure when and how street rates should be updated."
-                >
-                  <Form.Item
-                    label={
-                      <FormLabel
-                        icon={<SoundOutlined />}
-                        label="Frequency"
-                        iconColor="#fa8c16"
-                      />
-                    }
-                    name="frequency"
-                  >
-                    <Segmented
-                      size="middle"
-                      value={frequency}
-                      onChange={handleFrequencyChange}
-                      options={[
-                        { label: 'Daily', value: 'Daily' },
-                        { label: 'Weekly', value: 'Weekly' },
-                        { label: 'Monthly', value: 'Monthly' },
-                      ]}
-                    />
-                  </Form.Item>
-
-                  {/* Day of Week - only show for Weekly frequency */}
-                  {frequency === 'Weekly' && (
-                    <Form.Item
-                      label={
-                        <FormLabel
-                          icon={<BulbOutlined />}
-                          label="Day of Week"
-                          iconColor="#fa8c16"
-                        />
-                      }
-                      name="weekday"
-                    >
-                      <Segmented size="middle" options={WEEKDAY_OPTIONS} />
-                    </Form.Item>
-                  )}
-
-                  {/* Day of Month - only show for Monthly frequency */}
-                  {frequency === 'Monthly' && (
-                    <Form.Item
-                      label={
-                        <FormLabel
-                          icon={<BulbOutlined />}
-                          label="Day of Month"
-                          iconColor="#fa8c16"
-                        />
-                      }
-                      name="dayOfMonth"
-                    >
-                      <Select size="middle">
-                        {Array.from({ length: 31 }, (_, i) => (
-                          <Option key={i + 1} value={i + 1}>
-                            {i + 1}
-                          </Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-                  )}
-
-                  <Form.Item
-                    label={
-                      <FormLabel
-                        icon={<ClockCircleOutlined />}
-                        label="Time of Day"
-                        tooltip="Set the time when updates should be executed."
-                        iconColor="#fa8c16"
-                      />
-                    }
-                    name="timeOfDay"
-                    className="full-width-picker"
-                  >
-                    <TimePicker format="HH:mm" size="middle" style={{ width: 300 }}/>
-                  </Form.Item>
-
-                  <Form.Item
-                    label={
-                      <FormLabel
-                        icon={<MailOutlined />}
-                        label="Notification Emails"
-                        tooltip="Hit ENTER to add a new email."
-                        iconColor="#fa8c16"
-                      />
-                    }
-                    name="emails"
-                    style={{ marginBottom: 0 }}
-                  >
-                    <Select
-                      size="middle"
-                      mode="tags"
-                      tokenSeparators={[',']}
-                      placeholder="Add email and press Enter"
-                    />
-                  </Form.Item>
-                </SettingGroup>
+                <StreetRateUpdateStrategy
+                  frequency={frequency}
+                  setFrequency={setFrequency}
+                  handleFrequencyChange={handleFrequencyChange}
+                  form={form}
+                />
               )}
 
-              <SettingGroup
-                title="Rates To Update"
-                description="Configure which rates should be updated automatically."
-              >
-                {/* Facility-specific fields */}
-                {scope === 'facility' && (
-                  <>
-                    <Form.Item
-                      name="overridePortfolio"
-                      valuePropName="checked"
-                      label="Override Portfolio Rate Setting"
-                    >
-                      <Switch />
-                    </Form.Item>
-                  </>
-                )}
+              <RatesToUpdate scope={scope} />
 
-                {scope === 'portfolio' && (
-                  <Form.Item
-                    name="rate_hold_on_occupancy"
-                    valuePropName="checked"
-                    label="Do not decrease rates on fully occupied types"
-                  >
-                    <Switch />
-                  </Form.Item>
-                )}
+              <RevenueGoal />
 
-                <Form.Item name="web_rate" valuePropName="checked" label="Web Rate">
-                  <Switch />
-                </Form.Item>
-
-                <Form.Item name="street_rate" valuePropName="checked" label="Street Rate" style={{ marginBottom: 0 }}>
-                  <Switch />
-                </Form.Item>
-
-              </SettingGroup>
-
-              <SettingGroup
-                title="Revenue Goal"
-                description="Set the target average percent increase for revenue optimization."
-              >
-
-                <Form.Item
-                  label={
-                    <FormLabel
-                      icon={<PercentageOutlined />}
-                      label="Average Percent Increase"
-                      tooltip="Average rate increase percentage for eligible tenants. Recommended range: 5-25%"
-                      iconColor="#52c41a"
-                    />
-                  }
-                  name="averagePercentIncrease"
-                  className="full-width-number"
-                  style={{ marginBottom: 0 }}
-                >
-                  <InputNumber min={0} max={100} addonBefore="%" style={{ width: 300 }} />
-                </Form.Item>
-
-              </SettingGroup>
-
-              <SettingGroup
-                title="Rate Increase Criteria"
-                description="Configure the criteria and limits for automatic rate increases."
-              >
-
-                {scope === 'portfolio' && (
-
-                  <Form.Item
-                    label={
-                      <FormLabel
-                        icon={<ClockCircleOutlined />}
-                        label="Notification Days"
-                        tooltip="Number of days before rate change that notice is sent to customer"
-                        iconColor="#fa8c16"
-                      />
-                    }
-                    name="notificationDays"
-                    className="full-width-number"
-                  >
-                    <InputNumber min={0} style={{ width: 300 }} />
-                  </Form.Item>
-
-                )}
-
-                <Form.Item
-                  label={
-                    <FormLabel
-                      icon={<DollarOutlined />}
-                      label="Max Dollar Increase"
-                      tooltip="The maximum incremental dollar increase any one tenant may receive."
-                      iconColor="#52c41a"
-                    />
-                  }
-                  name="maxDollarIncrease"
-                  className="full-width-number"
-                >
-                  <InputNumber min={0} addonBefore="$" style={{ width: 300 }} />
-                </Form.Item>
-
-                <Form.Item
-                  label={
-                    <FormLabel
-                      icon={<DollarOutlined />}
-                      label="Min Dollar Increase"
-                      tooltip="The minimum incremental dollar increase any one tenant may receive."
-                      iconColor="#52c41a"
-                    />
-                  }
-                  name="minDollarIncrease"
-                  className="full-width-number"
-                >
-                  <InputNumber min={0} addonBefore="$" style={{ width: 300 }} />
-                </Form.Item>
-
-                <Form.Item
-                  label={
-                    <FormLabel
-                      icon={<PercentageOutlined />}
-                      label="Max Percent Increase"
-                      tooltip="The maximum percentage increase any one tenant may receive."
-                      iconColor="#52c41a"
-                    />
-                  }
-                  name="maxPercentIncrease"
-                  className="full-width-number"
-                >
-                  <InputNumber min={0} max={100} addonBefore="%" style={{ width: 300 }} />
-                </Form.Item>
-
-                <Form.Item
-                  label={
-                    <FormLabel
-                      icon={<PercentageOutlined />}
-                      label="Min Percent Increase"
-                      tooltip="The minimum percentage increase any one tenant may receive."
-                      iconColor="#52c41a"
-                    />
-                  }
-                  name="minPercentIncrease"
-                  className="full-width-number"
-                >
-                  <InputNumber min={0} max={100} addonBefore="%" style={{ width: 300 }} />
-                </Form.Item>
-
-                <Form.Item
-                  label={
-                    <FormLabel
-                      icon={<PercentageOutlined />}
-                      label="Store Occupancy Threshold"
-                      tooltip="The minimum occupancy required for any given facility to qualify for tenant rate increases."
-                      iconColor="#52c41a"
-                    />
-                  }
-                  name="storeOccupancyThreshold"
-                  className="full-width-number"
-                >
-                  <InputNumber min={0} max={100} addonBefore="%" style={{ width: 300 }} />
-                </Form.Item>
-
-                <Form.Item
-                  label={
-                    <FormLabel
-                      icon={<ClockCircleOutlined />}
-                      label="Time Since Last Increase (months)"
-                      tooltip="The minimum time in months since a tenant's last rate increase."
-                      iconColor="#fa8c16"
-                    />
-                  }
-                  name="timeSinceLastIncrease"
-                  className="full-width-number"
-                >
-                  <InputNumber min={0} style={{ width: 300 }} />
-                </Form.Item>
-
-                <Form.Item
-                  label={
-                    <FormLabel
-                      icon={<ClockCircleOutlined />}
-                      label="Time Since Move-in (months)"
-                      tooltip="The minimum time in months since a tenant's move-in date."
-                      iconColor="#fa8c16"
-                    />
-                  }
-                  name="timeSinceMoveIn"
-                  className="full-width-number"
-                >
-                  <InputNumber min={0} style={{ width: 300 }} />
-                </Form.Item>
-
-                <Form.Item
-                  label={
-                    <FormLabel
-                      icon={<DollarOutlined />}
-                      label="Limit Above Street Rate ($)"
-                      tooltip="The absolute dollar value over the unit street rate a tenant is occupying."
-                    />
-                  }
-                  name="limitAboveStreetRate"
-                  className="full-width-number"
-                >
-                  <InputNumber min={0} addonBefore="$" style={{ width: 300 }} />
-                </Form.Item>
-
-                <Form.Item
-                  label={
-                    <FormLabel
-                      icon={<PercentageOutlined />}
-                      label="Limit Above Street Rate (%)"
-                      tooltip="The percentage over the unit street rate a tenant is occupying."
-                    />
-                  }
-                  name="percentAboveStreetRate"
-                  className="full-width-number"
-                >
-                  <InputNumber min={0} max={100} addonBefore="%" style={{ width: 300 }} />
-                </Form.Item>
-
-                <Form.Item
-                  label={
-                    <FormLabel
-                      icon={<PercentageOutlined />}
-                      label="Max Move-Out Probability"
-                      tooltip="The desired upper threshold for any given tenant's move-out probability."
-                      iconColor="#52c41a"
-                    />
-                  }
-                  name="maxMoveOutProbability"
-                  className="full-width-number"
-                  style={{ marginBottom: 0 }}
-                >
-                  <InputNumber min={0} max={100} addonBefore="%" style={{ width: 300 }} />
-                </Form.Item>
-
-              </SettingGroup>
+              <RateIncreaseCriteria scope={scope} />
               <Flex justify="flex-end">
                 <Form.Item style={{ marginBottom: 0 }}>
                   <Button
