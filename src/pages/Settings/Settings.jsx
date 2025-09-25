@@ -1,4 +1,5 @@
 import PageFrame from '@/components/common/PageFrame';
+import SettingGroup from '@/components/common/SettingGroup';
 import { showError, showSuccess } from '@/utils/messageService';
 import {
   SaveOutlined,
@@ -13,7 +14,6 @@ import {
   Button,
   Card,
   Col,
-  Divider,
   Form,
   InputNumber,
   Row,
@@ -26,15 +26,12 @@ import {
   Spin,
   Space,
   Flex,
-  Typography,
 } from 'antd';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
-
-const { Title, Text } = Typography;
 
 dayjs.extend(utc);
 import { selectPortfolioId, selectCustomerId } from '@/features/auth/authSelector';
@@ -647,8 +644,8 @@ const Settings = () => {
         <Spin spinning={isLoading} tip="Loading settings...">
           <Form
             form={form}
-            layout="vertical"
             onFinish={onFinish}
+
             initialValues={{
               frequency: 'Daily',
               weekday: 'Mon',
@@ -659,423 +656,438 @@ const Settings = () => {
               rate_hold_on_occupancy: false,
             }}
           >
-            {scope === 'facility' && (
-              <>
-                <Card.Grid style={{ width: '100%', borderRadius: 6 }} hoverable={false}>
-                  <Flex vertical gap={16}>
-                    <Flex align="center" gap={12}>
-                      <Title level={5} style={{ margin: 0 }}>
-                        Status
-                      </Title>
-                      <Text style={{ paddingTop: 3 }} type="secondary">
-                        Enable or disable this facility.
-                      </Text>
-                    </Flex>
-                    <Flex vertical>
-                      <Form.Item name="status" style={{ marginBottom: 0 }}>
-                        <Segmented
-                          size="middle"
-                          value={facilitySettings?.status || 'enabled'}
-                          options={[
-                            { label: 'Enabled', value: 'enabled' },
-                            { label: 'Disabled', value: 'disabled' },
-                          ]}
-                          onChange={handleStatusToggle}
-                        />
-                      </Form.Item>
-                    </Flex>
-                  </Flex>
-                </Card.Grid>
-                <Divider orientation="left">Profile</Divider>
-                <Row gutter={[16, 16]}>
-                  <Col xs={24} md={12} lg={8}>
-                    <Form.Item
-                      label={
-                        <span>
-                          <SettingOutlined style={{ marginRight: 8, color: '#52c41a' }} />
-                          Profile
-                          <Tooltip title="Select the facility profile type.">
-                            <InfoCircleOutlined style={{ marginLeft: 8, color: '#1890ff' }} />
-                          </Tooltip>
-                        </span>
-                      }
-                      name="profile"
-                    >
+            <Flex vertical gap={8}>
+              {scope === 'facility' && (
+                <>
+                  <SettingGroup
+                    title="Status"
+                    description="Enable or disable this facility."
+                  >
+                    <Form.Item name="status" style={{ marginBottom: 0 }}>
                       <Segmented
                         size="middle"
-                        value={facilitySettings?.profile || 'stabilized'}
+                        value={facilitySettings?.status || 'enabled'}
                         options={[
-                          { label: 'Stabilized', value: 'stabilized' },
-                          { label: 'Lease Up', value: 'leaseup' },
+                          { label: 'Enabled', value: 'enabled' },
+                          { label: 'Disabled', value: 'disabled' },
                         ]}
-                        onChange={handleProfileToggle}
+                        onChange={handleStatusToggle}
                       />
                     </Form.Item>
-                  </Col>
-                </Row>
-              </>
-            )}
+                  </SettingGroup>
+                  <SettingGroup
+                    title="Profile"
+                    description="Select the facility profile type."
+                  >
+                    <Row gutter={[16, 16]}>
+                      <Col xs={24} md={12} lg={8}>
+                        <Form.Item
+                          label={
+                            <span>
+                              <SettingOutlined style={{ marginRight: 8, color: '#52c41a' }} />
+                              Profile
+                              <Tooltip title="Select the facility profile type.">
+                                <InfoCircleOutlined style={{ marginLeft: 8, color: '#1890ff' }} />
+                              </Tooltip>
+                            </span>
+                          }
+                          name="profile"
+                        >
+                          <Segmented
+                            size="middle"
+                            value={facilitySettings?.profile || 'stabilized'}
+                            options={[
+                              { label: 'Stabilized', value: 'stabilized' },
+                              { label: 'Lease Up', value: 'leaseup' },
+                            ]}
+                            onChange={handleProfileToggle}
+                          />
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                  </SettingGroup>
+                </>
+              )}
 
-            <Divider orientation="left">Street Rate Strategy</Divider>
-
-            {/* Strategy Selection with Hint */}
-
-            <Row gutter={[16, 16]}>
-              <Col xs={24}>
-                <Form.Item
-                  label={
-                    <span>
-                      <BulbOutlined style={{ marginRight: 8, color: '#fa8c16' }} />
-                      Street Rate Strategy
-                      <Tooltip title="Your selection will apply to all facilities.">
-                        <InfoCircleOutlined style={{ marginLeft: 8, color: '#1890ff' }} />
-                      </Tooltip>
-                    </span>
-                  }
-                  name="street_rate_strategy"
-                >
-                  <Segmented
-                    size="middle"
-                    options={scope === 'portfolio' ? PORTFOLIO_STRATEGY_OPTIONS : STRATEGY_OPTIONS}
-                    onChange={handleStrategyChange}
-                  />
-                </Form.Item>
-              </Col>
-              <Col xs={24} md={12} lg={8}>
-                <Form.Item
-                  label={
-                    <span>
-                      <SettingOutlined style={{ marginRight: 8, color: '#52c41a' }} />
-                      Value Pricing
-                      <Tooltip title="Configure value pricing settings for your facilities.">
-                        <InfoCircleOutlined style={{ marginLeft: 8, color: '#1890ff' }} />
-                      </Tooltip>
-                    </span>
-                  }
-                  name="value_pricing"
-                >
-                  <Segmented
-                    size="middle"
-                    value={currentValuePricing}
-                    options={
-                      scope === 'portfolio'
-                        ? PORTFOLIO_VALUE_PRICING_OPTIONS
-                        : VALUE_PRICING_OPTIONS
-                    }
-                    onChange={handleValuePricingChange}
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
-
-            {/* Unit Ranking Upload - only show for facility scope */}
-            {scope === 'facility' && (
-              <>
-                <Divider orientation="left">Unit Ranking Upload</Divider>
+              <SettingGroup
+                title="Street Rate Strategy"
+                description="Configure your street rate strategy and value pricing settings."
+              >
                 <Row gutter={[16, 16]}>
                   <Col xs={24}>
                     <Form.Item
                       label={
                         <span>
                           <BulbOutlined style={{ marginRight: 8, color: '#fa8c16' }} />
-                          Unit Ranking Upload
-                          <Tooltip title="Upload unit ranking data for this facility.">
+                          Street Rate Strategy
+                          <Tooltip title="Your selection will apply to all facilities.">
                             <InfoCircleOutlined style={{ marginLeft: 8, color: '#1890ff' }} />
                           </Tooltip>
                         </span>
                       }
+                      name="street_rate_strategy"
                     >
-                      <Space wrap>
-                        <Upload
-                          accept=".xlsx"
-                          showUploadList={false}
-                          beforeUpload={(file) => {
-                            handleUnitRankingUpload(file);
-                            return false;
-                          }}
-                        >
-                          <Button icon={<UploadOutlined />} style={{ width: '100%' }} block>
-                            Click Here To Upload Your Unit Ranking
-                          </Button>
-                        </Upload>
-                        <Button icon={<DownloadOutlined />} onClick={handleExportRanking}>
-                          Click Here To Export Unit Ranking
-                        </Button>
-                        <Button
-                          type="link"
-                          icon={<DownloadOutlined />}
-                          onClick={handleDownloadSample}
-                        >
-                          Download Sample XLSX
-                        </Button>
-                      </Space>
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </>
-            )}
-
-            {/* Street Rate Update Strategy - only show for portfolio scope */}
-            {scope === 'portfolio' && (
-              <>
-                <Divider orientation="left">Street Rate Update Strategy</Divider>
-                <Row gutter={[16, 16]}>
-                  <Col xs={24} md={12} lg={8}>
-                    <Form.Item label="Frequency" name="frequency">
                       <Segmented
                         size="middle"
-                        value={frequency}
-                        onChange={handleFrequencyChange}
-                        options={[
-                          { label: 'Daily', value: 'Daily' },
-                          { label: 'Weekly', value: 'Weekly' },
-                          { label: 'Monthly', value: 'Monthly' },
-                        ]}
+                        options={scope === 'portfolio' ? PORTFOLIO_STRATEGY_OPTIONS : STRATEGY_OPTIONS}
+                        onChange={handleStrategyChange}
                       />
                     </Form.Item>
                   </Col>
+                  <Col xs={24} md={12} lg={8}>
+                    <Form.Item
+                      label={
+                        <span>
+                          <SettingOutlined style={{ marginRight: 8, color: '#52c41a' }} />
+                          Value Pricing
+                          <Tooltip title="Configure value pricing settings for your facilities.">
+                            <InfoCircleOutlined style={{ marginLeft: 8, color: '#1890ff' }} />
+                          </Tooltip>
+                        </span>
+                      }
+                      name="value_pricing"
+                    >
+                      <Segmented
+                        size="middle"
+                        value={currentValuePricing}
+                        options={
+                          scope === 'portfolio'
+                            ? PORTFOLIO_VALUE_PRICING_OPTIONS
+                            : VALUE_PRICING_OPTIONS
+                        }
+                        onChange={handleValuePricingChange}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+              </SettingGroup>
 
-                  {/* Day of Week - only show for Weekly frequency */}
-                  {frequency === 'Weekly' && (
-                    <Col xs={24} md={12} lg={8}>
-                      <Form.Item label="Day of Week" name="weekday">
-                        <Segmented size="middle" options={WEEKDAY_OPTIONS} />
-                      </Form.Item>
-                    </Col>
-                  )}
-
-                  {/* Day of Month - only show for Monthly frequency */}
-                  {frequency === 'Monthly' && (
-                    <Col xs={24} md={12} lg={8}>
-                      <Form.Item label="Day of Month" name="dayOfMonth">
-                        <Select size="middle">
-                          {Array.from({ length: 31 }, (_, i) => (
-                            <Option key={i + 1} value={i + 1}>
-                              {i + 1}
-                            </Option>
-                          ))}
-                        </Select>
-                      </Form.Item>
-                    </Col>
-                  )}
-
-                  {/* Time of Day - show for Weekly and Monthly */}
-                  {(frequency === 'Weekly' || frequency === 'Monthly') && (
-                    <Col xs={24} md={12} lg={8}>
+              {/* Unit Ranking Upload - only show for facility scope */}
+              {scope === 'facility' && (
+                <SettingGroup
+                  title="Unit Ranking Upload"
+                  description="Upload unit ranking data for this facility."
+                >
+                  <Row gutter={[16, 16]}>
+                    <Col xs={24}>
                       <Form.Item
                         label={
                           <span>
-                            <ClockCircleOutlined style={{ marginRight: 8, color: '#fa8c16' }} />
-                            Time of Day
-                            <Tooltip title="Set the time when updates should be executed.">
+                            <BulbOutlined style={{ marginRight: 8, color: '#fa8c16' }} />
+                            Unit Ranking Upload
+                            <Tooltip title="Upload unit ranking data for this facility.">
                               <InfoCircleOutlined style={{ marginLeft: 8, color: '#1890ff' }} />
                             </Tooltip>
                           </span>
                         }
-                        name="timeOfDay"
-                        className="full-width-picker"
                       >
-                        <TimePicker format="HH:mm" size="middle" />
+                        <Space wrap>
+                          <Upload
+                            accept=".xlsx"
+                            showUploadList={false}
+                            beforeUpload={(file) => {
+                              handleUnitRankingUpload(file);
+                              return false;
+                            }}
+                          >
+                            <Button icon={<UploadOutlined />} style={{ width: '100%' }} block>
+                              Click Here To Upload Your Unit Ranking
+                            </Button>
+                          </Upload>
+                          <Button icon={<DownloadOutlined />} onClick={handleExportRanking}>
+                            Click Here To Export Unit Ranking
+                          </Button>
+                          <Button
+                            type="link"
+                            icon={<DownloadOutlined />}
+                            onClick={handleDownloadSample}
+                          >
+                            Download Sample XLSX
+                          </Button>
+                        </Space>
                       </Form.Item>
                     </Col>
+                  </Row>
+                </SettingGroup>
+              )}
+
+              {/* Street Rate Update Strategy - only show for portfolio scope */}
+              {scope === 'portfolio' && (
+                <SettingGroup
+                  title="Street Rate Update Strategy"
+                  description="Configure when and how street rates should be updated."
+                >
+                  <Row gutter={[16, 16]}>
+                    <Col xs={24} md={12} lg={8}>
+                      <Form.Item label="Frequency" name="frequency">
+                        <Segmented
+                          size="middle"
+                          value={frequency}
+                          onChange={handleFrequencyChange}
+                          options={[
+                            { label: 'Daily', value: 'Daily' },
+                            { label: 'Weekly', value: 'Weekly' },
+                            { label: 'Monthly', value: 'Monthly' },
+                          ]}
+                        />
+                      </Form.Item>
+                    </Col>
+
+                    {/* Day of Week - only show for Weekly frequency */}
+                    {frequency === 'Weekly' && (
+                      <Col xs={24} md={12} lg={8}>
+                        <Form.Item label="Day of Week" name="weekday">
+                          <Segmented size="middle" options={WEEKDAY_OPTIONS} />
+                        </Form.Item>
+                      </Col>
+                    )}
+
+                    {/* Day of Month - only show for Monthly frequency */}
+                    {frequency === 'Monthly' && (
+                      <Col xs={24} md={12} lg={8}>
+                        <Form.Item label="Day of Month" name="dayOfMonth">
+                          <Select size="middle">
+                            {Array.from({ length: 31 }, (_, i) => (
+                              <Option key={i + 1} value={i + 1}>
+                                {i + 1}
+                              </Option>
+                            ))}
+                          </Select>
+                        </Form.Item>
+                      </Col>
+                    )}
+
+                    {/* Time of Day - show for Weekly and Monthly */}
+                    {(frequency === 'Weekly' || frequency === 'Monthly') && (
+                      <Col xs={24} md={12} lg={8}>
+                        <Form.Item
+                          label={
+                            <span>
+                              <ClockCircleOutlined style={{ marginRight: 8, color: '#fa8c16' }} />
+                              Time of Day
+                              <Tooltip title="Set the time when updates should be executed.">
+                                <InfoCircleOutlined style={{ marginLeft: 8, color: '#1890ff' }} />
+                              </Tooltip>
+                            </span>
+                          }
+                          name="timeOfDay"
+                          className="full-width-picker"
+                        >
+                          <TimePicker format="HH:mm" size="middle" />
+                        </Form.Item>
+                      </Col>
+                    )}
+
+                    <Col xs={24} md={24} lg={16}>
+                      <Form.Item label="Notification Emails" name="emails">
+                        <Select
+                          size="middle"
+                          mode="tags"
+                          tokenSeparators={[',']}
+                          placeholder="Add email and press Enter"
+                        />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                </SettingGroup>
+              )}
+
+              <SettingGroup
+                title="Rates To Update"
+                description="Configure which rates should be updated automatically."
+              >
+                <Row gutter={[16, 16]}>
+                  {/* Facility-specific fields */}
+                  {scope === 'facility' && (
+                    <>
+                      <Col xs={24} md={12} lg={8}>
+                        <Form.Item
+                          name="overridePortfolio"
+                          valuePropName="checked"
+                          label="Override Portfolio Rate Setting"
+                        >
+                          <Switch />
+                        </Form.Item>
+                      </Col>
+                    </>
                   )}
 
-                  <Col xs={24} md={24} lg={16}>
-                    <Form.Item label="Notification Emails" name="emails">
-                      <Select
-                        size="middle"
-                        mode="tags"
-                        tokenSeparators={[',']}
-                        placeholder="Add email and press Enter"
-                      />
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </>
-            )}
-
-            <Divider orientation="left">Rates To Update</Divider>
-            <Row gutter={[16, 16]}>
-              {/* Facility-specific fields */}
-              {scope === 'facility' && (
-                <>
                   <Col xs={24} md={12} lg={8}>
-                    <Form.Item
-                      name="overridePortfolio"
-                      valuePropName="checked"
-                      label="Override Portfolio Rate Setting"
-                    >
+                    <Form.Item name="web_rate" valuePropName="checked" label="Web Rate">
                       <Switch />
                     </Form.Item>
                   </Col>
-                </>
-              )}
+                  <Col xs={24} md={12} lg={8}>
+                    <Form.Item name="street_rate" valuePropName="checked" label="Street Rate">
+                      <Switch />
+                    </Form.Item>
+                  </Col>
 
-              <Col xs={24} md={12} lg={8}>
-                <Form.Item name="web_rate" valuePropName="checked" label="Web Rate">
-                  <Switch />
-                </Form.Item>
-              </Col>
-              <Col xs={24} md={12} lg={8}>
-                <Form.Item name="street_rate" valuePropName="checked" label="Street Rate">
-                  <Switch />
-                </Form.Item>
-              </Col>
+                  {/* Rate hold on occupancy - only show for portfolio scope */}
+                  {scope === 'portfolio' && (
+                    <Col xs={24} md={12} lg={8}>
+                      <Form.Item
+                        name="rate_hold_on_occupancy"
+                        valuePropName="checked"
+                        label="Do not decrease rates on fully occupied types"
+                      >
+                        <Switch />
+                      </Form.Item>
+                    </Col>
+                  )}
+                </Row>
+              </SettingGroup>
 
-              {/* Rate hold on occupancy - only show for portfolio scope */}
-              {scope === 'portfolio' && (
-                <Col xs={24} md={12} lg={8}>
-                  <Form.Item
-                    name="rate_hold_on_occupancy"
-                    valuePropName="checked"
-                    label="Do not decrease rates on fully occupied types"
-                  >
-                    <Switch />
-                  </Form.Item>
-                </Col>
-              )}
-            </Row>
+              <SettingGroup
+                title="Revenue Goal"
+                description="Set the target average percent increase for revenue optimization."
+              >
+                <Row gutter={[16, 16]}>
+                  <Col xs={24} md={12} lg={8}>
+                    <Form.Item
+                      label="Average Percent Increase"
+                      name="averagePercentIncrease"
+                      className="full-width-number"
+                    >
+                      <InputNumber min={0} max={100} addonBefore="%" style={{ width: '100%' }} />
+                    </Form.Item>
+                  </Col>
+                </Row>
+              </SettingGroup>
 
-            <Divider orientation="left">Revenue Goal</Divider>
-            <Row gutter={[16, 16]}>
-              <Col xs={24} md={12} lg={8}>
-                <Form.Item
-                  label="Average Percent Increase"
-                  name="averagePercentIncrease"
-                  className="full-width-number"
-                >
-                  <InputNumber min={0} max={100} addonBefore="%" style={{ width: '100%' }} />
+              <SettingGroup
+                title="Rate Increase Criteria"
+                description="Configure the criteria and limits for automatic rate increases."
+              >
+                <Row gutter={[16, 16]}>
+                  {/* Notification Days - only show for portfolio scope */}
+                  {scope === 'portfolio' && (
+                    <Col xs={24} md={12} lg={8}>
+                      <Form.Item
+                        label="Notification Days"
+                        name="notificationDays"
+                        className="full-width-number"
+                      >
+                        <InputNumber min={0} style={{ width: '100%' }} />
+                      </Form.Item>
+                    </Col>
+                  )}
+                  <Col xs={24} md={12} lg={8}>
+                    <Form.Item
+                      label="Max Dollar Increase"
+                      name="maxDollarIncrease"
+                      className="full-width-number"
+                    >
+                      <InputNumber min={0} addonBefore="$" style={{ width: '100%' }} />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} md={12} lg={8}>
+                    <Form.Item
+                      label="Min Dollar Increase"
+                      name="minDollarIncrease"
+                      className="full-width-number"
+                    >
+                      <InputNumber min={0} addonBefore="$" style={{ width: '100%' }} />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} md={12} lg={8}>
+                    <Form.Item
+                      label="Max Percent Increase"
+                      name="maxPercentIncrease"
+                      className="full-width-number"
+                    >
+                      <InputNumber min={0} max={100} addonBefore="%" style={{ width: '100%' }} />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} md={12} lg={8}>
+                    <Form.Item
+                      label="Min Percent Increase"
+                      name="minPercentIncrease"
+                      className="full-width-number"
+                    >
+                      <InputNumber min={0} max={100} addonBefore="%" style={{ width: '100%' }} />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} md={12} lg={8}>
+                    <Form.Item
+                      label="Store Occupancy Threshold"
+                      name="storeOccupancyThreshold"
+                      className="full-width-number"
+                    >
+                      <InputNumber min={0} max={100} addonBefore="%" style={{ width: '100%' }} />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} md={12} lg={8}>
+                    <Form.Item
+                      label="Time Since Last Increase (months)"
+                      name="timeSinceLastIncrease"
+                      className="full-width-number"
+                    >
+                      <InputNumber min={0} style={{ width: '100%' }} />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} md={12} lg={8}>
+                    <Form.Item
+                      label="Time Since Move-in (months)"
+                      name="timeSinceMoveIn"
+                      className="full-width-number"
+                    >
+                      <InputNumber min={0} style={{ width: '100%' }} />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} md={12} lg={8}>
+                    <Form.Item
+                      label={
+                        <span>
+                          <SettingOutlined style={{ marginRight: 8, color: '#52c41a' }} />
+                          Limit Above Street Rate ($)
+                          <Tooltip title="The absolute dollar value over the unit street rate a tenant is occupying.">
+                            <InfoCircleOutlined style={{ marginLeft: 8, color: '#1890ff' }} />
+                          </Tooltip>
+                        </span>
+                      }
+                      name="limitAboveStreetRate"
+                      className="full-width-number"
+                    >
+                      <InputNumber min={0} addonBefore="$" style={{ width: '100%' }} />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} md={12} lg={8}>
+                    <Form.Item
+                      label={
+                        <span>
+                          <SettingOutlined style={{ marginRight: 8, color: '#52c41a' }} />
+                          Limit Above Street Rate (%)
+                          <Tooltip title="The percentage over the unit street rate a tenant is occupying.">
+                            <InfoCircleOutlined style={{ marginLeft: 8, color: '#1890ff' }} />
+                          </Tooltip>
+                        </span>
+                      }
+                      name="percentAboveStreetRate"
+                      className="full-width-number"
+                    >
+                      <InputNumber min={0} max={100} addonBefore="%" style={{ width: '100%' }} />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} md={12} lg={8}>
+                    <Form.Item
+                      label="Max Move-Out Probability"
+                      name="maxMoveOutProbability"
+                      className="full-width-number"
+                    >
+                      <InputNumber min={0} max={100} addonBefore="%" style={{ width: '100%' }} />
+                    </Form.Item>
+                  </Col>
+                </Row>
+              </SettingGroup>
+              <Flex justify="flex-end">
+                <Form.Item style={{ marginBottom: 0 }}>
+                  <Button type="primary" htmlType="submit" loading={isLoading} icon={<SaveOutlined />} style={{ width: 200 }}>
+                    Save
+                  </Button>
                 </Form.Item>
-              </Col>
-            </Row>
-
-            <Divider orientation="left">Rate Increase Criteria</Divider>
-            <Row gutter={[16, 16]}>
-              {/* Notification Days - only show for portfolio scope */}
-              {scope === 'portfolio' && (
-                <Col xs={24} md={12} lg={8}>
-                  <Form.Item
-                    label="Notification Days"
-                    name="notificationDays"
-                    className="full-width-number"
-                  >
-                    <InputNumber min={0} style={{ width: '100%' }} />
-                  </Form.Item>
-                </Col>
-              )}
-              <Col xs={24} md={12} lg={8}>
-                <Form.Item
-                  label="Max Dollar Increase"
-                  name="maxDollarIncrease"
-                  className="full-width-number"
-                >
-                  <InputNumber min={0} addonBefore="$" style={{ width: '100%' }} />
-                </Form.Item>
-              </Col>
-              <Col xs={24} md={12} lg={8}>
-                <Form.Item
-                  label="Min Dollar Increase"
-                  name="minDollarIncrease"
-                  className="full-width-number"
-                >
-                  <InputNumber min={0} addonBefore="$" style={{ width: '100%' }} />
-                </Form.Item>
-              </Col>
-              <Col xs={24} md={12} lg={8}>
-                <Form.Item
-                  label="Max Percent Increase"
-                  name="maxPercentIncrease"
-                  className="full-width-number"
-                >
-                  <InputNumber min={0} max={100} addonBefore="%" style={{ width: '100%' }} />
-                </Form.Item>
-              </Col>
-              <Col xs={24} md={12} lg={8}>
-                <Form.Item
-                  label="Min Percent Increase"
-                  name="minPercentIncrease"
-                  className="full-width-number"
-                >
-                  <InputNumber min={0} max={100} addonBefore="%" style={{ width: '100%' }} />
-                </Form.Item>
-              </Col>
-              <Col xs={24} md={12} lg={8}>
-                <Form.Item
-                  label="Store Occupancy Threshold"
-                  name="storeOccupancyThreshold"
-                  className="full-width-number"
-                >
-                  <InputNumber min={0} max={100} addonBefore="%" style={{ width: '100%' }} />
-                </Form.Item>
-              </Col>
-              <Col xs={24} md={12} lg={8}>
-                <Form.Item
-                  label="Time Since Last Increase (months)"
-                  name="timeSinceLastIncrease"
-                  className="full-width-number"
-                >
-                  <InputNumber min={0} style={{ width: '100%' }} />
-                </Form.Item>
-              </Col>
-              <Col xs={24} md={12} lg={8}>
-                <Form.Item
-                  label="Time Since Move-in (months)"
-                  name="timeSinceMoveIn"
-                  className="full-width-number"
-                >
-                  <InputNumber min={0} style={{ width: '100%' }} />
-                </Form.Item>
-              </Col>
-              <Col xs={24} md={12} lg={8}>
-                <Form.Item
-                  label={
-                    <span>
-                      <SettingOutlined style={{ marginRight: 8, color: '#52c41a' }} />
-                      Limit Above Street Rate ($)
-                      <Tooltip title="The absolute dollar value over the unit street rate a tenant is occupying.">
-                        <InfoCircleOutlined style={{ marginLeft: 8, color: '#1890ff' }} />
-                      </Tooltip>
-                    </span>
-                  }
-                  name="limitAboveStreetRate"
-                  className="full-width-number"
-                >
-                  <InputNumber min={0} addonBefore="$" style={{ width: '100%' }} />
-                </Form.Item>
-              </Col>
-              <Col xs={24} md={12} lg={8}>
-                <Form.Item
-                  label={
-                    <span>
-                      <SettingOutlined style={{ marginRight: 8, color: '#52c41a' }} />
-                      Limit Above Street Rate (%)
-                      <Tooltip title="The percentage over the unit street rate a tenant is occupying.">
-                        <InfoCircleOutlined style={{ marginLeft: 8, color: '#1890ff' }} />
-                      </Tooltip>
-                    </span>
-                  }
-                  name="percentAboveStreetRate"
-                  className="full-width-number"
-                >
-                  <InputNumber min={0} max={100} addonBefore="%" style={{ width: '100%' }} />
-                </Form.Item>
-              </Col>
-              <Col xs={24} md={12} lg={8}>
-                <Form.Item
-                  label="Max Move-Out Probability"
-                  name="maxMoveOutProbability"
-                  className="full-width-number"
-                >
-                  <InputNumber min={0} max={100} addonBefore="%" style={{ width: '100%' }} />
-                </Form.Item>
-              </Col>
-            </Row>
-
-            <Form.Item>
-              <Button type="primary" htmlType="submit" loading={isLoading} icon={<SaveOutlined />}>
-                Save
-              </Button>
-            </Form.Item>
+              </Flex>
+            </Flex>
           </Form>
         </Spin>
       </Card>
