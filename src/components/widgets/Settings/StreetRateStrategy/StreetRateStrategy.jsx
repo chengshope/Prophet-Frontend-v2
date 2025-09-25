@@ -9,33 +9,12 @@ import {
   useSavePortfolioValuePricingMutation,
   useSaveFacilityValuePricingMutation,
 } from '@/api/settingsApi';
-
-// Constants for strategy and value pricing options
-const STRATEGY_OPTIONS = [
-  { label: 'Mirror Competitors', value: 'mirror' },
-  { label: 'Maverick', value: 'maverick' },
-  { label: 'Happy Medium', value: 'happy_medium' },
-  { label: 'Maverick+', value: 'maverick_plus' },
-];
-
-const VALUE_PRICING_OPTIONS = [
-  { label: 'Off', value: 'off' },
-  { label: 'On', value: 'on' },
-];
-
-const PORTFOLIO_STRATEGY_OPTIONS = [
-  { label: 'Mirror Competitors', value: 'mirror' },
-  { label: 'Maverick', value: 'maverick' },
-  { label: 'Happy Medium', value: 'happy_medium' },
-  { label: 'Maverick+', value: 'maverick_plus' },
-  { label: 'Multiple', value: 'multiple', disabled: true },
-];
-
-const PORTFOLIO_VALUE_PRICING_OPTIONS = [
-  { label: 'Off', value: 'off' },
-  { label: 'On', value: 'on' },
-  { label: 'Multiple', value: 'multiple', disabled: true },
-];
+import {
+  STRATEGY_OPTIONS,
+  VALUE_PRICING_OPTIONS,
+  PORTFOLIO_STRATEGY_OPTIONS,
+  PORTFOLIO_VALUE_PRICING_OPTIONS,
+} from '@/constants';
 
 const StreetRateStrategy = ({
   scope,

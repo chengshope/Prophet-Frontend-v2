@@ -2,18 +2,9 @@ import { Form, Segmented, Select, TimePicker } from 'antd';
 import { SoundOutlined, BulbOutlined, ClockCircleOutlined, MailOutlined } from '@ant-design/icons';
 import SettingGroup from '@/components/common/SettingGroup';
 import FormLabel from '@/components/common/FormLabel';
+import { WEEKDAY_OPTIONS, FREQUENCY_OPTIONS } from '@/constants';
 
 const { Option } = Select;
-
-const WEEKDAY_OPTIONS = [
-  { label: 'Monday', value: 'Mon' },
-  { label: 'Tuesday', value: 'Tue' },
-  { label: 'Wednesday', value: 'Wed' },
-  { label: 'Thursday', value: 'Thu' },
-  { label: 'Friday', value: 'Fri' },
-  { label: 'Saturday', value: 'Sat' },
-  { label: 'Sunday', value: 'Sun' },
-];
 
 const StreetRateUpdateStrategy = ({ frequency, handleFrequencyChange, loading = false }) => {
   return (
@@ -30,15 +21,11 @@ const StreetRateUpdateStrategy = ({ frequency, handleFrequencyChange, loading = 
           size="middle"
           value={frequency}
           onChange={handleFrequencyChange}
-          options={[
-            { label: 'Daily', value: 'Daily' },
-            { label: 'Weekly', value: 'Weekly' },
-            { label: 'Monthly', value: 'Monthly' },
-          ]}
+          options={FREQUENCY_OPTIONS.map(freq => ({ label: freq, value: freq }))}
         />
       </Form.Item>
 
-      {frequency === 'Weekly' && (
+      {frequency === FREQUENCY_OPTIONS[1] && (
         <Form.Item
           label={<FormLabel icon={<BulbOutlined />} label="Day of Week" iconColor="#fa8c16" />}
           name="weekday"
@@ -48,7 +35,7 @@ const StreetRateUpdateStrategy = ({ frequency, handleFrequencyChange, loading = 
       )}
 
       {/* Day of Month - only show for Monthly frequency */}
-      {frequency === 'Monthly' && (
+      {frequency === FREQUENCY_OPTIONS[2] && (
         <Form.Item
           label={<FormLabel icon={<BulbOutlined />} label="Day of Month" iconColor="#fa8c16" />}
           name="dayOfMonth"

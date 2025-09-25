@@ -19,6 +19,18 @@ import utc from 'dayjs/plugin/utc';
 
 dayjs.extend(utc);
 import { selectPortfolioId, selectCustomerId } from '@/features/auth/authSelector';
+import { WEEKDAYS, FREQUENCY_OPTIONS, SETTINGS_INITIAL_VALUES } from '@/constants';
+import {
+  convertPercentageToDecimal,
+  convertDecimalToPercentage,
+  convertToNumber,
+  getDayOfWeekNumber
+} from '@/utils/dataConverters';
+import {
+  prepareEcriSettings,
+  prepareStreetRateSettings,
+  prepareCronJobSettings
+} from '@/utils/settingsHelpers';
 import {
   useGetPortfolioSettingsQuery,
   useUpdatePortfolioSettingsMutation,
@@ -33,13 +45,7 @@ import {
 } from '@/api/settingsApi';
 import './Settings.less';
 
-const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-const FREQUENCY_OPTIONS = ['Daily', 'Weekly', 'Monthly'];
 
-const getDayOfWeekNumber = (weekdayString) => {
-  const index = WEEKDAYS.indexOf(weekdayString);
-  return index >= 0 ? index : 0;
-};
 
 const Settings = () => {
   const { id: facilityId } = useParams();
@@ -256,39 +262,6 @@ const Settings = () => {
     }
   }, [portfolioStrategies, facilitiesList, facilitySettings, scope]);
 
-  // Helper functions for data transformation (matching v1 logic)
-const convertPercentageToDecimal = (value) => {
-  if (value === null || value === undefined) return null;
-  const decimal = value / 100;
-  return Math.round(decimal * 100) / 100; // round to 2 decimals
-};
-
-const convertDecimalToPercentage = (value) => {
-  if (value === null || value === undefined) return null;
-  const percent = value * 100;
-  return Math.round(percent * 100) / 100; // round to 2 decimals
-};
-
-  const convertToNumber = (value) => {
-    return value ? Number(value) : null;
-  };
-
-  // Helper function to prepare ECRI settings (reduces duplication)
-  const prepareEcriSettings = (values) => ({
-    averagePercentIncrease: convertPercentageToDecimal(values.averagePercentIncrease),
-    maxDollarIncrease: convertToNumber(values.maxDollarIncrease),
-    minDollarIncrease: convertToNumber(values.minDollarIncrease),
-    maxPercentIncrease: convertPercentageToDecimal(values.maxPercentIncrease),
-    minPercentIncrease: convertPercentageToDecimal(values.minPercentIncrease),
-    storeOccupancyThreshold: convertPercentageToDecimal(values.storeOccupancyThreshold),
-    timeSinceLastIncrease: convertToNumber(values.timeSinceLastIncrease),
-    timeSinceMoveIn: convertToNumber(values.timeSinceMoveIn),
-    limitAboveStreetRate: convertToNumber(values.limitAboveStreetRate),
-    percentAboveStreetRate: convertPercentageToDecimal(values.percentAboveStreetRate),
-    maxMoveOutProbability: convertPercentageToDecimal(values.maxMoveOutProbability),
-    ...(scope === 'portfolio' && { notificationDays: convertToNumber(values.notificationDays) }),
-  });
-
   // Helper function to save ECRI settings (reduces duplication)
   const saveEcriSettings = async (ecriSettings) => {
     const hasEcriSettings = Object.values(ecriSettings).some(
@@ -305,7 +278,7 @@ const convertDecimalToPercentage = (value) => {
 
   const handlePortfolioSave = async (values) => {
     // Prepare ECRI settings using helper function
-    const ecriSettings = prepareEcriSettings(values);
+    const ecriSettings = prepareEcriSettings(values, scope);
 
     // Prepare street rate settings
     const streetRateSettings = {
@@ -375,14 +348,10 @@ const convertDecimalToPercentage = (value) => {
 
   const handleFacilitySave = async (values) => {
     // Prepare ECRI settings using helper function
-    const ecriSettings = prepareEcriSettings(values);
+    const ecriSettings = prepareEcriSettings(values, scope);
 
     // Prepare street rate settings
-    const streetRateSettings = {
-      web_rate: values.web_rate,
-      street_rate: values.street_rate,
-      override_portfolio_rate_setting: values.overridePortfolio,
-    };
+    const streetRateSettings = prepareStreetRateSettings(values);
 
     // Save ECRI settings using helper function
     await saveEcriSettings(ecriSettings);
@@ -454,15 +423,7 @@ const convertDecimalToPercentage = (value) => {
             onFinish={onFinish}
             labelCol={{ flex: '320px' }}
             wrapperCol={{ flex: 1 }}
-            initialValues={{
-              frequency: 'Daily',
-              weekday: 'Mon',
-              dayOfMonth: 1,
-              overridePortfolio: false,
-              web_rate: false,
-              street_rate: false,
-              rate_hold_on_occupancy: false,
-            }}
+            initialValues={SETTINGS_INITIAL_VALUES}
           >
             <Flex vertical gap={16}>
               {scope === 'facility' && (
