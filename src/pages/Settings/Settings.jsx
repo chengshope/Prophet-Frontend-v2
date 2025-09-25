@@ -26,7 +26,7 @@ import {
   Spin,
   Space,
   Flex,
-  Typography
+  Typography,
 } from 'antd';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -70,10 +70,7 @@ const STRATEGY_OPTIONS = [
   { label: 'Maverick+', value: 'maverick_plus' },
 ];
 
-const PORTFOLIO_STRATEGY_OPTIONS = [
-  ...STRATEGY_OPTIONS,
-  { label: 'Multiple', value: 'multiple' },
-];
+const PORTFOLIO_STRATEGY_OPTIONS = [...STRATEGY_OPTIONS, { label: 'Multiple', value: 'multiple' }];
 
 const VALUE_PRICING_OPTIONS = [
   { label: 'On', value: 'on' },
@@ -130,12 +127,10 @@ const Settings = () => {
   // Portfolio strategies - get strategies for all facilities in portfolio
   // API Call: GET /api/facility_profile/{customerId}/strategies
   // Response: Array of { id, facility_id, street_rate_strategy }
-  const { data: portfolioStrategies, isLoading: strategiesLoading } = useGetPortfolioStrategiesQuery(
-    customerId,
-    {
+  const { data: portfolioStrategies, isLoading: strategiesLoading } =
+    useGetPortfolioStrategiesQuery(customerId, {
       skip: !customerId,
-    }
-  );
+    });
 
   // Cron job settings
   const { data: cronJobSettings, isLoading: cronJobLoading } = useGetCronJobSettingsQuery(
@@ -282,7 +277,10 @@ const Settings = () => {
         ...streetRateSettings,
         ...convertedEcriSettings,
         frequency: cronSettings.frequency || streetRateSettings.frequency || 'Daily',
-        weekday: cronSettings.day_of_week !== undefined ? WEEKDAYS[cronSettings.day_of_week] : streetRateSettings.weekday || 'Mon',
+        weekday:
+          cronSettings.day_of_week !== undefined
+            ? WEEKDAYS[cronSettings.day_of_week]
+            : streetRateSettings.weekday || 'Mon',
         dayOfMonth: cronSettings.day_of_month || streetRateSettings.dayOfMonth || 1,
         timeOfDay: formTimeOfDay,
         emails: cronSettings.emails || streetRateSettings.emails || [],
@@ -328,7 +326,9 @@ const Settings = () => {
     // Log portfolio strategies data for debugging
     if (portfolioStrategies && portfolioStrategies.length > 0) {
       console.log('Portfolio Strategies API Response:', portfolioStrategies);
-      console.log('Unique strategies found:', [...new Set(portfolioStrategies.map(s => s.street_rate_strategy))]);
+      console.log('Unique strategies found:', [
+        ...new Set(portfolioStrategies.map((s) => s.street_rate_strategy)),
+      ]);
     }
   }, [portfolioStrategies, facilitiesList, facilitySettings, scope]);
 
@@ -411,16 +411,18 @@ const Settings = () => {
       const updateParams = {
         customer_id: customerId,
         frequency: values.frequency,
-        emails: values.emails || []
+        emails: values.emails || [],
       };
 
       // Add day_of_week for Weekly frequency (matching v1)
-      if (values.frequency === FREQUENCY_OPTIONS[1]) { // 'Weekly'
+      if (values.frequency === FREQUENCY_OPTIONS[1]) {
+        // 'Weekly'
         updateParams.day_of_week = day_of_week;
       }
 
       // Add day_of_month for Monthly frequency (matching v1)
-      if (values.frequency === FREQUENCY_OPTIONS[2]) { // 'Monthly'
+      if (values.frequency === FREQUENCY_OPTIONS[2]) {
+        // 'Monthly'
         updateParams.day_of_month = values.dayOfMonth;
       }
 
@@ -661,15 +663,16 @@ const Settings = () => {
               <>
                 <Card.Grid style={{ width: '100%', borderRadius: 6 }} hoverable={false}>
                   <Flex vertical gap={16}>
-                    <Flex align='center' gap={12}>
-                      <Title level={5} style={{ margin: 0}}>Status</Title>
-                      <Text style={{ paddingTop: 3 }} type='secondary'>Enable or disable this facility.</Text>
+                    <Flex align="center" gap={12}>
+                      <Title level={5} style={{ margin: 0 }}>
+                        Status
+                      </Title>
+                      <Text style={{ paddingTop: 3 }} type="secondary">
+                        Enable or disable this facility.
+                      </Text>
                     </Flex>
                     <Flex vertical>
-                      <Form.Item
-                        name="status"
-                        style={{ marginBottom: 0}}
-                      >
+                      <Form.Item name="status" style={{ marginBottom: 0 }}>
                         <Segmented
                           size="middle"
                           value={facilitySettings?.status || 'enabled'}
@@ -754,7 +757,11 @@ const Settings = () => {
                   <Segmented
                     size="middle"
                     value={currentValuePricing}
-                    options={scope === 'portfolio' ? PORTFOLIO_VALUE_PRICING_OPTIONS : VALUE_PRICING_OPTIONS}
+                    options={
+                      scope === 'portfolio'
+                        ? PORTFOLIO_VALUE_PRICING_OPTIONS
+                        : VALUE_PRICING_OPTIONS
+                    }
                     onChange={handleValuePricingChange}
                   />
                 </Form.Item>
@@ -832,10 +839,7 @@ const Settings = () => {
                   {frequency === 'Weekly' && (
                     <Col xs={24} md={12} lg={8}>
                       <Form.Item label="Day of Week" name="weekday">
-                        <Segmented
-                          size="middle"
-                          options={WEEKDAY_OPTIONS}
-                        />
+                        <Segmented size="middle" options={WEEKDAY_OPTIONS} />
                       </Form.Item>
                     </Col>
                   )}
