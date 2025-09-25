@@ -257,13 +257,17 @@ const Settings = () => {
   }, [portfolioStrategies, facilitiesList, facilitySettings, scope]);
 
   // Helper functions for data transformation (matching v1 logic)
-  const convertPercentageToDecimal = (value) => {
-    return value ? value / 100 : null;
-  };
+const convertPercentageToDecimal = (value) => {
+  if (value === null || value === undefined) return null;
+  const decimal = value / 100;
+  return Math.round(decimal * 100) / 100; // round to 2 decimals
+};
 
-  const convertDecimalToPercentage = (value) => {
-    return value ? value * 100 : null;
-  };
+const convertDecimalToPercentage = (value) => {
+  if (value === null || value === undefined) return null;
+  const percent = value * 100;
+  return Math.round(percent * 100) / 100; // round to 2 decimals
+};
 
   const convertToNumber = (value) => {
     return value ? Number(value) : null;
@@ -456,7 +460,7 @@ const Settings = () => {
               dayOfMonth: 1,
               overridePortfolio: false,
               web_rate: false,
-              street_rate: true,
+              street_rate: false,
               rate_hold_on_occupancy: false,
             }}
           >

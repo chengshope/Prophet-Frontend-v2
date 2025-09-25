@@ -38,7 +38,6 @@ const RatesToUpdate = ({ scope, loading = false }) => {
 
       <Form.Item
         name="street_rate"
-        valuePropName="checked"
         label="Street Rate"
         style={{ marginBottom: 0 }}
       >
