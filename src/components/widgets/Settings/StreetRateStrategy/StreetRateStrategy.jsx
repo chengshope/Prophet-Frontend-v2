@@ -44,11 +44,15 @@ const StreetRateStrategy = ({
   currentValuePricing,
   setCurrentValuePricing,
 }) => {
-  // RTK mutations
-  const [savePortfolioStrategies] = useSavePortfolioStrategiesMutation();
-  const [saveFacilityStrategies] = useSaveFacilityStrategiesMutation();
-  const [savePortfolioValuePricing] = useSavePortfolioValuePricingMutation();
-  const [saveFacilityValuePricing] = useSaveFacilityValuePricingMutation();
+  // RTK mutations with loading states
+  const [savePortfolioStrategies, { isLoading: portfolioStrategySaving }] = useSavePortfolioStrategiesMutation();
+  const [saveFacilityStrategies, { isLoading: facilityStrategySaving }] = useSaveFacilityStrategiesMutation();
+  const [savePortfolioValuePricing, { isLoading: portfolioValuePricingSaving }] = useSavePortfolioValuePricingMutation();
+  const [saveFacilityValuePricing, { isLoading: facilityValuePricingSaving }] = useSaveFacilityValuePricingMutation();
+
+  // Combined loading states
+  const isStrategySaving = scope === 'portfolio' ? portfolioStrategySaving : facilityStrategySaving;
+  const isValuePricingSaving = scope === 'portfolio' ? portfolioValuePricingSaving : facilityValuePricingSaving;
 
   // Handle strategy changes (immediate save like v1)
   const handleStrategyChange = async (strategyValue) => {
@@ -90,6 +94,7 @@ const StreetRateStrategy = ({
     <SettingGroup
       title="Street Rate Strategy"
       description="Configure your street rate strategy and value pricing settings."
+      loading={isStrategySaving || isValuePricingSaving}
     >
       <Form.Item
         label={
@@ -106,6 +111,8 @@ const StreetRateStrategy = ({
           size="middle"
           options={scope === 'portfolio' ? PORTFOLIO_STRATEGY_OPTIONS : STRATEGY_OPTIONS}
           onChange={handleStrategyChange}
+          disabled={isStrategySaving}
+          loading={isStrategySaving}
         />
       </Form.Item>
 
@@ -126,6 +133,8 @@ const StreetRateStrategy = ({
           value={currentValuePricing}
           options={scope === 'portfolio' ? PORTFOLIO_VALUE_PRICING_OPTIONS : VALUE_PRICING_OPTIONS}
           onChange={handleValuePricingChange}
+          disabled={currentValuePricing === 'multiple' || isValuePricingSaving}
+          loading={isValuePricingSaving}
         />
       </Form.Item>
     </SettingGroup>

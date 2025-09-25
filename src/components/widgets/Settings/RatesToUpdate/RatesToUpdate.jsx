@@ -1,11 +1,12 @@
 import { Form, Switch } from 'antd';
 import SettingGroup from '@/components/common/SettingGroup';
 
-const RatesToUpdate = ({ scope }) => {
+const RatesToUpdate = ({ scope, loading = false }) => {
   return (
     <SettingGroup
       title="Rates To Update"
       description="Configure which rates should be updated automatically."
+      loading={loading}
     >
       {/* Facility-specific fields */}
       {scope === 'facility' && (

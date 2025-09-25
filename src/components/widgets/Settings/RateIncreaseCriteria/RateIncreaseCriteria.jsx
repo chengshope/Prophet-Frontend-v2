@@ -8,11 +8,12 @@ import {
 import SettingGroup from '@/components/common/SettingGroup';
 import FormLabel from '@/components/common/FormLabel';
 
-const RateIncreaseCriteria = ({ scope }) => {
+const RateIncreaseCriteria = ({ scope, loading = false }) => {
   return (
     <SettingGroup
       title="Rate Increase Criteria"
       description="Configure the criteria and limits for automatic rate increases."
+      loading={loading}
     >
       {/* Portfolio-specific notification days */}
       {scope === 'portfolio' && (

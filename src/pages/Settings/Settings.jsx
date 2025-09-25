@@ -33,18 +33,11 @@ import {
 } from '@/api/settingsApi';
 import './Settings.less';
 
-// WEEKDAYS array for day_of_week conversion (matching v1)
 const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const FREQUENCY_OPTIONS = ['Daily', 'Weekly', 'Monthly'];
 
-// Day of week mapping - if backend expects different numbering, adjust this
-// Current v1 logic: Mon=0, Tue=1, Wed=2, Thu=3, Fri=4, Sat=5, Sun=6
-// If backend expects: Sun=0, Mon=1, Tue=2, Wed=3, Thu=4, Fri=5, Sat=6
-// Then we need to adjust the mapping accordingly
 const getDayOfWeekNumber = (weekdayString) => {
   const index = WEEKDAYS.indexOf(weekdayString);
-  // For now, using v1 logic. If backend expects different mapping,
-  // we can adjust this function
   return index >= 0 ? index : 0;
 };
 
@@ -56,31 +49,28 @@ const Settings = () => {
   const [frequency, setFrequency] = useState('Daily');
   const [currentValuePricing, setCurrentValuePricing] = useState('off');
 
-  // Get user data from Redux
   const portfolioId = useSelector(selectPortfolioId);
   const customerId = useSelector(selectCustomerId);
 
-  // API hooks
-  const { data: facilitiesList, isLoading: facilitiesLoading } = useGetFacilitiesListQuery();
+  const { data: facilitiesList, isLoading: facilitiesLoading, isFetching: facilitiesFetching, refetch } = useGetFacilitiesListQuery({
+    refetchOnMountOrArgChange: true,
+  });
 
-  // Portfolio strategies - get strategies for all facilities in portfolio
-  // API Call: GET /api/facility_profile/{customerId}/strategies
-  // Response: Array of { id, facility_id, street_rate_strategy }
-  const { data: portfolioStrategies, isLoading: strategiesLoading } =
+  const { data: portfolioStrategies, isLoading: strategiesLoading, isFetching: strategiesFetching } =
     useGetPortfolioStrategiesQuery(customerId, {
-      skip: !customerId,
+      skip: !customerId || scope !== 'portfolio',
       refetchOnMountOrArgChange: true,
     });
 
-  // Cron job settings
-  const { data: cronJobSettings, isLoading: cronJobLoading } = useGetCronJobSettingsQuery(
+  const { data: cronJobSettings, isLoading: cronJobLoading, isFetching: cronJobFetching } = useGetCronJobSettingsQuery(
     customerId,
     {
       skip: !customerId || scope !== 'portfolio',
+      refetchOnMountOrArgChange: true,
     }
   );
 
-  const { data: portfolioSettings, isLoading: portfolioLoading } = useGetPortfolioSettingsQuery(
+  const { data: portfolioSettings, isLoading: portfolioLoading, isFetching: portfolioFetching } = useGetPortfolioSettingsQuery(
     portfolioId,
     {
       skip: !portfolioId || scope !== 'portfolio',
@@ -89,7 +79,7 @@ const Settings = () => {
   );
 
   // Facility data
-  const { data: facilitySettings, isLoading: facilityLoading } = useGetFacilitySettingsQuery(
+  const { data: facilitySettings, isLoading: facilityLoading, isFetching: facilityFetching } = useGetFacilitySettingsQuery(
     facilityId,
     {
       skip: !facilityId || scope !== 'facility',
@@ -97,19 +87,25 @@ const Settings = () => {
     }
   );
 
-  // Mutations
-  const [updatePortfolioSettings] = useUpdatePortfolioSettingsMutation();
-  const [updateFacilitySettings] = useUpdateFacilitySettingsMutation();
-  const [updatePortfolioEcri] = useUpdatePortfolioEcriSettingsMutation();
-  const [updateFacilityEcri] = useUpdateFacilityEcriSettingsMutation();
-  // New API mutations
-  const [updateCronJobSettings] = useUpdateCronJobSettingsMutation();
+  // Mutations with loading states
+  const [updatePortfolioSettings, { isLoading: portfolioSettingsUpdating }] = useUpdatePortfolioSettingsMutation();
+  const [updateFacilitySettings, { isLoading: facilitySettingsUpdating }] = useUpdateFacilitySettingsMutation();
+  const [updatePortfolioEcri, { isLoading: portfolioEcriUpdating }] = useUpdatePortfolioEcriSettingsMutation();
+  const [updateFacilityEcri, { isLoading: facilityEcriUpdating }] = useUpdateFacilityEcriSettingsMutation();
+  const [updateCronJobSettings, { isLoading: cronJobUpdating }] = useUpdateCronJobSettingsMutation();
 
-  // Combined loading state
+  // Combined loading state (including fetching states for refetch operations)
   const isLoading =
     scope === 'portfolio'
-      ? portfolioLoading || facilitiesLoading || cronJobLoading || strategiesLoading
-      : facilityLoading;
+      ? portfolioLoading || facilitiesLoading || cronJobLoading || strategiesLoading ||
+        portfolioFetching || facilitiesFetching || cronJobFetching || strategiesFetching
+      : facilityLoading || facilityFetching;
+
+  // Combined saving state for mutations
+  const isSaving =
+    scope === 'portfolio'
+      ? portfolioSettingsUpdating || portfolioEcriUpdating || cronJobUpdating
+      : facilitySettingsUpdating || facilityEcriUpdating;
 
   // Handle scope change
   const handleScopeChange = (value) => {
@@ -422,6 +418,7 @@ const Settings = () => {
             if (value === 'portfolio') {
               handleScopeChange('portfolio');
               navigate('/settings');
+              refetch();
             } else {
               handleScopeChange('facility');
               navigate(`/settings/${value}`);
@@ -489,24 +486,26 @@ const Settings = () => {
                   setFrequency={setFrequency}
                   handleFrequencyChange={handleFrequencyChange}
                   form={form}
+                  loading={isSaving}
                 />
               )}
 
-              <RatesToUpdate scope={scope} />
+              <RatesToUpdate scope={scope} loading={isSaving} />
 
-              <RevenueGoal />
+              <RevenueGoal loading={isSaving} />
 
-              <RateIncreaseCriteria scope={scope} />
+              <RateIncreaseCriteria scope={scope} loading={isSaving} />
               <Flex justify="flex-end">
                 <Form.Item style={{ marginBottom: 0 }}>
                   <Button
                     type="primary"
                     htmlType="submit"
-                    loading={isLoading}
+                    loading={isSaving}
+                    disabled={isLoading}
                     icon={<SaveOutlined />}
                     style={{ width: 200 }}
                   >
-                    Save
+                    {isSaving ? 'Saving...' : 'Save'}
                   </Button>
                 </Form.Item>
               </Flex>

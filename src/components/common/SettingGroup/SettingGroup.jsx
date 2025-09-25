@@ -1,4 +1,4 @@
-import { Card, Flex, Typography } from 'antd';
+import { Card, Flex, Spin, Typography } from 'antd';
 
 const { Title, Text } = Typography;
 
@@ -9,6 +9,7 @@ const SettingGroup = ({
   style = {},
   titleLevel = 5,
   gap = 16,
+  loading = false,
   ...props
 }) => {
   return (
@@ -21,21 +22,23 @@ const SettingGroup = ({
       hoverable={false}
       {...props}
     >
-      <Flex vertical gap={gap}>
-        <Flex align="center" gap={12}>
-          <Title level={titleLevel} style={{ margin: 0 }}>
-            {title}
-          </Title>
-          {description && (
-            <Text style={{ paddingTop: 3 }} type="secondary">
-              {description}
-            </Text>
-          )}
+      <Spin spinning={loading}>
+        <Flex vertical gap={gap}>
+          <Flex align="center" gap={12}>
+            <Title level={titleLevel} style={{ margin: 0 }}>
+              {title}
+            </Title>
+            {description && (
+              <Text style={{ paddingTop: 3 }} type="secondary">
+                {description}
+              </Text>
+            )}
+          </Flex>
+          <Flex vertical justify="center">
+            {children}
+          </Flex>
         </Flex>
-        <Flex vertical justify="center">
-          {children}
-        </Flex>
-      </Flex>
+      </Spin>
     </Card.Grid>
   );
 };

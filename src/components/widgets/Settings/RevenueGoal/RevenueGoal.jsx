@@ -3,11 +3,12 @@ import { PercentageOutlined } from '@ant-design/icons';
 import SettingGroup from '@/components/common/SettingGroup';
 import FormLabel from '@/components/common/FormLabel';
 
-const RevenueGoal = () => {
+const RevenueGoal = ({ loading = false }) => {
   return (
     <SettingGroup
       title="Revenue Goal"
       description="Set the target average percent increase for revenue optimization."
+      loading={loading}
     >
       <Form.Item
         label={

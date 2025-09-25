@@ -4,7 +4,7 @@ import { showError, showSuccess } from '@/utils/messageService';
 import { useToggleFacilityStatusMutation } from '@/api/settingsApi';
 
 const FacilityStatus = ({ facilitySettings, facilityId }) => {
-  const [toggleFacilityStatus] = useToggleFacilityStatusMutation();
+  const [toggleFacilityStatus, { isLoading: isToggling }] = useToggleFacilityStatusMutation();
 
   // Handle status toggle (immediate save like v1)
   const handleStatusToggle = async (value) => {
@@ -18,7 +18,7 @@ const FacilityStatus = ({ facilitySettings, facilityId }) => {
   };
 
   return (
-    <SettingGroup title="Status" description="Enable or disable this facility.">
+    <SettingGroup title="Status" description="Enable or disable this facility." loading={isToggling}>
       <Form.Item name="status" style={{ marginBottom: 0 }}>
         <Segmented
           size="middle"
@@ -27,6 +27,8 @@ const FacilityStatus = ({ facilitySettings, facilityId }) => {
             { label: 'Disabled', value: 'disabled' },
           ]}
           onChange={handleStatusToggle}
+          loading={isToggling}
+          disabled={isToggling}
         />
       </Form.Item>
     </SettingGroup>

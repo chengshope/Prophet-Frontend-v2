@@ -10,10 +10,10 @@ import {
 } from '@/api/settingsApi';
 
 const UnitRankingUpload = ({ facilityId, facilitySettings }) => {
-  // API mutations
-  const [uploadUnitRanking] = useUploadUnitRankingMutation();
-  const [downloadSampleXLSX] = useLazyDownloadSampleXLSXQuery();
-  const [exportUnitRanking] = useLazyExportUnitRankingQuery();
+  // API mutations with loading states
+  const [uploadUnitRanking, { isLoading: isUploading }] = useUploadUnitRankingMutation();
+  const [downloadSampleXLSX, { isLoading: isDownloadingSample }] = useLazyDownloadSampleXLSXQuery();
+  const [exportUnitRanking, { isLoading: isExporting }] = useLazyExportUnitRankingQuery();
 
   // Handle unit ranking file upload
   const handleUnitRankingUpload = async (file) => {
@@ -81,6 +81,7 @@ const UnitRankingUpload = ({ facilityId, facilitySettings }) => {
     <SettingGroup
       title="Unit Ranking Upload"
       description="Upload unit ranking data for this facility."
+      loading={isUploading || isExporting || isDownloadingSample}
     >
       <Form.Item
         label={
@@ -102,15 +103,29 @@ const UnitRankingUpload = ({ facilityId, facilitySettings }) => {
               return false;
             }}
           >
-            <Button icon={<UploadOutlined />} style={{ width: '100%' }} block>
-              Click Here To Upload Your Unit Ranking
+            <Button
+              icon={<UploadOutlined />}
+              style={{ width: '100%' }}
+              block
+              loading={isUploading}
+            >
+              {isUploading ? 'Uploading...' : 'Click Here To Upload Your Unit Ranking'}
             </Button>
           </Upload>
-          <Button icon={<DownloadOutlined />} onClick={handleExportRanking}>
-            Click Here To Export Unit Ranking
+          <Button
+            icon={<DownloadOutlined />}
+            onClick={handleExportRanking}
+            loading={isExporting}
+          >
+            {isExporting ? 'Exporting...' : 'Click Here To Export Unit Ranking'}
           </Button>
-          <Button type="link" icon={<DownloadOutlined />} onClick={handleDownloadSample}>
-            Download Sample XLSX
+          <Button
+            type="link"
+            icon={<DownloadOutlined />}
+            onClick={handleDownloadSample}
+            loading={isDownloadingSample}
+          >
+            {isDownloadingSample ? 'Downloading...' : 'Download Sample XLSX'}
           </Button>
         </Space>
       </Form.Item>

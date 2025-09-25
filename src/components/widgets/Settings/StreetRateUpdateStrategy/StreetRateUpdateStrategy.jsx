@@ -15,11 +15,12 @@ const WEEKDAY_OPTIONS = [
   { label: 'Sunday', value: 'Sun' },
 ];
 
-const StreetRateUpdateStrategy = ({ frequency, handleFrequencyChange }) => {
+const StreetRateUpdateStrategy = ({ frequency, handleFrequencyChange, loading = false }) => {
   return (
     <SettingGroup
       title="Street Rate Update Strategy"
       description="Configure when and how street rates should be updated."
+      loading={loading}
     >
       <Form.Item
         label={<FormLabel icon={<SoundOutlined />} label="Frequency" iconColor="#fa8c16" />}

@@ -4,7 +4,7 @@ import { showError, showSuccess } from '@/utils/messageService';
 import { useToggleFacilityProfileMutation } from '@/api/settingsApi';
 
 const FacilityProfile = ({ facilityId }) => {
-  const [toggleFacilityProfile] = useToggleFacilityProfileMutation();
+  const [toggleFacilityProfile, { isLoading: isToggling }] = useToggleFacilityProfileMutation();
 
   // Handle profile toggle (immediate save like v1)
   const handleProfileToggle = async () => {
@@ -18,7 +18,7 @@ const FacilityProfile = ({ facilityId }) => {
   };
 
   return (
-    <SettingGroup title="Profile" description="Select the facility profile type.">
+    <SettingGroup title="Profile" description="Select the facility profile type." loading={isToggling}>
       <Form.Item name="profile" style={{ marginBottom: 0 }}>
         <Segmented
           size="middle"
@@ -27,6 +27,8 @@ const FacilityProfile = ({ facilityId }) => {
             { label: 'Lease Up', value: 'leaseup' },
           ]}
           onChange={handleProfileToggle}
+          loading={isToggling}
+          disabled={isToggling}
         />
       </Form.Item>
     </SettingGroup>
