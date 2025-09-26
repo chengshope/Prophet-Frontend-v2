@@ -15,7 +15,7 @@ export const PORTFOLIO_STRATEGY_OPTIONS = [
   { label: 'Maverick', value: 'maverick' },
   { label: 'Happy Medium', value: 'happy_medium' },
   { label: 'Maverick+', value: 'maverick_plus' },
-  { label: 'Multiple', value: 'multiple' },
+  { label: 'Multiple', value: 'multiple', disabled: true },
 ];
 
 // Value pricing options
@@ -27,7 +27,7 @@ export const VALUE_PRICING_OPTIONS = [
 export const PORTFOLIO_VALUE_PRICING_OPTIONS = [
   { label: 'Off', value: 'off' },
   { label: 'On', value: 'on' },
-  { label: 'Multiple', value: 'multiple' },
+  { label: 'Multiple', value: 'multiple', disabled: true },
 ];
 
 // Weekday options for segmented control

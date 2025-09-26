@@ -10,7 +10,6 @@ import { useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import './Loading.less';
 
-// Helper function for consistent error handling
 const handleSyncError = (error, redirectPath) => {
   console.error('Sync error:', error);
   const message = error?.data?.errors || error.message || String(error);
@@ -33,7 +32,6 @@ const Loading = () => {
 
   const [loadingText, setLoadingText] = useState('Calculating Your Rate Recommendations...');
 
-  // Redirect to login if not authenticated
   useEffect(() => {
     if (!isAuthenticated) {
       navigate('/login');
@@ -42,7 +40,7 @@ const Loading = () => {
 
   useEffect(() => {
     if (!isAuthenticated) return;
-    if (hasExecuted.current) return; // Prevent double execution in Strict Mode
+    if (hasExecuted.current) return;
     hasExecuted.current = true;
 
     const executeSync = async () => {

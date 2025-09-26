@@ -28,9 +28,8 @@ const { Search } = Input;
 const { Text } = Typography;
 
 const ExistingCustomers = () => {
-  // Local state management (Rule #29: Use useState for local state)
-  const [searchInput, setSearchInput] = useState(''); // User input
-  const [search, setSearchState] = useState(''); // Debounced search value
+  const [searchInput, setSearchInput] = useState('');
+  const [search, setSearchState] = useState('');
   const [sort, setSortState] = useState('facility_name');
   const [orderby, setOrderByState] = useState('asc');
   const [currentPage, setCurrentPageState] = useState(1);
@@ -39,7 +38,6 @@ const ExistingCustomers = () => {
   const [errorLog, setErrorLog] = useState('');
   const [latestPublishedDate, setLatestPublishedDate] = useState('');
 
-  // Redux state for API responses (Rule #29: Use redux for api responses)
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const savedEcriIds = useSelector(getSavedEcriIds);
@@ -123,7 +121,6 @@ const ExistingCustomers = () => {
       message.success('Rates published successfully');
       setPublishModalOpen(false);
 
-      // Clear the saved rate changes after successful publishing
       removeSavedTenantChanges();
       dispatch(clearSavedTenantChanges());
     } catch (error) {

@@ -112,7 +112,7 @@ const StreetRateStrategy = ({
           value={currentValuePricing}
           options={scope === 'portfolio' ? PORTFOLIO_VALUE_PRICING_OPTIONS : VALUE_PRICING_OPTIONS}
           onChange={handleValuePricingChange}
-          disabled={currentValuePricing === 'multiple' || isValuePricingSaving}
+          disabled={isValuePricingSaving}
           loading={isValuePricingSaving}
         />
       </Form.Item>

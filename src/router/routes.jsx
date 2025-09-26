@@ -11,7 +11,6 @@ import Loading from '@/pages/Loading';
 import Login from '@/pages/Login';
 import NotFound from '@/pages/NotFound';
 import Portfolio from '@/pages/Portfolio';
-import Profile from '@/pages/Profile';
 import Reporting from '@/pages/Reporting';
 import ResetPassword from '@/pages/ResetPassword';
 import Settings from '@/pages/Settings';
@@ -51,14 +50,6 @@ export const routeConfig = [
       { path: 'settings/:id', element: <Settings /> },
       { path: 'portfolio', element: <Portfolio /> },
       { path: 'portfolio/:id', element: <Portfolio /> },
-
-      {
-        path: 'profile',
-        children: [
-          { index: true, element: <Profile /> },
-          { path: 'settings', element: <Settings /> },
-        ],
-      },
     ],
   },
   { path: '404', element: <NotFound /> },

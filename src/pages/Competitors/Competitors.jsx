@@ -124,9 +124,7 @@ const Competitors = () => {
     if (id !== previousFacilityId) {
       setSearch('');
       setDebouncedSearch('');
-      // Clear hovered competitor
       setHoveredCompetitor(null);
-      // Update previous facility ID
       setPreviousFacilityId(id);
     }
   }, [id, previousFacilityId]);
