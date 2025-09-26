@@ -4,11 +4,11 @@ import { lazy } from 'react';
 import { Navigate } from 'react-router-dom';
 import ProtectedRoute from './guards/ProtectedRoute';
 import PublicRoute from './guards/PublicRoute';
+import Loading from '@/pages/Loading';
 
 const Competitors = lazy(() => import('@/pages/Competitors'));
 const ExistingCustomers = lazy(() => import('@/pages/ExistingCustomers'));
 const ForgotPassword = lazy(() => import('@/pages/ForgotPassword'));
-const Loading = lazy(() => import('@/pages/Loading'));
 const Login = lazy(() => import('@/pages/Login'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 const Portfolio = lazy(() => import('@/pages/Portfolio'));
