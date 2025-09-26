@@ -1,20 +1,28 @@
 import AuthLayout from '@/layouts/AuthLayout';
 import MainLayout from '@/layouts/MainLayout';
+import { lazy } from 'react';
 import { Navigate } from 'react-router-dom';
 import ProtectedRoute from './guards/ProtectedRoute';
 import PublicRoute from './guards/PublicRoute';
 
-import Competitors from '@/pages/Competitors';
-import ExistingCustomers from '@/pages/ExistingCustomers';
-import ForgotPassword from '@/pages/ForgotPassword';
-import Loading from '@/pages/Loading';
-import Login from '@/pages/Login';
-import NotFound from '@/pages/NotFound';
-import Portfolio from '@/pages/Portfolio';
-import Reporting from '@/pages/Reporting';
-import ResetPassword from '@/pages/ResetPassword';
-import Settings from '@/pages/Settings';
-import StreetRates from '@/pages/StreetRates';
+// Simulate network delay
+function delayImport(factory, ms = 5000) {
+  return new Promise(resolve => {
+    setTimeout(() => resolve(factory()), ms);
+  });
+}
+
+const Competitors = lazy(() => delayImport(() => import('@/pages/Competitors')));
+const ExistingCustomers = lazy(() => import('@/pages/ExistingCustomers'));
+const ForgotPassword = lazy(() => import('@/pages/ForgotPassword'));
+const Loading = lazy(() => import('@/pages/Loading'));
+const Login = lazy(() => import('@/pages/Login'));
+const NotFound = lazy(() => import('@/pages/NotFound'));
+const Portfolio = lazy(() => import('@/pages/Portfolio'));
+const Reporting = lazy(() => import('@/pages/Reporting'));
+const ResetPassword = lazy(() => import('@/pages/ResetPassword'));
+const Settings = lazy(() => import('@/pages/Settings'));
+const StreetRates = lazy(() => import('@/pages/StreetRates'));
 
 export const routeConfig = [
   { path: '/', element: <Navigate to="/login" replace /> },
@@ -31,6 +39,7 @@ export const routeConfig = [
       { path: 'reset-password', element: <ResetPassword /> },
     ],
   },
+
   {
     path: '/',
     element: (
@@ -52,6 +61,7 @@ export const routeConfig = [
       { path: 'portfolio/:id', element: <Portfolio /> },
     ],
   },
+
   { path: '404', element: <NotFound /> },
   { path: '*', element: <NotFound /> },
 ];

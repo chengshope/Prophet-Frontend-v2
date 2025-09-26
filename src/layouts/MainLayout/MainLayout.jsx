@@ -15,7 +15,8 @@ import { Layout } from 'antd';
 import HeaderBar from './Header';
 import Navbar from './Navbar';
 
-import { useState } from 'react';
+import SuspenseLoading from '@/components/common/SuspenseLoading';
+import { Suspense, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import './MainLayout.less';
@@ -68,13 +69,13 @@ const MainLayout = () => {
     },
     ...(isIntegrator
       ? [
-          {
-            key: '/portfolio',
-            icon: <BookOutlined />,
-            label: 'Portfolio',
-            onClick: () => navigate('/portfolio'),
-          },
-        ]
+        {
+          key: '/portfolio',
+          icon: <BookOutlined />,
+          label: 'Portfolio',
+          onClick: () => navigate('/portfolio'),
+        },
+      ]
       : []),
   ];
 
@@ -145,9 +146,11 @@ const MainLayout = () => {
       <Layout>
         <HeaderBar breadcrumbItems={getBreadcrumbItems()} userMenuItems={userMenuItems} />
         <Content className="page-content">
-          <div className="content-area">
-            <Outlet />
-          </div>
+          <Suspense fallback={<SuspenseLoading />} key={location.pathname}>
+            <div className="content-area">
+              <Outlet />
+            </div>
+          </Suspense>
         </Content>
       </Layout>
     </Layout>
