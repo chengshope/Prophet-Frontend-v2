@@ -1,5 +1,17 @@
 .auth-page {
   min-height: 100vh;
+  position: relative;
+}
+
+.background-image {
+  background-image: url(../../assets/images/login.jpg);
+  background-size: cover;
+  background-position: center center;
+  filter: blur(25px);
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
 }
 
 .auth-container {
@@ -9,6 +21,7 @@
   align-items: center;
   padding: 20px;
   flex: 1;
+  z-index: 2;
 }
 
 .brand-logo {

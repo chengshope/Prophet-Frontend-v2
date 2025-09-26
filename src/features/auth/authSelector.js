@@ -3,6 +3,8 @@ export const selectAuth = (state) => state.auth;
 export const selectToken = (state) => state.auth.token;
 export const selectUser = (state) => state.auth.user;
 
+export const selectRole = (state) => state.auth.user?.role?.id;
+
 export const selectUsername = (state) => {
   const u = state.auth.user;
   if (!u) return undefined;

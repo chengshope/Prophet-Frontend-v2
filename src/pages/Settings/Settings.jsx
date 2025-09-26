@@ -147,9 +147,9 @@ const Settings = () => {
       const uniqueStrategies = [...new Set(strategies)];
       return uniqueStrategies.length === 1 ? uniqueStrategies[0] : 'multiple';
     } else if (scope === 'facility' && facilitySettings) {
-      return facilitySettings.street_rate_strategy || 'happy_medium';
+      return facilitySettings.street_rate_strategy || 'mirror';
     }
-    return 'happy_medium';
+    return 'mirror';
   };
 
   // Helper function to determine value pricing value

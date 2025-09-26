@@ -1,8 +1,5 @@
 import {
-  useCreatePortfolioUserMutation,
-  useDeletePortfolioUserMutation,
   useGetPortfolioCompaniesQuery,
-  useGetPortfolioCustomerUsersQuery,
   useGetPortfolioDetailsByIdQuery,
   useGetPortfolioFacilitiesQuery,
   useGetPortfoliosListQuery,
@@ -15,7 +12,7 @@ import PageFrame from '@/components/common/PageFrame';
 import CreatePortfolio from '@/components/widgets/Portfolio/Modal/CreatePortfolio';
 import DeleteUserModal from '@/components/widgets/Portfolio/Modal/DeleteUserModal';
 import StorTrackModal from '@/components/widgets/Portfolio/Modal/StorTrackModal';
-import { selectPortfolioId, selectUser } from '@/features/auth/authSelector';
+import { selectPortfolioId, selectRole, selectUser } from '@/features/auth/authSelector';
 import { showError, showSuccess } from '@/utils/messageService';
 import {
   DeleteOutlined,
@@ -31,6 +28,11 @@ import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import './Portfolio.less';
+import {
+  useCreatePortfolioUserMutation,
+  useDeletePortfolioUserMutation,
+  useGetPortfolioCustomerUsersQuery,
+} from '@/api/portfolioApi';
 
 const { Option } = Select;
 
@@ -65,6 +67,7 @@ const Portfolio = () => {
 
   // Get user data from Redux
   const user = useSelector(selectUser);
+  const roleId = useSelector(selectRole);
   const currentPortfolioId = useSelector(selectPortfolioId);
   const isIntegrator = user?.role?.name === 'integrator';
 
@@ -84,9 +87,12 @@ const Portfolio = () => {
     }
   );
 
-  const { data: usersList } = useGetPortfolioCustomerUsersQuery(portfolioId || currentPortfolioId, {
-    skip: !portfolioId && !currentPortfolioId,
-  });
+  const { data: usersList } = useGetPortfolioCustomerUsersQuery(
+    { portfolioId: portfolioId || currentPortfolioId, roleId },
+    {
+      skip: (!portfolioId && !currentPortfolioId) || !roleId,
+    }
+  );
 
   const { data: portfoliosList } = useGetPortfoliosListQuery();
   const { data: companiesData } = useGetPortfolioCompaniesQuery(undefined, {
@@ -116,8 +122,6 @@ const Portfolio = () => {
             ? pmsCredentials.company_id
             : pmsCredentials.corp_code,
       });
-
-      // Companies will be loaded automatically via useGetPortfolioCompaniesQuery
     }
   }, [portfolioSettings, form]);
 
@@ -141,8 +145,6 @@ const Portfolio = () => {
       setCompanies(companiesData);
     }
   }, [companiesData]);
-
-  // Users are now loaded automatically via useGetPortfolioCustomerUsersQuery
 
   const handlePortfolioSave = async (values) => {
     try {
@@ -245,7 +247,6 @@ const Portfolio = () => {
 
     setSelectedFacility(facility);
     setStorTrackModalVisible(true);
-    // Note: performStorTrackLookup will be called automatically by the modal's useEffect
   };
 
   const performStorTrackLookup = useCallback(
@@ -276,7 +277,6 @@ const Portfolio = () => {
     try {
       setUpdatingStorTrack(true);
 
-      // Update facility with StorTrack settings
       await updateFacilityStorTrack({
         facilityId: facility.id,
         stortrack_id: store.masterid,
@@ -322,14 +322,13 @@ const Portfolio = () => {
       width: 150,
       render: (_, record) => (
         <Button
-          color="primary"
-          variant="outlined"
+          variant="dashed"
+          color="danger"
           size="small"
+          shape="circle"
           icon={<DeleteOutlined />}
           onClick={() => handleDeleteUserClick(record)}
-        >
-          Delete
-        </Button>
+        />
       ),
     },
   ];
@@ -361,15 +360,19 @@ const Portfolio = () => {
     {
       title: 'Store Lookup',
       key: 'lookup',
+      width: 150,
+      align: 'center',
       render: (_, record) => (
         <Button
-          type="text"
+          variant="dashed"
+          color="blue"
+          size="small"
+          shape="circle"
           icon={<SearchOutlined />}
           onClick={() => handleStorTrackLookup(record)}
           title="Lookup StorTrack"
         />
       ),
-      width: 120,
     },
   ];
 
@@ -400,6 +403,16 @@ const Portfolio = () => {
       }
       extra={[
         <Button
+          key="sync"
+          icon={<SyncOutlined />}
+          loading={loadingSync}
+          variant="filled"
+          color="danger"
+          onClick={handleSyncFacilities}
+        >
+          Sync Facilities
+        </Button>,
+        <Button
           key="create"
           type="primary"
           icon={<PlusOutlined />}
@@ -407,16 +420,6 @@ const Portfolio = () => {
           onClick={() => setCreatePortfolioVisible(true)}
         >
           Create Portfolio
-        </Button>,
-        <Button
-          key="sync"
-          type="primary"
-          danger
-          icon={<SyncOutlined />}
-          loading={loadingSync}
-          onClick={handleSyncFacilities}
-        >
-          Sync Facilities
         </Button>,
       ]}
     >
@@ -430,7 +433,8 @@ const Portfolio = () => {
         }
         extra={
           <Button
-            type="primary"
+            variant="dashed"
+            color="green"
             icon={<SaveOutlined />}
             loading={savingPortfolio}
             onClick={() => form.submit()}
@@ -557,7 +561,8 @@ const Portfolio = () => {
           }
           extra={
             <Button
-              type="primary"
+              variant="dashed"
+              color="green"
               icon={<PlusOutlined />}
               onClick={() => setAddUserModalVisible(true)}
             >

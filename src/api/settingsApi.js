@@ -133,26 +133,6 @@ export const settingsApi = createApi({
       transformResponse: (response) => response.result || response,
     }),
 
-    getPortfolioUsers: builder.query({
-      query: (portfolioId) => `/portfolio/${portfolioId}/users`,
-      transformResponse: (response) => response.result || response,
-    }),
-
-    createPortfolioUser: builder.mutation({
-      query: ({ portfolioId, userData }) => ({
-        url: `/portfolio/${portfolioId}/users`,
-        method: 'POST',
-        body: userData,
-      }),
-    }),
-
-    deletePortfolioUser: builder.mutation({
-      query: ({ portfolioId, userId }) => ({
-        url: `/portfolio/${portfolioId}/users/${userId}`,
-        method: 'DELETE',
-      }),
-    }),
-
     getPortfolioCompanies: builder.query({
       query: () => '/portfolio/storEdge/companies',
       transformResponse: (response) => response.result || response,
@@ -178,11 +158,6 @@ export const settingsApi = createApi({
       transformResponse: (response) => response.result || response,
     }),
 
-    getPortfolioCustomerUsers: builder.query({
-      query: (portfolioId) => `/customers/users?portfolio_id=${portfolioId}&role_id=1`,
-      transformResponse: (response) => response.result || response,
-    }),
-
     syncPortfolioFacilities: builder.mutation({
       query: (portfolioId) => ({
         url: `/sync-data-ui/${portfolioId}`,
@@ -197,22 +172,6 @@ export const settingsApi = createApi({
         body: payload,
       }),
       transformResponse: (response) => response.result || response,
-    }),
-
-    createPortfolioUser: builder.mutation({
-      query: (userData) => ({
-        url: '/customers/users',
-        method: 'POST',
-        body: userData,
-      }),
-      transformResponse: (response) => response.result || response,
-    }),
-
-    deletePortfolioUser: builder.mutation({
-      query: (userId) => ({
-        url: `/customers/users/${userId}`,
-        method: 'DELETE',
-      }),
     }),
 
     updateCompetitorStore: builder.mutation({
@@ -339,14 +298,10 @@ export const {
   // Portfolio Management
   useGetPortfolioByIdQuery,
   useGetPortfolioDetailsByIdQuery,
-  useGetPortfolioUsersQuery,
-  useCreatePortfolioUserMutation,
-  useDeletePortfolioUserMutation,
   useGetPortfolioCompaniesQuery,
   useGetPortfoliosListQuery,
   useCreatePortfolioAndUsersMutation,
   useGetPortfolioFacilitiesQuery,
-  useGetPortfolioCustomerUsersQuery,
   useSyncPortfolioFacilitiesMutation,
   useLookupStorTrackMutation,
   useUpdateFacilityStorTrackMutation,

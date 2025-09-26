@@ -31,6 +31,7 @@ const AuthLayout = () => {
           </div>
         </Suspense>
       </Content>
+      {/* <div className='background-image'></div> */}
     </Layout>
   );
 };

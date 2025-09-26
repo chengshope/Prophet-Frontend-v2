@@ -1,7 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { baseQuery } from './baseQuery';
 
-const competitorsApi = createApi({
+export const competitorsApi = createApi({
   reducerPath: 'competitorsApi',
   baseQuery,
   tagTypes: ['Competitors', 'Facilities', 'Strategies'],
@@ -90,5 +90,3 @@ export const {
   useSaveFacilityStrategyMutation,
   useSavePortfolioStrategiesMutation,
 } = competitorsApi;
-
-export default competitorsApi;

@@ -5,8 +5,9 @@ import { reportingApi } from '@/api/reportingApi';
 import { streetRatesApi } from '@/api/streetRatesApi';
 import { settingsApi } from '@/api/settingsApi';
 import { syncDataApi } from '@/api/syncDataApi';
-import existingCustomersApi from '@/api/existingCustomersApi';
-import competitorsApi from '@/api/competitorsApi';
+import { portfolioApi } from '@/api/portfolioApi';
+import { existingCustomersApi } from '@/api/existingCustomersApi';
+import { competitorsApi } from '@/api/competitorsApi';
 import authReducer from '@/features/auth/authSlice';
 import streetRatesReducer from '@/features/streetRates/streetRatesSlice';
 import existingCustomersReducer from '@/features/existingCustomers/existingCustomersSlice';
@@ -23,6 +24,7 @@ export const store = configureStore({
     [syncDataApi.reducerPath]: syncDataApi.reducer,
     [existingCustomersApi.reducerPath]: existingCustomersApi.reducer,
     [competitorsApi.reducerPath]: competitorsApi.reducer,
+    [portfolioApi.reducerPath]: portfolioApi.reducer,
     auth: authReducer,
     streetRates: streetRatesReducer,
     existingCustomers: existingCustomersReducer,
@@ -38,7 +40,8 @@ export const store = configureStore({
       settingsApi.middleware,
       syncDataApi.middleware,
       existingCustomersApi.middleware,
-      competitorsApi.middleware
+      competitorsApi.middleware,
+      portfolioApi.middleware
     ),
 });
 

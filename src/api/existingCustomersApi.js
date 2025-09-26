@@ -64,5 +64,3 @@ export const {
   usePublishIndividualRateChangesMutation,
   useRefreshModelMutation,
 } = existingCustomersApi;
-
-export default existingCustomersApi;
