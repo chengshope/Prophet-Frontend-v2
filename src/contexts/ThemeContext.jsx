@@ -11,24 +11,18 @@ export const useThemeContext = () => {
 };
 
 export const ThemeContextProvider = ({ children }) => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [isCompact, setIsCompact] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const saved = localStorage.getItem('theme');
+    if (saved) return saved === 'dark';
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
 
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
-    const savedDensity = localStorage.getItem('density');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const [isCompact, setIsCompact] = useState(() => {
+    const saved = localStorage.getItem('density');
+    return saved ? saved === 'compact' : false;
+  });
 
-    if (savedTheme) {
-      setIsDarkMode(savedTheme === 'dark');
-    } else {
-      setIsDarkMode(prefersDark);
-    }
-    if (savedDensity) {
-      setIsCompact(savedDensity === 'compact');
-    }
-  }, []);
-
+  // Now you can remove the first useEffect entirely.
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
     localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
@@ -44,17 +38,20 @@ export const ThemeContextProvider = ({ children }) => {
   const toggleDensity = () => setIsCompact((v) => !v);
   const setDensity = (density) => setIsCompact(density === 'compact');
 
-  const value = {
-    isDarkMode,
-    toggleTheme,
-    setTheme,
-    theme: isDarkMode ? 'dark' : 'light',
-    // density
-    isCompact,
-    toggleDensity,
-    setDensity,
-    density: isCompact ? 'compact' : 'comfortable',
-  };
-
-  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+  return (
+    <ThemeContext.Provider
+      value={{
+        isDarkMode,
+        toggleTheme,
+        setTheme,
+        theme: isDarkMode ? 'dark' : 'light',
+        isCompact,
+        toggleDensity,
+        setDensity,
+        density: isCompact ? 'compact' : 'comfortable',
+      }}
+    >
+      {children}
+    </ThemeContext.Provider>
+  );
 };

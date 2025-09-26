@@ -11,7 +11,7 @@ const rawBaseQuery = fetchBaseQuery({
     }
     return headers;
   },
-  timeout: 20 * 1000 // Set a long timeout for the Sync-data API call
+  timeout: 20 * 1000, // Set a long timeout for the Sync-data API call
 });
 
 export const baseQuery = async (args, api, extraOptions) => {
@@ -19,8 +19,7 @@ export const baseQuery = async (args, api, extraOptions) => {
 
   if (res.error) {
     const { status, data, error } = res.error;
-    const message =
-      data?.error || data?.message || error || 'Something went wrong';
+    const message = data?.error || data?.message || error || 'Something went wrong';
 
     switch (status) {
       case 'TIMEOUT_ERROR':

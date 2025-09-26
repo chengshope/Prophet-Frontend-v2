@@ -201,13 +201,13 @@ export const getUnitTypeStatisticsTableColumns = ({
               style={{
                 width: '100%',
                 height: '32px',
-                backgroundColor: '#f5f5f5',
-                border: '1px solid #d9d9d9',
+                backgroundColor: 'var(--ant-color-bg-container)',
+                border: '1px solid var(--ant-color-border)',
                 borderRadius: '6px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#8c8c8c',
+                color: 'var(--ant-color-text-disabled)',
               }}
             >
               {formatCurrency(currentValue)}

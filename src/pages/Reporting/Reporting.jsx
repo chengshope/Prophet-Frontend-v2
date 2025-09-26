@@ -59,7 +59,7 @@ const Reporting = () => {
     const tab = tabItems.find((t) => t.key === key);
     if (tab) {
       dispatch(setActiveTab(key));
-      navigate(tab.path, { replace: true });
+      navigate(tab.path);
     }
   };
 
