@@ -6,11 +6,11 @@ import {
   InfoCircleOutlined,
   UserAddOutlined,
 } from '@ant-design/icons';
+import { showSuccess, showError } from '@/utils/messageService';
 import {
   useCreatePortfolioAndUsersMutation,
   useGetPortfolioCompaniesQuery,
-} from '@/api/settingsApi';
-import { showSuccess, showError } from '@/utils/messageService';
+} from '@/api/portfolioApi';
 
 const { Option } = Select;
 

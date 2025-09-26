@@ -1,11 +1,5 @@
 import { convertPercentageToDecimal, convertToNumber } from './dataConverters';
 
-/**
- * Prepare ECRI settings for API submission
- * @param {Object} values - Form values
- * @param {string} scope - 'portfolio' or 'facility'
- * @returns {Object} Prepared ECRI settings
- */
 export const prepareEcriSettings = (values, scope) => ({
   averagePercentIncrease: convertPercentageToDecimal(values.averagePercentIncrease),
   maxDollarIncrease: convertToNumber(values.maxDollarIncrease),
@@ -21,23 +15,12 @@ export const prepareEcriSettings = (values, scope) => ({
   ...(scope === 'portfolio' && { notificationDays: convertToNumber(values.notificationDays) }),
 });
 
-/**
- * Prepare street rate settings for API submission
- * @param {Object} values - Form values
- * @returns {Object} Prepared street rate settings
- */
 export const prepareStreetRateSettings = (values) => ({
   web_rate: values.web_rate,
   street_rate: values.street_rate,
   override_portfolio_rate_setting: values.overridePortfolio,
 });
 
-/**
- * Prepare cron job settings for API submission
- * @param {Object} values - Form values
- * @param {Function} getDayOfWeekNumber - Function to get day of week number
- * @returns {Object} Prepared cron job settings
- */
 export const prepareCronJobSettings = (values, getDayOfWeekNumber) => ({
   frequency: values.frequency,
   day_of_week: getDayOfWeekNumber(values.weekday),

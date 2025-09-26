@@ -133,31 +133,6 @@ export const settingsApi = createApi({
       transformResponse: (response) => response.result || response,
     }),
 
-    getPortfolioCompanies: builder.query({
-      query: () => '/portfolio/storEdge/companies',
-      transformResponse: (response) => response.result || response,
-    }),
-
-    // Get all portfolios for dropdown selection
-    getPortfoliosList: builder.query({
-      query: () => '/portfolio/list',
-      transformResponse: (response) => response.result || response,
-    }),
-
-    // Create portfolio with users
-    createPortfolioAndUsers: builder.mutation({
-      query: (portfolioData) => ({
-        url: '/portfolio/add',
-        method: 'POST',
-        body: portfolioData,
-      }),
-    }),
-
-    getPortfolioFacilities: builder.query({
-      query: (portfolioId) => `/portfolio/${portfolioId}/facility/list`,
-      transformResponse: (response) => response.result || response,
-    }),
-
     syncPortfolioFacilities: builder.mutation({
       query: (portfolioId) => ({
         url: `/sync-data-ui/${portfolioId}`,
@@ -172,25 +147,6 @@ export const settingsApi = createApi({
         body: payload,
       }),
       transformResponse: (response) => response.result || response,
-    }),
-
-    updateCompetitorStore: builder.mutation({
-      query: ({ storeid, storeData }) => ({
-        url: `/comp_stores/${storeid}`,
-        method: 'POST',
-        body: storeData,
-      }),
-    }),
-
-    updateFacilityStorTrack: builder.mutation({
-      query: ({ facilityId, stortrack_id, stortrack_radius }) => ({
-        url: `/facility_profile/update-facility/${facilityId}`,
-        method: 'PUT',
-        body: {
-          stortrack_id,
-          stortrack_radius,
-        },
-      }),
     }),
 
     toggleFacilityProfile: builder.mutation({
@@ -298,14 +254,8 @@ export const {
   // Portfolio Management
   useGetPortfolioByIdQuery,
   useGetPortfolioDetailsByIdQuery,
-  useGetPortfolioCompaniesQuery,
-  useGetPortfoliosListQuery,
-  useCreatePortfolioAndUsersMutation,
-  useGetPortfolioFacilitiesQuery,
   useSyncPortfolioFacilitiesMutation,
   useLookupStorTrackMutation,
-  useUpdateFacilityStorTrackMutation,
-  useUpdateCompetitorStoreMutation,
   useToggleFacilityProfileMutation,
   useToggleFacilityStatusMutation,
 

@@ -4,7 +4,7 @@ import { baseQuery } from './baseQuery';
 export const portfolioApi = createApi({
   reducerPath: 'portfolioApi',
   baseQuery,
-  tagTypes: ['UserList'],
+  tagTypes: ['UserList', 'CompList', 'PortfolioList'],
   endpoints: (builder) => ({
     getPortfolioCustomerUsers: builder.query({
       query: ({ portfolioId }) => `/customers/users?portfolio_id=${portfolioId}&role_id=1`,
@@ -32,6 +32,52 @@ export const portfolioApi = createApi({
         { type: 'UserList', id: portfolio_id },
       ],
     }),
+
+    getPortfolioFacilities: builder.query({
+      query: (portfolioId) => `/portfolio/${portfolioId}/facility/list`,
+      transformResponse: (response) => response.result || response,
+      providesTags: ['CompList'],
+    }),
+
+    updateCompetitorStore: builder.mutation({
+      query: ({ storeid, storeData }) => ({
+        url: `/comp_stores/${storeid}`,
+        method: 'POST',
+        body: storeData,
+      }),
+    }),
+
+    updateFacilityStorTrack: builder.mutation({
+      query: ({ facilityId, stortrack_id, stortrack_radius }) => ({
+        url: `/facility_profile/update-facility/${facilityId}`,
+        method: 'PUT',
+        body: {
+          stortrack_id,
+          stortrack_radius,
+        },
+      }),
+      invalidatesTags: ['CompList'],
+    }),
+
+    getPortfoliosList: builder.query({
+      query: () => '/portfolio/list',
+      transformResponse: (response) => response.result || response,
+      providesTags: ['PortfolioList'],
+    }),
+
+    createPortfolioAndUsers: builder.mutation({
+      query: (portfolioData) => ({
+        url: '/portfolio/add',
+        method: 'POST',
+        body: portfolioData,
+      }),
+      invalidatesTags: ['PortfolioList'],
+    }),
+
+    getPortfolioCompanies: builder.query({
+      query: () => '/portfolio/storEdge/companies',
+      transformResponse: (response) => response.result || response,
+    }),
   }),
 });
 
@@ -39,4 +85,10 @@ export const {
   useGetPortfolioCustomerUsersQuery,
   useCreatePortfolioUserMutation,
   useDeletePortfolioUserMutation,
+  useUpdateCompetitorStoreMutation,
+  useUpdateFacilityStorTrackMutation,
+  useGetPortfolioFacilitiesQuery,
+  useGetPortfoliosListQuery,
+  useGetPortfolioCompaniesQuery,
+  useCreatePortfolioAndUsersMutation,
 } = portfolioApi;

@@ -1,11 +1,7 @@
 import {
-  useGetPortfolioCompaniesQuery,
   useGetPortfolioDetailsByIdQuery,
-  useGetPortfolioFacilitiesQuery,
-  useGetPortfoliosListQuery,
   useLookupStorTrackMutation,
   useSyncPortfolioFacilitiesMutation,
-  useUpdateFacilityStorTrackMutation,
   useUpdatePortfolioSettingsMutation,
 } from '@/api/settingsApi';
 import PageFrame from '@/components/common/PageFrame';
@@ -31,7 +27,12 @@ import './Portfolio.less';
 import {
   useCreatePortfolioUserMutation,
   useDeletePortfolioUserMutation,
+  useGetPortfolioCompaniesQuery,
   useGetPortfolioCustomerUsersQuery,
+  useGetPortfolioFacilitiesQuery,
+  useGetPortfoliosListQuery,
+  useUpdateCompetitorStoreMutation,
+  useUpdateFacilityStorTrackMutation,
 } from '@/api/portfolioApi';
 
 const { Option } = Select;
@@ -94,7 +95,11 @@ const Portfolio = () => {
     }
   );
 
-  const { data: portfoliosList } = useGetPortfoliosListQuery();
+  const {
+    data: portfoliosList,
+    isLoading: portfolioListLoading,
+    isFetching: portfolioListFetching,
+  } = useGetPortfoliosListQuery();
   const { data: companiesData } = useGetPortfolioCompaniesQuery(undefined, {
     skip: !portfolioSettings || portfolioSettings.pms_type !== 'storedge',
   });
@@ -104,6 +109,7 @@ const Portfolio = () => {
   const [lookupStorTrack] = useLookupStorTrackMutation();
   const [updateFacilityStorTrack] = useUpdateFacilityStorTrackMutation();
   const [syncPortfolioFacilities] = useSyncPortfolioFacilitiesMutation();
+  const [updateCompetitorStore] = useUpdateCompetitorStoreMutation();
 
   // Load portfolio data
   useEffect(() => {
@@ -277,6 +283,11 @@ const Portfolio = () => {
     try {
       setUpdatingStorTrack(true);
 
+      await updateCompetitorStore({
+        storeid: store.storeid,
+        storeData: { ...store, radius },
+      }).unwrap();
+
       await updateFacilityStorTrack({
         facilityId: facility.id,
         stortrack_id: store.masterid,
@@ -386,7 +397,7 @@ const Portfolio = () => {
             value={portfolioId ? parseInt(portfolioId) : undefined}
             onChange={(value) => navigate(`/portfolio/${value}`)}
             placeholder="Select Portfolio"
-            loading={portfolioLoading}
+            loading={portfolioLoading || portfolioListLoading || portfolioListFetching}
             showSearch
             optionFilterProp="children"
             filterOption={(input, option) =>

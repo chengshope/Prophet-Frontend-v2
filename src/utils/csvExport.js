@@ -1,10 +1,5 @@
 import dayjs from 'dayjs';
 
-/**
- * Downloads CSV content as a file
- * @param {string} csvContent - The CSV content to download
- * @param {string} filename - The filename (without extension)
- */
 export const downloadCSV = (csvContent, filename) => {
   const blob = new Blob([csvContent], { type: 'text/csv' });
   const url = window.URL.createObjectURL(blob);
@@ -18,13 +13,6 @@ export const downloadCSV = (csvContent, filename) => {
   window.URL.revokeObjectURL(url);
 };
 
-/**
- * Handles CSV export with error handling
- * @param {Function} exportFunction - The function that returns CSV data
- * @param {string} filename - The filename for the CSV
- * @param {Function} showSuccess - Success message function
- * @param {Function} showError - Error message function
- */
 export const handleCSVExport = async (exportFunction, filename, showSuccess, showError) => {
   try {
     const csvContent = await exportFunction();
