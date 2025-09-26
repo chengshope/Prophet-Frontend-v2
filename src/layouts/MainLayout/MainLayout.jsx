@@ -69,13 +69,13 @@ const MainLayout = () => {
     },
     ...(isIntegrator
       ? [
-        {
-          key: '/portfolio',
-          icon: <BookOutlined />,
-          label: 'Portfolio',
-          onClick: () => navigate('/portfolio'),
-        },
-      ]
+          {
+            key: '/portfolio',
+            icon: <BookOutlined />,
+            label: 'Portfolio',
+            onClick: () => navigate('/portfolio'),
+          },
+        ]
       : []),
   ];
 

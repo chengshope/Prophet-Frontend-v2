@@ -5,14 +5,7 @@ import { Navigate } from 'react-router-dom';
 import ProtectedRoute from './guards/ProtectedRoute';
 import PublicRoute from './guards/PublicRoute';
 
-// Simulate network delay
-function delayImport(factory, ms = 5000) {
-  return new Promise(resolve => {
-    setTimeout(() => resolve(factory()), ms);
-  });
-}
-
-const Competitors = lazy(() => delayImport(() => import('@/pages/Competitors')));
+const Competitors = lazy(() => import('@/pages/Competitors'));
 const ExistingCustomers = lazy(() => import('@/pages/ExistingCustomers'));
 const ForgotPassword = lazy(() => import('@/pages/ForgotPassword'));
 const Loading = lazy(() => import('@/pages/Loading'));
