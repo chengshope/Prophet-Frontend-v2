@@ -2,10 +2,6 @@ import { Modal, Typography } from 'antd';
 
 const { Text } = Typography;
 
-/**
- * Modal for confirming user deletion
- * Following Rule #4: Modal components under Portfolio/Modal/
- */
 const DeleteUserModal = ({ open, onOk, onCancel, confirmLoading, selectedUser = null }) => {
   return (
     <Modal

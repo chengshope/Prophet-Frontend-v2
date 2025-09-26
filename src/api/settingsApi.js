@@ -127,7 +127,7 @@ export const settingsApi = createApi({
       transformResponse: (response) => response.result || response,
     }),
 
-    // Get portfolio details by ID (matching v1: /portfolio/id/:id)
+    // Get portfolio details by ID
     getPortfolioDetailsById: builder.query({
       query: (portfolioId) => `/portfolio/id/${portfolioId}`,
       transformResponse: (response) => response.result || response,
@@ -164,7 +164,7 @@ export const settingsApi = createApi({
       transformResponse: (response) => response.result || response,
     }),
 
-    // Create portfolio with users (matching v1: POST /portfolio/add)
+    // Create portfolio with users
     createPortfolioAndUsers: builder.mutation({
       query: (portfolioData) => ({
         url: '/portfolio/add',
@@ -173,13 +173,11 @@ export const settingsApi = createApi({
       }),
     }),
 
-    // Get facilities by portfolio ID (matching v1: GET /portfolio/{portfolioId}/facility/list)
     getPortfolioFacilities: builder.query({
       query: (portfolioId) => `/portfolio/${portfolioId}/facility/list`,
       transformResponse: (response) => response.result || response,
     }),
 
-    // Get users by portfolio ID (matching v1: GET /customers/users?portfolio_id={portfolioId}&role_id=1)
     getPortfolioCustomerUsers: builder.query({
       query: (portfolioId) => `/customers/users?portfolio_id=${portfolioId}&role_id=1`,
       transformResponse: (response) => response.result || response,
@@ -192,7 +190,6 @@ export const settingsApi = createApi({
       }),
     }),
 
-    // StorTrack lookup (matching v1: POST /portfolio/lookupStorTrack)
     lookupStorTrack: builder.mutation({
       query: (payload) => ({
         url: '/portfolio/lookupStorTrack',
@@ -202,7 +199,6 @@ export const settingsApi = createApi({
       transformResponse: (response) => response.result || response,
     }),
 
-    // Create user (matching v1: POST /customers/users)
     createPortfolioUser: builder.mutation({
       query: (userData) => ({
         url: '/customers/users',
@@ -212,7 +208,6 @@ export const settingsApi = createApi({
       transformResponse: (response) => response.result || response,
     }),
 
-    // Delete user (matching v1: DELETE /customers/users/{id})
     deletePortfolioUser: builder.mutation({
       query: (userId) => ({
         url: `/customers/users/${userId}`,
@@ -220,7 +215,6 @@ export const settingsApi = createApi({
       }),
     }),
 
-    // Update competitor store (matching v1: POST /comp_stores/{storeid})
     updateCompetitorStore: builder.mutation({
       query: ({ storeid, storeData }) => ({
         url: `/comp_stores/${storeid}`,
@@ -229,7 +223,6 @@ export const settingsApi = createApi({
       }),
     }),
 
-    // Update facility StorTrack settings (matching v1: PUT /facility_profile/update-facility/{facilityId})
     updateFacilityStorTrack: builder.mutation({
       query: ({ facilityId, stortrack_id, stortrack_radius }) => ({
         url: `/facility_profile/update-facility/${facilityId}`,
@@ -248,7 +241,6 @@ export const settingsApi = createApi({
       }),
     }),
 
-    // Toggle facility status (matching v1: PUT /facility_profile/toggle-status/{id})
     toggleFacilityStatus: builder.mutation({
       query: (facilityId) => ({
         url: `/facility_profile/toggle-status/${facilityId}`,
@@ -256,7 +248,6 @@ export const settingsApi = createApi({
       }),
     }),
 
-    // Cron Job Settings
     getCronJobSettings: builder.query({
       query: (customerId) => `/cron-job/${customerId}`,
       transformResponse: (response) => response.result || response,
@@ -270,7 +261,6 @@ export const settingsApi = createApi({
       }),
     }),
 
-    // Portfolio Strategies
     getPortfolioStrategies: builder.query({
       query: (customerId) => `/facility_profile/${customerId}/strategies`,
       transformResponse: (response) => response.result || response,
@@ -292,7 +282,6 @@ export const settingsApi = createApi({
       }),
     }),
 
-    // Portfolio Value Pricing
     getPortfolioValuePricing: builder.query({
       query: (customerId) => `/facility_profile/${customerId}/value_pricing`,
       transformResponse: (response) => response.result || response,

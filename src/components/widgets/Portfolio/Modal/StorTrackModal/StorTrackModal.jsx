@@ -4,10 +4,6 @@ import { Modal, Form, Select, InputNumber, Button, Spin, Typography } from 'antd
 const { Option } = Select;
 const { Text } = Typography;
 
-/**
- * Modal for StorTrack lookup and configuration
- * Following Rule #4: Modal components under Portfolio/Modal/
- */
 const StorTrackModal = ({
   open,
   onCancel,
@@ -24,12 +20,10 @@ const StorTrackModal = ({
 
   useEffect(() => {
     if (open && selectedFacility) {
-      // Reset form when modal opens
       form.resetFields();
       setSelectedStore(null);
       setRadius(1);
 
-      // Trigger lookup if facility has coordinates
       if (selectedFacility.latitude && selectedFacility.longitude && onLookupStores) {
         onLookupStores(selectedFacility);
       }
@@ -37,7 +31,6 @@ const StorTrackModal = ({
   }, [open, selectedFacility, onLookupStores, form]);
 
   useEffect(() => {
-    // Pre-select existing store if available
     if (nearbyStores.length > 0 && selectedFacility?.comp_stores_info?.s_id) {
       const existingStore = nearbyStores.find(
         (store) => store.storeid === selectedFacility.comp_stores_info.s_id
@@ -57,7 +50,6 @@ const StorTrackModal = ({
     setSelectedStore(storeId);
     const store = nearbyStores.find((s) => s.storeid === storeId);
     if (store) {
-      // Auto-set radius based on existing facility data if available
       const existingRadius = selectedFacility?.comp_stores_info?.distance;
       if (existingRadius) {
         setRadius(existingRadius);

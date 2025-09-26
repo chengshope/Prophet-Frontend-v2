@@ -79,7 +79,6 @@ export const getExistingCustomersTableColumns = ({
         className: 'new-group-header',
         width: 150,
         render: (value) => {
-          // Use the actual average rate increase amount from the API
           const avgChange = value || 0;
           const color = avgChange >= 0 ? '#52c41a' : '#ff4d4f';
           const sign = avgChange >= 0 ? '+' : '';
@@ -143,7 +142,6 @@ export const getExistingCustomersTableColumns = ({
   },
 ];
 
-// FacilityActions component extracted from the main table
 const FacilityActions = ({ facility, isExpanded, onExpand, onClose, onSaveChanges, onPublish }) => {
   const newTenantChanges = useSelector(selectNewTenantChanges);
   const hasChanges = newTenantChanges.some((tenant) =>

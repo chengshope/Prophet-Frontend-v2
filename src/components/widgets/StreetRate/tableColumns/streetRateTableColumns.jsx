@@ -17,7 +17,6 @@ export const getStreetRateTableColumns = ({
   const navigate = useNavigate();
 
   return [
-    // Facility Column
     {
       title: 'Facility',
       dataIndex: 'facility_name',
@@ -36,8 +35,6 @@ export const getStreetRateTableColumns = ({
         </Space>
       ),
     },
-
-    // Market Column
     {
       title: 'Market',
       dataIndex: 'market',
@@ -45,8 +42,6 @@ export const getStreetRateTableColumns = ({
       width: 140,
       sorter: true,
     },
-
-    // Physical Occupancy Column
     {
       title: 'Physical Occupancy %',
       dataIndex: 'physical_occupancy',
@@ -56,12 +51,10 @@ export const getStreetRateTableColumns = ({
       sorter: true,
       render: (value) => (value != null ? `${parseFloat(value).toFixed(2)}%` : '0.00%'),
     },
-
     {
       title: 'New',
       className: 'new-group-header',
       children: [
-        // Average Rate Change Percentage Column
         {
           title: 'Avg Rate Change %',
           dataIndex: 'avr_rate_change_percent',
@@ -77,8 +70,6 @@ export const getStreetRateTableColumns = ({
             return <span style={{ color }}>{formatPercent(numValue / 100)}</span>;
           },
         },
-
-        // Average Rate Change Amount Column
         {
           title: 'Avg Rate Change $',
           dataIndex: 'avr_rate_change_amount',
@@ -94,8 +85,6 @@ export const getStreetRateTableColumns = ({
             return <span style={{ color }}>{formatCurrency(numValue)}</span>;
           },
         },
-
-        // Largest Increase Column
         {
           title: 'Largest Increase',
           dataIndex: 'largest_increase',
@@ -106,8 +95,6 @@ export const getStreetRateTableColumns = ({
           sorter: true,
           render: (value) => (value != null ? formatCurrency(value) : '$0.00'),
         },
-
-        // Largest Decrease Column
         {
           title: 'Largest Decrease',
           dataIndex: 'largest_decrease',
@@ -120,8 +107,6 @@ export const getStreetRateTableColumns = ({
         },
       ],
     },
-
-    // Actions Column
     {
       title: 'Actions',
       key: 'actions',

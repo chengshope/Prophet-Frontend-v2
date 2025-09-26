@@ -1,20 +1,19 @@
-import { useMemo, useRef } from 'react';
 import { Card } from 'antd';
 import {
-  Chart as ChartJS,
   CategoryScale,
+  Chart as ChartJS,
+  Filler,
+  Legend,
   LinearScale,
-  PointElement,
   LineElement,
+  PointElement,
   Title,
   Tooltip,
-  Legend,
-  Filler,
 } from 'chart.js';
+import { useMemo, useRef } from 'react';
 import { Line } from 'react-chartjs-2';
 import './MultiLineChart.less';
 
-// Register Chart.js components once
 ChartJS.register(
   CategoryScale,
   LinearScale,

@@ -1,51 +1,44 @@
 import PageFrame from '@/components/common/PageFrame';
 import { showError, showSuccess } from '@/utils/messageService';
 // Split components
-import FacilityStatus from '@/components/widgets/Settings/FacilityStatus';
-import FacilityProfile from '@/components/widgets/Settings/FacilityProfile';
-import StreetRateStrategy from '@/components/widgets/Settings/StreetRateStrategy';
-import UnitRankingUpload from '@/components/widgets/Settings/UnitRankingUpload';
-import StreetRateUpdateStrategy from '@/components/widgets/Settings/StreetRateUpdateStrategy';
-import RatesToUpdate from '@/components/widgets/Settings/RatesToUpdate';
-import RevenueGoal from '@/components/widgets/Settings/RevenueGoal';
-import RateIncreaseCriteria from '@/components/widgets/Settings/RateIncreaseCriteria';
-import { SaveOutlined } from '@ant-design/icons';
-import { Button, Card, Form, Select, Spin, Flex } from 'antd';
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
-
-dayjs.extend(utc);
-import { selectPortfolioId, selectCustomerId } from '@/features/auth/authSelector';
-import { WEEKDAYS, FREQUENCY_OPTIONS, SETTINGS_INITIAL_VALUES } from '@/constants';
 import {
-  convertPercentageToDecimal,
-  convertDecimalToPercentage,
-  convertToNumber,
-  getDayOfWeekNumber
-} from '@/utils/dataConverters';
-import {
-  prepareEcriSettings,
-  prepareStreetRateSettings,
-  prepareCronJobSettings
-} from '@/utils/settingsHelpers';
-import {
-  useGetPortfolioSettingsQuery,
-  useUpdatePortfolioSettingsMutation,
+  useGetCronJobSettingsQuery,
+  useGetFacilitiesListQuery,
   useGetFacilitySettingsQuery,
+  useGetPortfolioSettingsQuery,
+  useGetPortfolioStrategiesQuery,
+  useUpdateCronJobSettingsMutation,
+  useUpdateFacilityEcriSettingsMutation,
   useUpdateFacilitySettingsMutation,
   useUpdatePortfolioEcriSettingsMutation,
-  useUpdateFacilityEcriSettingsMutation,
-  useGetFacilitiesListQuery,
-  useGetCronJobSettingsQuery,
-  useUpdateCronJobSettingsMutation,
-  useGetPortfolioStrategiesQuery,
+  useUpdatePortfolioSettingsMutation,
 } from '@/api/settingsApi';
+import FacilityProfile from '@/components/widgets/Settings/FacilityProfile';
+import FacilityStatus from '@/components/widgets/Settings/FacilityStatus';
+import RateIncreaseCriteria from '@/components/widgets/Settings/RateIncreaseCriteria';
+import RatesToUpdate from '@/components/widgets/Settings/RatesToUpdate';
+import RevenueGoal from '@/components/widgets/Settings/RevenueGoal';
+import StreetRateStrategy from '@/components/widgets/Settings/StreetRateStrategy';
+import StreetRateUpdateStrategy from '@/components/widgets/Settings/StreetRateUpdateStrategy';
+import UnitRankingUpload from '@/components/widgets/Settings/UnitRankingUpload';
+import { FREQUENCY_OPTIONS, SETTINGS_INITIAL_VALUES, WEEKDAYS } from '@/constants';
+import { selectCustomerId, selectPortfolioId } from '@/features/auth/authSelector';
+import {
+  convertDecimalToPercentage,
+  convertToNumber,
+  getDayOfWeekNumber,
+} from '@/utils/dataConverters';
+import { prepareEcriSettings, prepareStreetRateSettings } from '@/utils/settingsHelpers';
+import { SaveOutlined } from '@ant-design/icons';
+import { Button, Card, Flex, Form, Select, Spin } from 'antd';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-dom';
 import './Settings.less';
 
-
+dayjs.extend(utc);
 
 const Settings = () => {
   const { id: facilityId } = useParams();
@@ -58,53 +51,75 @@ const Settings = () => {
   const portfolioId = useSelector(selectPortfolioId);
   const customerId = useSelector(selectCustomerId);
 
-  const { data: facilitiesList, isLoading: facilitiesLoading, isFetching: facilitiesFetching, refetch } = useGetFacilitiesListQuery({
+  const {
+    data: facilitiesList,
+    isLoading: facilitiesLoading,
+    isFetching: facilitiesFetching,
+    refetch,
+  } = useGetFacilitiesListQuery({
     refetchOnMountOrArgChange: true,
   });
 
-  const { data: portfolioStrategies, isLoading: strategiesLoading, isFetching: strategiesFetching } =
-    useGetPortfolioStrategiesQuery(customerId, {
-      skip: !customerId || scope !== 'portfolio',
-      refetchOnMountOrArgChange: true,
-    });
+  const {
+    data: portfolioStrategies,
+    isLoading: strategiesLoading,
+    isFetching: strategiesFetching,
+  } = useGetPortfolioStrategiesQuery(customerId, {
+    skip: !customerId || scope !== 'portfolio',
+    refetchOnMountOrArgChange: true,
+  });
 
-  const { data: cronJobSettings, isLoading: cronJobLoading, isFetching: cronJobFetching } = useGetCronJobSettingsQuery(
-    customerId,
-    {
-      skip: !customerId || scope !== 'portfolio',
-      refetchOnMountOrArgChange: true,
-    }
-  );
+  const {
+    data: cronJobSettings,
+    isLoading: cronJobLoading,
+    isFetching: cronJobFetching,
+  } = useGetCronJobSettingsQuery(customerId, {
+    skip: !customerId || scope !== 'portfolio',
+    refetchOnMountOrArgChange: true,
+  });
 
-  const { data: portfolioSettings, isLoading: portfolioLoading, isFetching: portfolioFetching } = useGetPortfolioSettingsQuery(
-    portfolioId,
-    {
-      skip: !portfolioId || scope !== 'portfolio',
-      refetchOnMountOrArgChange: true,
-    }
-  );
+  const {
+    data: portfolioSettings,
+    isLoading: portfolioLoading,
+    isFetching: portfolioFetching,
+  } = useGetPortfolioSettingsQuery(portfolioId, {
+    skip: !portfolioId || scope !== 'portfolio',
+    refetchOnMountOrArgChange: true,
+  });
 
   // Facility data
-  const { data: facilitySettings, isLoading: facilityLoading, isFetching: facilityFetching } = useGetFacilitySettingsQuery(
-    facilityId,
-    {
-      skip: !facilityId || scope !== 'facility',
-      refetchOnMountOrArgChange: true,
-    }
-  );
+  const {
+    data: facilitySettings,
+    isLoading: facilityLoading,
+    isFetching: facilityFetching,
+  } = useGetFacilitySettingsQuery(facilityId, {
+    skip: !facilityId || scope !== 'facility',
+    refetchOnMountOrArgChange: true,
+  });
 
   // Mutations with loading states
-  const [updatePortfolioSettings, { isLoading: portfolioSettingsUpdating }] = useUpdatePortfolioSettingsMutation();
-  const [updateFacilitySettings, { isLoading: facilitySettingsUpdating }] = useUpdateFacilitySettingsMutation();
-  const [updatePortfolioEcri, { isLoading: portfolioEcriUpdating }] = useUpdatePortfolioEcriSettingsMutation();
-  const [updateFacilityEcri, { isLoading: facilityEcriUpdating }] = useUpdateFacilityEcriSettingsMutation();
-  const [updateCronJobSettings, { isLoading: cronJobUpdating }] = useUpdateCronJobSettingsMutation();
+  const [updatePortfolioSettings, { isLoading: portfolioSettingsUpdating }] =
+    useUpdatePortfolioSettingsMutation();
+  const [updateFacilitySettings, { isLoading: facilitySettingsUpdating }] =
+    useUpdateFacilitySettingsMutation();
+  const [updatePortfolioEcri, { isLoading: portfolioEcriUpdating }] =
+    useUpdatePortfolioEcriSettingsMutation();
+  const [updateFacilityEcri, { isLoading: facilityEcriUpdating }] =
+    useUpdateFacilityEcriSettingsMutation();
+  const [updateCronJobSettings, { isLoading: cronJobUpdating }] =
+    useUpdateCronJobSettingsMutation();
 
   // Combined loading state (including fetching states for refetch operations)
   const isLoading =
     scope === 'portfolio'
-      ? portfolioLoading || facilitiesLoading || cronJobLoading || strategiesLoading ||
-        portfolioFetching || facilitiesFetching || cronJobFetching || strategiesFetching
+      ? portfolioLoading ||
+        facilitiesLoading ||
+        cronJobLoading ||
+        strategiesLoading ||
+        portfolioFetching ||
+        facilitiesFetching ||
+        cronJobFetching ||
+        strategiesFetching
       : facilityLoading || facilityFetching;
 
   // Combined saving state for mutations
@@ -163,10 +178,10 @@ const Settings = () => {
       // Merge cron job settings if available
       const cronSettings = cronJobSettings || {};
 
-      // Convert cron job data to form format (matching v1 logic)
+      // Convert cron job data to form format
       let formTimeOfDay = null;
       if (cronSettings.hour && cronSettings.minute) {
-        // Convert UTC time back to local time (matching v1 logic)
+        // Convert UTC time back to local time
         let hour = cronSettings.hour;
         let minute = cronSettings.minute;
 
@@ -295,18 +310,14 @@ const Settings = () => {
       emails: values.emails,
     };
 
-    // Save ECRI settings using helper function
     await saveEcriSettings(ecriSettings);
 
-    // Save portfolio settings
     await updatePortfolioSettings({
       portfolioId,
       street_rate_settings: streetRateSettings,
     }).unwrap();
 
-    // Save cron job settings (matching v1 logic exactly)
     if (values.timeOfDay) {
-      // Convert day of week using WEEKDAYS array (matching v1)
       const day_of_week = getDayOfWeekNumber(values.weekday);
 
       const updateParams = {
@@ -315,19 +326,16 @@ const Settings = () => {
         emails: values.emails || [],
       };
 
-      // Add day_of_week for Weekly frequency (matching v1)
       if (values.frequency === FREQUENCY_OPTIONS[1]) {
         // 'Weekly'
         updateParams.day_of_week = day_of_week;
       }
 
-      // Add day_of_month for Monthly frequency (matching v1)
       if (values.frequency === FREQUENCY_OPTIONS[2]) {
         // 'Monthly'
         updateParams.day_of_month = values.dayOfMonth;
       }
 
-      // Time conversion logic (matching v1 exactly)
       const today = dayjs().format('YYYY-MM-DD');
       const timeString = values.timeOfDay.format
         ? values.timeOfDay.format('HH:mm')

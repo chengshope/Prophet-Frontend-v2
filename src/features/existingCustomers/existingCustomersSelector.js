@@ -1,6 +1,5 @@
 import { createSelector } from '@reduxjs/toolkit';
 
-// Data selectors (still used by components)
 export const selectExistingCustomersFacilities = (state) => state.existingCustomers.facilities;
 export const selectChangedFacilities = (state) => state.existingCustomers.changedFacilities;
 

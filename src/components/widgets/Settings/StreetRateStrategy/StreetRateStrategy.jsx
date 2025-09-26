@@ -23,17 +23,19 @@ const StreetRateStrategy = ({
   currentValuePricing,
   setCurrentValuePricing,
 }) => {
-  // RTK mutations with loading states
-  const [savePortfolioStrategies, { isLoading: portfolioStrategySaving }] = useSavePortfolioStrategiesMutation();
-  const [saveFacilityStrategies, { isLoading: facilityStrategySaving }] = useSaveFacilityStrategiesMutation();
-  const [savePortfolioValuePricing, { isLoading: portfolioValuePricingSaving }] = useSavePortfolioValuePricingMutation();
-  const [saveFacilityValuePricing, { isLoading: facilityValuePricingSaving }] = useSaveFacilityValuePricingMutation();
+  const [savePortfolioStrategies, { isLoading: portfolioStrategySaving }] =
+    useSavePortfolioStrategiesMutation();
+  const [saveFacilityStrategies, { isLoading: facilityStrategySaving }] =
+    useSaveFacilityStrategiesMutation();
+  const [savePortfolioValuePricing, { isLoading: portfolioValuePricingSaving }] =
+    useSavePortfolioValuePricingMutation();
+  const [saveFacilityValuePricing, { isLoading: facilityValuePricingSaving }] =
+    useSaveFacilityValuePricingMutation();
 
-  // Combined loading states
   const isStrategySaving = scope === 'portfolio' ? portfolioStrategySaving : facilityStrategySaving;
-  const isValuePricingSaving = scope === 'portfolio' ? portfolioValuePricingSaving : facilityValuePricingSaving;
+  const isValuePricingSaving =
+    scope === 'portfolio' ? portfolioValuePricingSaving : facilityValuePricingSaving;
 
-  // Handle strategy changes (immediate save like v1)
   const handleStrategyChange = async (strategyValue) => {
     try {
       if (scope === 'portfolio') {
@@ -48,7 +50,6 @@ const StreetRateStrategy = ({
     }
   };
 
-  // Handle value pricing changes (immediate save like v1)
   const handleValuePricingChange = async (valuePricingValue) => {
     try {
       if (scope === 'portfolio') {
@@ -60,7 +61,6 @@ const StreetRateStrategy = ({
         await saveFacilityValuePricing({ facilityId, valuePricing: valuePricingValue }).unwrap();
       }
 
-      // Update local state immediately for UI feedback
       setCurrentValuePricing(valuePricingValue);
       showSuccess('Value pricing updated successfully!');
     } catch (error) {

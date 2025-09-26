@@ -41,7 +41,6 @@ const ExistingCustomersTable = ({
   const [expandedRowKeys, setExpandedRowKeys] = useState([]);
   const [selectedFacility, setSelectedFacility] = useState(null);
 
-  // Redux selectors - using centralized state
   const facilities = useSelector(selectExistingCustomersFacilities);
   const changedTenantsByFacility = useSelector(getChangedTenantsByFacilityId);
   const newTenantChanges = useSelector(selectNewTenantChanges);
@@ -65,7 +64,6 @@ const ExistingCustomersTable = ({
     setExpandedRowKeys(expandedRowKeys.filter((key) => key !== facility.facility_id));
   };
 
-  // Handle save changes for current facility (similar to street rates)
   const handleSaveChanges = async (facility) => {
     try {
       // Get all changed tenants for this facility
@@ -76,7 +74,7 @@ const ExistingCustomersTable = ({
         return;
       }
 
-      // Prepare data for bulk update (v1 format)
+      // Prepare data for bulk update
       const bulkUpdateData = facilityChangedTenants.map((tenant) => ({
         id: tenant.ecri_id,
         new_rate: parseFloat(tenant.new_rate),
@@ -109,14 +107,13 @@ const ExistingCustomersTable = ({
     }
   };
 
-  // Handle individual facility publish
   const handlePublishIndividual = (facility) => {
     setSelectedFacility(facility);
     setPublishModalOpen(true);
   };
 
-  // Get saved tenant changes for selected facility using memoized selector
   const savedTenantChanges = useSelector(selectSavedTenantChanges);
+
   const savedTenantChangesForFacility = useMemo(() => {
     if (!selectedFacility) return [];
     return savedTenantChanges.filter(
@@ -157,7 +154,6 @@ const ExistingCustomersTable = ({
     }
   };
 
-  // Handle tenant changes in expanded row
   const handleTenantChange = (facilityId, tenant, field, value) => {
     const updatedTenant = { ...tenant, [field]: value };
 

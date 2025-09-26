@@ -12,11 +12,6 @@ import { getSecondaryUnitTypeLabel } from '@/utils/unitHelpers';
 
 const { Text } = Typography;
 
-/**
- * Get all columns for UnitTypeStatistics table
- * @param {Object} props - Column configuration props
- * @returns {Array} Complete columns array for the table
- */
 export const getUnitTypeStatisticsTableColumns = ({
   rateType,
   pmsType,

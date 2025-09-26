@@ -1,14 +1,7 @@
 import { Modal, Button, DatePicker } from 'antd';
 import './LockScheduleDateModal.less';
 
-const LockScheduleDateModal = ({
-  open,
-  onCancel,
-  onConfirm,
-  lockExpirationDate,
-  onDateChange,
-  unitToLock,
-}) => {
+const LockScheduleDateModal = ({ open, onCancel, onConfirm, lockExpirationDate, onDateChange }) => {
   const handleConfirm = () => {
     onConfirm();
   };

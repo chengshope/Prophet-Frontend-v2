@@ -18,7 +18,6 @@ import {
 const ExecutiveSummaryTab = () => {
   const dispatch = useDispatch();
 
-  // Get filters from Redux store
   const filters = useSelector(selectExecutiveSummaryFilters);
   const apiParams = useSelector(selectExecutiveSummaryApiParams);
 

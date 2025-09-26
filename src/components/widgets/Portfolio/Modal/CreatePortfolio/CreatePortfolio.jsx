@@ -1,18 +1,5 @@
 import { useState, useEffect } from 'react';
-import {
-  Modal,
-  Form,
-  Input,
-  Select,
-  Button,
-  Row,
-  Col,
-  Divider,
-  Table,
-  Space,
-  Tooltip,
-  message,
-} from 'antd';
+import { Modal, Form, Input, Select, Button, Row, Col, Divider, Table, Space, Tooltip } from 'antd';
 import {
   PlusOutlined,
   DeleteOutlined,
@@ -31,13 +18,8 @@ const CreatePortfolio = ({ visible, onCancel, onSuccess }) => {
   const [form] = Form.useForm();
   const [users, setUsers] = useState([]);
   const [createPortfolio, { isLoading }] = useCreatePortfolioAndUsersMutation();
-  const {
-    data: companies,
-    isLoading: companiesLoading,
-    error: companiesError,
-  } = useGetPortfolioCompaniesQuery();
+  const { data: companies, isLoading: companiesLoading } = useGetPortfolioCompaniesQuery();
 
-  // Reset form when modal opens/closes
   useEffect(() => {
     if (visible) {
       form.resetFields();
@@ -45,16 +27,8 @@ const CreatePortfolio = ({ visible, onCancel, onSuccess }) => {
     }
   }, [visible, form]);
 
-  // Debug companies data
-  useEffect(() => {
-    console.log('Companies data:', companies);
-    console.log('Companies loading:', companiesLoading);
-    console.log('Companies error:', companiesError);
-  }, [companies, companiesLoading, companiesError]);
-
   const handleSubmit = async (values) => {
     try {
-      // Prepare payload matching v1 structure
       const payload = {
         portfolio_name: values.portfolio_name,
         status: values.status,
@@ -63,7 +37,6 @@ const CreatePortfolio = ({ visible, onCancel, onSuccess }) => {
         pms_credentials: {},
       };
 
-      // Set PMS credentials based on type
       if (values.pms_type === 'sitelink') {
         payload.pms_credentials.username = values.username;
         payload.pms_credentials.password = values.password;

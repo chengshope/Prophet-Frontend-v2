@@ -1,9 +1,3 @@
-/**
- * Competitors Redux Slice
- * Following Rule #2: All API calls must be made via Redux Toolkit (RTK)
- * Following Rule #4: Centralized state management for Competitors functionality
- */
-
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
@@ -11,7 +5,7 @@ const initialState = {
   selectedFacilityId: null,
   search: '',
 
-  // Strategy state (matching v1)
+  // Strategy state
   strategy: null, // Will be set from facility data
 
   // UI state
@@ -58,7 +52,7 @@ const competitorsSlice = createSlice({
       state.search = action.payload;
     },
 
-    // Strategy management (matching v1)
+    // Strategy management
     setStrategy: (state, action) => {
       state.strategy = action.payload;
     },

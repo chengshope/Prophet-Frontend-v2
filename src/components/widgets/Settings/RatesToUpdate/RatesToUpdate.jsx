@@ -8,7 +8,6 @@ const RatesToUpdate = ({ scope, loading = false }) => {
       description="Configure which rates should be updated automatically."
       loading={loading}
     >
-      {/* Facility-specific fields */}
       {scope === 'facility' && (
         <>
           <Form.Item
@@ -21,7 +20,6 @@ const RatesToUpdate = ({ scope, loading = false }) => {
         </>
       )}
 
-      {/* Portfolio-specific fields */}
       {scope === 'portfolio' && (
         <Form.Item
           name="rate_hold_on_occupancy"
@@ -36,11 +34,7 @@ const RatesToUpdate = ({ scope, loading = false }) => {
         <Switch />
       </Form.Item>
 
-      <Form.Item
-        name="street_rate"
-        label="Street Rate"
-        style={{ marginBottom: 0 }}
-      >
+      <Form.Item name="street_rate" label="Street Rate" style={{ marginBottom: 0 }}>
         <Switch />
       </Form.Item>
     </SettingGroup>

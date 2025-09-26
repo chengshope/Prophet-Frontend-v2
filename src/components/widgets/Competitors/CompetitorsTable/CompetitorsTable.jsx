@@ -17,12 +17,10 @@ const CompetitorsTable = ({ data, loading, onCompetitorUpdate, onRowHover }) => 
         onCompetitorUpdate();
       }
     } catch (error) {
-      // Error handling is automatic with RTK Query
       console.error('Failed to update competitor type:', error);
     }
   };
 
-  // Get table columns using extracted function
   const columns = getCompetitorsTableColumns({
     onCompetitorTypeChange: handleCompetitorTypeChange,
   });

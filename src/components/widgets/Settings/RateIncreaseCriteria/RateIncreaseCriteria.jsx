@@ -15,7 +15,6 @@ const RateIncreaseCriteria = ({ scope, loading = false }) => {
       description="Configure the criteria and limits for automatic rate increases."
       loading={loading}
     >
-      {/* Portfolio-specific notification days */}
       {scope === 'portfolio' && (
         <Form.Item
           label={

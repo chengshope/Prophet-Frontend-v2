@@ -24,7 +24,6 @@ const UnitTypeStatistics = ({ facilityId, rows, rateType, changedUnits = [] }) =
   const [linkData, setLinkData] = useState({ unitTypeId: null, adjustmentPercentage: 0 });
   const [categoryData, setCategoryData] = useState({ guide: null, variance: 0 });
 
-  // Lock functionality state
   const [lockScheduleConfirmModalOpen, setLockScheduleConfirmModalOpen] = useState(false);
   const [lockScheduleModalOpen, setLockScheduleModalOpen] = useState(false);
   const [lockExpirationDate, setLockExpirationDate] = useState(null);
@@ -34,17 +33,14 @@ const UnitTypeStatistics = ({ facilityId, rows, rateType, changedUnits = [] }) =
 
   const pmsType = useSelector(selectPmsType);
 
-  // API hooks
   const { data: unitTypes, isLoading: unitTypesLoading } = useGetUnitTypesQuery(facilityId);
   const [updateUnitType, { isLoading: isUpdatingUnitType }] = useUpdateUnitTypeMutation();
 
-  // Handle rate input change
   const handleRateChange = (unit, newRate) => {
     const updatedUnit = {
       ...unit,
       [rateType === 'street_rate' ? 'new_std_rate' : 'new_web_rate']: newRate,
     };
-    // Pass newRate: true to track this as a rate change for publishing
     dispatch(updateFacility({ facilityId, unit: updatedUnit, newRate: true }));
   };
 
@@ -107,7 +103,6 @@ const UnitTypeStatistics = ({ facilityId, rows, rateType, changedUnits = [] }) =
     }
   };
 
-  // Handle removing unit type link/anchor
   const handleRemoveUnitType = async () => {
     if (!selectedUnit) return;
 
@@ -142,7 +137,6 @@ const UnitTypeStatistics = ({ facilityId, rows, rateType, changedUnits = [] }) =
     }
   };
 
-  // Handle lock functionality
   const handleLockToggle = (unit, checked) => {
     if (checked) {
       // When locking, ask if they want to schedule expiration

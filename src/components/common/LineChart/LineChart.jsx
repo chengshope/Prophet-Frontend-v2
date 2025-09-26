@@ -1,16 +1,15 @@
-// src/components/common/LineChart.jsx
-import { useMemo } from 'react';
 import { Card } from 'antd';
 import {
-  Chart as ChartJS,
   CategoryScale,
+  Chart as ChartJS,
+  Legend,
   LinearScale,
-  PointElement,
   LineElement,
+  PointElement,
   Title,
   Tooltip,
-  Legend,
 } from 'chart.js';
+import { useMemo } from 'react';
 import { Line } from 'react-chartjs-2';
 import './LineChart.less';
 

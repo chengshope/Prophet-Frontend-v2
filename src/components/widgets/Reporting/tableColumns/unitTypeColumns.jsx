@@ -1,8 +1,3 @@
-/**
- * Table column definitions for Unit Type Analysis table
- * Following Rule #4: Table Header Column extraction
- */
-
 import { formatCurrency } from '@/utils/formatters';
 
 export const unitTypeColumns = [
@@ -164,62 +159,10 @@ export const unitTypeColumns = [
   },
 ];
 
-// Mobile-optimized columns
-export const unitTypeColumnsMobile = [
-  {
-    title: 'Unit Type',
-    dataIndex: 'unitType',
-    key: 'unitType',
-    width: 120,
-    fixed: 'left',
-    render: (value) => <span style={{ fontWeight: 500, fontSize: '12px' }}>{value || 'N/A'}</span>,
-  },
-  {
-    title: 'Occupancy',
-    key: 'occupancy',
-    width: 100,
-    align: 'right',
-    render: (_, record) => (
-      <div style={{ fontSize: '12px' }}>
-        <div>{record.beginningOccupancy}</div>
-        <div style={{ color: 'var(--ant-color-text-tertiary)' }}>→ {record.endingOccupancy}</div>
-      </div>
-    ),
-  },
-  {
-    title: 'Change',
-    dataIndex: 'change',
-    key: 'change',
-    width: 80,
-    align: 'right',
-    render: (value) => {
-      if (!value) return '0.00%';
-      const numValue = parseFloat(value.replace('%', '') || 0);
-      const color = numValue >= 0 ? 'var(--ant-color-success)' : 'var(--ant-color-error)';
-      return <span style={{ color, fontWeight: 500, fontSize: '12px' }}>{value}</span>;
-    },
-  },
-  {
-    title: 'Avg Rate',
-    dataIndex: 'averageRate',
-    key: 'averageRate',
-    width: 100,
-    align: 'right',
-    render: (value) => {
-      if (typeof value === 'string' && value.startsWith('$')) {
-        return <span style={{ fontSize: '12px' }}>{value}</span>;
-      }
-      return <span style={{ fontSize: '12px' }}>{formatCurrency(value)}</span>;
-    },
-  },
-];
-
-// Utility function to get appropriate columns based on screen size
-export const getUnitTypeColumns = (isMobile = false) => {
-  return isMobile ? unitTypeColumnsMobile : unitTypeColumns;
+export const getUnitTypeColumns = () => {
+  return unitTypeColumns;
 };
 
-// Data transformation utility for unit type table
 export const transformUnitTypeData = (unitTypeAnalysis) => {
   const analysisData = unitTypeAnalysis?.unit_types || [];
 

@@ -94,13 +94,11 @@ const StreetRatesTable = ({
     }
   };
 
-  // Handle cancel/close for current facility
   const handleClose = (facility) => {
     // Just close without saving
     setExpandedRowKeys(expandedRowKeys.filter((key) => key !== facility.id));
   };
 
-  // Handle individual facility publish
   const handlePublishIndividual = (facility) => {
     setSelectedFacility(facility);
     setPublishModalOpen(true);
@@ -143,7 +141,6 @@ const StreetRatesTable = ({
     }
   };
 
-  // Get columns using extracted column definitions
   const columns = getStreetRateTableColumns({
     expandedRowKeys,
     changedUnits,
@@ -155,7 +152,6 @@ const StreetRatesTable = ({
     isSavingChanges,
   });
 
-  // Handle table sorting
   const handleTableChange = (_, __, sorter) => {
     if (sorter && sorter.field) {
       const direction = sorter.order === 'ascend' ? 'asc' : 'desc';

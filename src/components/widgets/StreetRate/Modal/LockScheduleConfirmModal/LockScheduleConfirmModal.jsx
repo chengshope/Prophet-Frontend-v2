@@ -1,6 +1,6 @@
 import { Modal, Button } from 'antd';
 
-const LockScheduleConfirmModal = ({ open, onCancel, onSchedule, onLockNow, unitToLock }) => {
+const LockScheduleConfirmModal = ({ open, onCancel, onSchedule, onLockNow }) => {
   return (
     <Modal
       title="Schedule Expiration"

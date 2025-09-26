@@ -21,7 +21,7 @@ const StreetRateUpdateStrategy = ({ frequency, handleFrequencyChange, loading = 
           size="middle"
           value={frequency}
           onChange={handleFrequencyChange}
-          options={FREQUENCY_OPTIONS.map(freq => ({ label: freq, value: freq }))}
+          options={FREQUENCY_OPTIONS.map((freq) => ({ label: freq, value: freq }))}
         />
       </Form.Item>
 
@@ -34,7 +34,6 @@ const StreetRateUpdateStrategy = ({ frequency, handleFrequencyChange, loading = 
         </Form.Item>
       )}
 
-      {/* Day of Month - only show for Monthly frequency */}
       {frequency === FREQUENCY_OPTIONS[2] && (
         <Form.Item
           label={<FormLabel icon={<BulbOutlined />} label="Day of Month" iconColor="#fa8c16" />}

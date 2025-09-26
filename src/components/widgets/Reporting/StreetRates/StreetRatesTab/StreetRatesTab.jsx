@@ -16,7 +16,6 @@ import {
 const StreetRatesTab = () => {
   const dispatch = useDispatch();
 
-  // Get filters from Redux store
   const filters = useSelector(selectStreetRatesFilters);
   const apiParams = useSelector(selectStreetRatesApiParams);
 

@@ -1,35 +1,35 @@
-import PageFrame from '@/components/common/PageFrame';
-import { showError, showSuccess } from '@/utils/messageService';
 import {
-  SaveOutlined,
-  PlusOutlined,
-  DeleteOutlined,
-  SearchOutlined,
-  SyncOutlined,
-  UserOutlined,
-  SettingOutlined,
-} from '@ant-design/icons';
-import { Button, Card, Col, Form, Input, Modal, Row, Select, Table, Space, Spin } from 'antd';
-import { useState, useEffect, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { selectUser, selectPortfolioId } from '@/features/auth/authSelector';
-import {
-  useUpdatePortfolioSettingsMutation,
-  useGetPortfolioDetailsByIdQuery,
-  useGetPortfoliosListQuery,
-  useGetPortfolioCompaniesQuery,
-  useGetPortfolioFacilitiesQuery,
-  useGetPortfolioCustomerUsersQuery,
   useCreatePortfolioUserMutation,
   useDeletePortfolioUserMutation,
+  useGetPortfolioCompaniesQuery,
+  useGetPortfolioCustomerUsersQuery,
+  useGetPortfolioDetailsByIdQuery,
+  useGetPortfolioFacilitiesQuery,
+  useGetPortfoliosListQuery,
   useLookupStorTrackMutation,
-  useUpdateFacilityStorTrackMutation,
   useSyncPortfolioFacilitiesMutation,
+  useUpdateFacilityStorTrackMutation,
+  useUpdatePortfolioSettingsMutation,
 } from '@/api/settingsApi';
+import PageFrame from '@/components/common/PageFrame';
 import CreatePortfolio from '@/components/widgets/Portfolio/Modal/CreatePortfolio';
 import DeleteUserModal from '@/components/widgets/Portfolio/Modal/DeleteUserModal';
 import StorTrackModal from '@/components/widgets/Portfolio/Modal/StorTrackModal';
+import { selectPortfolioId, selectUser } from '@/features/auth/authSelector';
+import { showError, showSuccess } from '@/utils/messageService';
+import {
+  DeleteOutlined,
+  PlusOutlined,
+  SaveOutlined,
+  SearchOutlined,
+  SettingOutlined,
+  SyncOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
+import { Button, Card, Col, Form, Input, Modal, Row, Select, Space, Spin, Table } from 'antd';
+import { useCallback, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-dom';
 import './Portfolio.less';
 
 const { Option } = Select;
@@ -77,7 +77,6 @@ const Portfolio = () => {
     skip: !portfolioId && !currentPortfolioId,
   });
 
-  // Get portfolio-specific facilities (matching v1: /portfolio/{portfolioId}/facility/list)
   const { data: facilitiesList } = useGetPortfolioFacilitiesQuery(
     portfolioId || currentPortfolioId,
     {
@@ -85,7 +84,6 @@ const Portfolio = () => {
     }
   );
 
-  // Get portfolio-specific users (matching v1: /customers/users?portfolio_id={portfolioId}&role_id=1)
   const { data: usersList } = useGetPortfolioCustomerUsersQuery(portfolioId || currentPortfolioId, {
     skip: !portfolioId && !currentPortfolioId,
   });
@@ -179,7 +177,6 @@ const Portfolio = () => {
     try {
       setAddingUser(true);
 
-      // Create user payload matching v1 API
       const userData = {
         first_name: values.firstName,
         last_name: values.lastName,
@@ -229,7 +226,6 @@ const Portfolio = () => {
 
     setLoadingSync(true);
     try {
-      // Call real API matching v1: GET /sync-data-ui/{portfolioId}
       await syncPortfolioFacilities(selectedPortfolio.id).unwrap();
       showSuccess('Facilities synced successfully!');
       refetchPortfolio();
@@ -257,7 +253,6 @@ const Portfolio = () => {
       setLoadingStores(true);
 
       try {
-        // Call real API matching v1: POST /portfolio/lookupStorTrack
         const payload = {
           latitude: facility.latitude,
           longitude: facility.longitude,
@@ -281,12 +276,12 @@ const Portfolio = () => {
     try {
       setUpdatingStorTrack(true);
 
-      // Update facility with StorTrack settings (matching v1 API exactly)
+      // Update facility with StorTrack settings
       await updateFacilityStorTrack({
         facilityId: facility.id,
         stortrack_id: store.masterid,
-        stortrack_radius: radius.toString(), // Convert to string to match v1 API
-        portfolioId: portfolioId || currentPortfolioId, // For proper cache invalidation
+        stortrack_radius: radius.toString(),
+        portfolioId: portfolioId || currentPortfolioId,
       }).unwrap();
 
       showSuccess('StorTrack settings updated successfully!');

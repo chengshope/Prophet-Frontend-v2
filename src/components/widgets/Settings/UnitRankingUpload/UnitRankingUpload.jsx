@@ -9,13 +9,11 @@ import {
   useLazyExportUnitRankingQuery,
 } from '@/api/settingsApi';
 
-const UnitRankingUpload = ({ facilityId, facilitySettings }) => {
-  // API mutations with loading states
+const UnitRankingUpload = ({ facilitySettings }) => {
   const [uploadUnitRanking, { isLoading: isUploading }] = useUploadUnitRankingMutation();
   const [downloadSampleXLSX, { isLoading: isDownloadingSample }] = useLazyDownloadSampleXLSXQuery();
   const [exportUnitRanking, { isLoading: isExporting }] = useLazyExportUnitRankingQuery();
 
-  // Handle unit ranking file upload
   const handleUnitRankingUpload = async (file) => {
     const { facility_id } = facilitySettings;
     if (!facility_id) {
@@ -31,7 +29,6 @@ const UnitRankingUpload = ({ facilityId, facilitySettings }) => {
     }
   };
 
-  // Handle sample download
   const handleDownloadSample = async () => {
     const { facility_id } = facilitySettings;
 
@@ -41,7 +38,6 @@ const UnitRankingUpload = ({ facilityId, facilitySettings }) => {
     }
     try {
       const result = await downloadSampleXLSX(facility_id).unwrap();
-      // Create download link
       const url = window.URL.createObjectURL(result);
       const a = document.createElement('a');
       a.href = url;
@@ -54,7 +50,6 @@ const UnitRankingUpload = ({ facilityId, facilitySettings }) => {
     }
   };
 
-  // Handle export ranking
   const handleExportRanking = async () => {
     const { facility_id } = facilitySettings;
 
@@ -64,7 +59,6 @@ const UnitRankingUpload = ({ facilityId, facilitySettings }) => {
     }
     try {
       const result = await exportUnitRanking(facility_id).unwrap();
-      // Create download link
       const url = window.URL.createObjectURL(result);
       const a = document.createElement('a');
       a.href = url;
@@ -103,20 +97,11 @@ const UnitRankingUpload = ({ facilityId, facilitySettings }) => {
               return false;
             }}
           >
-            <Button
-              icon={<UploadOutlined />}
-              style={{ width: '100%' }}
-              block
-              loading={isUploading}
-            >
+            <Button icon={<UploadOutlined />} style={{ width: '100%' }} block loading={isUploading}>
               {isUploading ? 'Uploading...' : 'Click Here To Upload Your Unit Ranking'}
             </Button>
           </Upload>
-          <Button
-            icon={<DownloadOutlined />}
-            onClick={handleExportRanking}
-            loading={isExporting}
-          >
+          <Button icon={<DownloadOutlined />} onClick={handleExportRanking} loading={isExporting}>
             {isExporting ? 'Exporting...' : 'Click Here To Export Unit Ranking'}
           </Button>
           <Button

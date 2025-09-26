@@ -1,11 +1,8 @@
 import { Table, Card, Alert } from 'antd';
 import { useGetUnitTypeAnalysisQuery } from '@/api/reportingApi';
 import { getUnitTypeColumns, transformUnitTypeData } from '../../tableColumns/unitTypeColumns';
-import { useResponsive } from '@/hooks/useResponsive';
 
 const UnitTypeTable = ({ apiParams }) => {
-  const { isMobile } = useResponsive();
-
   const {
     data: unitTypeAnalysis,
     isLoading,
@@ -16,7 +13,7 @@ const UnitTypeTable = ({ apiParams }) => {
   });
 
   const tableData = transformUnitTypeData(unitTypeAnalysis);
-  const columns = getUnitTypeColumns(isMobile);
+  const columns = getUnitTypeColumns();
 
   if (error) {
     return (
@@ -44,7 +41,7 @@ const UnitTypeTable = ({ apiParams }) => {
         showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
       }}
       scroll={{ x: 'max-content' }}
-      size={isMobile ? 'small' : 'middle'}
+      size={'middle'}
       rowKey="key"
     />
   );

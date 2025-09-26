@@ -1,8 +1,3 @@
-/**
- * Utility functions for reporting components
- * Following Rule #7: Extract functions that don't use state or lifecycle methods
- */
-
 import dayjs from 'dayjs';
 import { formatCurrency, formatPercent } from './formatters';
 

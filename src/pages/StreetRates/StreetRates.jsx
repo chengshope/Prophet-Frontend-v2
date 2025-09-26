@@ -1,32 +1,31 @@
-import { useState, useMemo, useEffect } from 'react';
+import { CloudUploadOutlined, DownloadOutlined, ReloadOutlined } from '@ant-design/icons';
+import { Button, Col, Input, message, Row, Space } from 'antd';
+import moment from 'moment';
+import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Row, Space, Col, Input, Button, message } from 'antd';
-import { CloudUploadOutlined, ReloadOutlined, DownloadOutlined } from '@ant-design/icons';
-import moment from 'moment';
 
 import {
   useGetStreetRatesFacilitiesQuery,
-  useSubmitAllRatesMutation,
   useLazyExportCSVQuery,
+  useSubmitAllRatesMutation,
 } from '@/api/streetRatesApi';
+import PageFrame from '@/components/common/PageFrame';
+import { ErrorModal, PublishConfirmModal, StreetRatesTable } from '@/components/widgets/StreetRate';
 import {
   selectSavedRateUnits,
   selectStreetRatesTotal,
 } from '@/features/streetRates/streetRatesSelector';
 import { clearSavedRateChanges } from '@/features/streetRates/streetRatesSlice';
-import { removeSavedRateUnits } from '@/utils/localStorage';
 import { handleCSVExport } from '@/utils/csvExport';
-import PageFrame from '@/components/common/PageFrame';
-import { StreetRatesTable, PublishConfirmModal, ErrorModal } from '@/components/widgets/StreetRate';
+import { removeSavedRateUnits } from '@/utils/localStorage';
 import './StreetRates.less';
 
 const { Search } = Input;
 
 const StreetRates = () => {
-  // Local state management (Rule #29: Use useState for local state)
-  const [searchInput, setSearchInput] = useState(''); // User input
-  const [search, setSearchState] = useState(''); // Debounced search value
+  const [searchInput, setSearchInput] = useState('');
+  const [search, setSearchState] = useState('');
   const [sort, setSortState] = useState('facility_name');
   const [orderby, setOrderByState] = useState('asc');
   const [currentPage, setCurrentPageState] = useState(1);

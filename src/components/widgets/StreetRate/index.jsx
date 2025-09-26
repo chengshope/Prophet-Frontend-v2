@@ -1,8 +1,3 @@
-/**
- * StreetRate widget exports
- * Following Rule #4: components/widgets/StreetRate
- */
-
 export { default as StreetRatesTable } from './StreetRatesTable';
 export { default as UnitTypeStatistics } from './UnitTypeStatistics';
 

@@ -14,7 +14,6 @@ import {
 const ExistingRatesTab = () => {
   const dispatch = useDispatch();
 
-  // Get filters from Redux store
   const filters = useSelector(selectExistingRatesFilters);
   const apiParams = useSelector(selectExistingRatesApiParams);
 
