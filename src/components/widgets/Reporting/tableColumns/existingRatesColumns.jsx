@@ -72,7 +72,7 @@ export const existingRatesColumns = [
       if (!value) return '$0.00';
       const numValue = parseFloat(value.toString().replace(/[$,]/g, '') || 0);
       const color = numValue >= 0 ? 'var(--ant-color-success)' : 'var(--ant-color-error)';
-      return <span style={{ color }}>{value}</span>;
+      return <span style={{ color }}>${value}</span>;
     },
   },
   {
