@@ -1,19 +1,19 @@
 import fullLogo from '@/assets/prophet_logo.svg';
 import logoIcon from '@/assets/prophet_logo_icon.svg';
-import { MenuFoldOutlined, MenuUnfoldOutlined, SunOutlined, MoonOutlined } from '@ant-design/icons';
-import { Button, Image, Layout, Menu, Tooltip, Switch, Space } from 'antd';
-import { useThemeContext } from '@/contexts/ThemeContext';
+// import { useThemeContext } from '@/contexts/ThemeContext';
+import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
+import { Button, Image, Layout, Menu, Tooltip } from 'antd';
 
 const { Sider } = Layout;
 
 const Navbar = ({ collapsed, onToggleCollapsed, selectedKey, items }) => {
-  const { isDarkMode, toggleTheme } = useThemeContext();
+  // const { isDarkMode, toggleTheme } = useThemeContext();
 
-  const handleThemeChange = (checked) => {
-    if ((checked && !isDarkMode) || (!checked && isDarkMode)) {
-      toggleTheme();
-    }
-  };
+  // const handleThemeChange = (checked) => {
+  //   if ((checked && !isDarkMode) || (!checked && isDarkMode)) {
+  //     toggleTheme();
+  //   }
+  // };
 
   return (
     <Sider trigger={null} collapsible collapsed={collapsed} className="sidebar" width={250}>
@@ -30,7 +30,7 @@ const Navbar = ({ collapsed, onToggleCollapsed, selectedKey, items }) => {
       <div className="sider-filler" />
 
       <div className="sider-bottom">
-        <div className="theme-toggle-container">
+        {/* <div className="theme-toggle-container">
           {collapsed ? (
             <Tooltip
               title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
@@ -55,7 +55,7 @@ const Navbar = ({ collapsed, onToggleCollapsed, selectedKey, items }) => {
               />
             </Space>
           )}
-        </div>
+        </div> */}
         {collapsed ? (
           <Tooltip title="Expand sidebar" placement="right">
             <Button
