@@ -3,6 +3,7 @@ import {
   useRunStreetRatesPythonMutation,
   useSyncDataMutation,
 } from '@/api/syncDataApi';
+import LoadingImage from '@/assets/images/loading.svg';
 import { selectUser } from '@/features/auth/authSelector';
 import { showError } from '@/utils/messageService';
 import { useEffect, useRef, useState } from 'react';
@@ -75,7 +76,7 @@ const Loading = () => {
     <div className="loading-container" role="status" aria-live="polite">
       <div className="loading-content">
         <div className="loading-animation">
-          <img src="/assets/images/loading.svg" alt="Loading Animation" className="loading-svg" />
+          <img src={LoadingImage} alt="Loading Animation" className="loading-svg" />
         </div>
         <p className="loading-text">{loadingText}</p>
       </div>
