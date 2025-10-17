@@ -24,12 +24,8 @@ const Login = () => {
     <Flex vertical>
       <Flex vertical align="center" gap="small" style={{ marginBottom: 30, textAlign: 'center' }}>
         <Title level={2} style={{ marginBottom: '8px' }}>
-          Welcome Back
+          Welcome back
         </Title>
-        <Text type="secondary">
-          Secure access to AI-driven recommendations for street rates and existing-customer rate
-          increases.
-        </Text>
       </Flex>
 
       <Form name="login" onFinish={onFinish} autoComplete="off" layout="vertical" size="large">
