@@ -1,9 +1,9 @@
-import { Input, Checkbox, Tag, Button, Space, Typography } from 'antd';
-import { EditOutlined } from '@ant-design/icons';
-import { getMoveOutProbabilityColor } from '../../../../utils/config';
 import { formatCurrency } from '@/utils/formatters';
+import { EditOutlined } from '@ant-design/icons';
+import { Button, Checkbox, Input, Space, Tag, Typography } from 'antd';
 import dayjs from 'dayjs';
 import moment from 'moment';
+import { getMoveOutProbabilityColor } from '../../../../utils/config';
 
 const { Text } = Typography;
 
@@ -44,7 +44,7 @@ export const getTenantEditingTableColumns = ({
       render: (value) => value || '-',
     },
     {
-      title: 'Current Tenant Rate $',
+      title: 'Current Tenant Rate',
       dataIndex: 'current_rate',
       key: 'current_rate',
       width: 130,
@@ -54,7 +54,7 @@ export const getTenantEditingTableColumns = ({
       ),
     },
     {
-      title: "Today's Street Rate $",
+      title: "Today's Street Rate",
       dataIndex: 'std_rate',
       key: 'street_rate',
       width: 130,
@@ -62,7 +62,7 @@ export const getTenantEditingTableColumns = ({
       render: (value) => formatCurrency(value || 0),
     },
     {
-      title: 'Street Rate Delta $',
+      title: 'Street Rate Delta',
       key: 'street_rate_delta',
       width: 130,
       align: 'center',
@@ -79,7 +79,7 @@ export const getTenantEditingTableColumns = ({
       },
     },
     {
-      title: 'Move-Out Probability $',
+      title: 'Move-Out Probability',
       dataIndex: 'move_out_probability',
       key: 'moveout_probability',
       width: 150,
@@ -87,7 +87,7 @@ export const getTenantEditingTableColumns = ({
       render: (value) => {
         const percentage = value * 100 || 0;
         const color = getMoveOutProbabilityColor(percentage);
-        return <Tag color={color}>{percentage.toFixed(1)}%</Tag>;
+        return <Tag color={color} style={{ color: 'black' }}>{percentage.toFixed(1)}%</Tag>;
       },
     },
     {
@@ -112,14 +112,7 @@ export const getTenantEditingTableColumns = ({
       key: 'rate_increase_dollar',
       width: 130,
       align: 'center',
-      render: (value) => {
-        const color = value >= 0 ? '#52c41a' : '#ff4d4f';
-        return (
-          <div>
-            <div style={{ color }}>${value.toFixed(1)}</div>
-          </div>
-        );
-      },
+      render: (value) => <div>${value.toFixed(2)}</div>
     },
     {
       title: 'Rate Increase %',
@@ -135,13 +128,21 @@ export const getTenantEditingTableColumns = ({
       key: 'effective_date',
       width: 120,
       align: 'center',
-      render: (value) => value || '-',
+      render: (date) => {
+        if (!date) return '-';
+        const d = new Date(date);
+        return d.toLocaleDateString('en-US', {
+          year: '2-digit',
+          month: '2-digit',
+          day: '2-digit',
+        });
+      },
     },
     {
       title: 'New Rate',
       dataIndex: 'new_rate',
       key: 'new_rate',
-      width: 120,
+      width: 160,
       align: 'center',
       render: (_, tenant) => {
         const isEditing = editingTenantId === tenant.ecri_id;
