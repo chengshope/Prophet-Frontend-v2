@@ -1,29 +1,29 @@
-import { useState, useMemo } from 'react';
-import { Table, Modal, message, Typography, Row, Col } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
 import {
-  usePublishIndividualRateChangesMutation,
   useBulkUpdateTenantsMutation,
+  usePublishIndividualRateChangesMutation,
 } from '@/api/existingCustomersApi';
 import {
-  selectExistingCustomersFacilities,
-  selectSavedTenantChanges,
   getChangedTenantsByFacilityId,
+  selectExistingCustomersFacilities,
   selectNewTenantChanges,
+  selectSavedTenantChanges,
 } from '@/features/existingCustomers/existingCustomersSelector';
 import {
-  clearSavedTenantChangesByIds,
   clearChangedTenantsByFacilityId,
+  clearSavedTenantChangesByIds,
   mergeToSavedTenantChanges,
   updateTenant,
 } from '@/features/existingCustomers/existingCustomersSlice';
 import {
-  removeSavedTenantChangesByIds,
   mergeSavedTenantChanges,
+  removeSavedTenantChangesByIds,
   setSavedTenantChanges,
 } from '@/utils/localStorage';
+import { UserOutlined } from '@ant-design/icons';
+import { Col, message, Modal, Row, Table, Typography } from 'antd';
+import { useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { getExistingCustomersTableColumns } from '../tableColumns';
 import TenantEditingTable from '../TenantEditingTable';
 import './ExistingCustomersTable.less';
@@ -217,7 +217,7 @@ const ExistingCustomersTable = ({
           expandedRowRender,
         }}
         rowKey="facility_id"
-        scroll={{ x: 1200 }}
+        scroll={{ x: 900 }}
         locale={{
           emptyText: (
             <div

@@ -1,27 +1,27 @@
-import { useState, useMemo, useEffect } from 'react';
+import { CloudUploadOutlined, ReloadOutlined, UserOutlined } from '@ant-design/icons';
+import { Button, Card, Col, Input, message, Row, Space, Typography } from 'antd';
+import moment from 'moment';
+import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Row, Col, Input, Button, message, Card, Typography, Space } from 'antd';
-import { UserOutlined, ReloadOutlined, CloudUploadOutlined } from '@ant-design/icons';
-import moment from 'moment';
 
 import {
   useGetExistingCustomersQuery,
   usePublishAllRateChangesMutation,
 } from '@/api/existingCustomersApi';
+import PageFrame from '@/components/common/PageFrame';
 import {
-  getSavedEcriIds,
+  ErrorModal,
+  ExistingCustomersTable,
+  PublishAllModal,
+} from '@/components/widgets/ExistingCustomers';
+import {
   getFacilitiesWithChangesCount,
   getFormattedSummaryData,
+  getSavedEcriIds,
 } from '@/features/existingCustomers/existingCustomersSelector';
 import { clearSavedTenantChanges } from '@/features/existingCustomers/existingCustomersSlice';
 import { removeSavedTenantChanges } from '@/utils/localStorage';
-import PageFrame from '@/components/common/PageFrame';
-import {
-  ExistingCustomersTable,
-  PublishAllModal,
-  ErrorModal,
-} from '@/components/widgets/ExistingCustomers';
 import './ExistingCustomers.less';
 
 const { Search } = Input;
@@ -188,7 +188,7 @@ const ExistingCustomers = () => {
           <Col xs={24} sm={12} md={6}>
             <Card>
               <Text type="secondary">Average Rate Increase %</Text>
-              <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#52c41a' }}>
+              <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#1890ff' }}>
                 {summaryStats?.averageRateIncrease || '0.0'}%
               </div>
             </Card>
@@ -196,7 +196,7 @@ const ExistingCustomers = () => {
           <Col xs={24} sm={12} md={6}>
             <Card>
               <Text type="secondary">Estimated Revenue Increase</Text>
-              <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#faad14' }}>
+              <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#1890ff' }}>
                 ${summaryStats?.estimatedRevenueIncrease || '0.00'}
               </div>
             </Card>
@@ -204,7 +204,7 @@ const ExistingCustomers = () => {
           <Col xs={24} sm={12} md={6}>
             <Card>
               <Text type="secondary">Average Move-out Probability</Text>
-              <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#f5222d' }}>
+              <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#1890ff' }}>
                 {summaryStats?.averageMoveOutProbability || '0.0'}%
               </div>
             </Card>
