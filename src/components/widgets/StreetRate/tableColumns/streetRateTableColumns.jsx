@@ -28,9 +28,6 @@ export const getStreetRateTableColumns = ({
           <Text type="secondary" style={{ fontSize: '12px' }}>
             {record.address}
           </Text>
-          <Text type="secondary" style={{ fontSize: '12px' }}>
-            {record.market}
-          </Text>
         </Space>
       ),
     },
