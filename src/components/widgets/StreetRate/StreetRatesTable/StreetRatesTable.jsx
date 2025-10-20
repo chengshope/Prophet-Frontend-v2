@@ -1,20 +1,20 @@
+import { DollarOutlined } from '@ant-design/icons';
+import { Card, Col, message, Modal, Row, Table } from 'antd';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Table, Card, Modal, message, Row, Col } from 'antd';
-import { DollarOutlined } from '@ant-design/icons';
 
-import { useSubmitIndividualRatesMutation, useSaveRateChangesMutation } from '@/api/streetRatesApi';
+import { useSaveRateChangesMutation, useSubmitIndividualRatesMutation } from '@/api/streetRatesApi';
 import {
   getChangedUnits,
   getChangedUnitsByFacilityId,
-  selectStreetRatesFacilities,
   selectNewRateUnits,
   selectSavedRateUnits,
+  selectStreetRatesFacilities,
 } from '@/features/streetRates/streetRatesSelector';
 import {
   clearChangedUnitByFacilityId,
-  mergeToSavedRateChanges,
   clearSavedRateChangesByIds,
+  mergeToSavedRateChanges,
 } from '@/features/streetRates/streetRatesSlice';
 import {
   mergeSavedRateUnits,
@@ -167,7 +167,7 @@ const StreetRatesTable = ({
         loading={loading}
         rowKey={(record) => record.id || record.facility_id}
         pagination={pagination}
-        scroll={{ x: 1200 }}
+        scroll={{ x: 900 }}
         bordered
         onChange={handleTableChange}
         className="street-rates-table"

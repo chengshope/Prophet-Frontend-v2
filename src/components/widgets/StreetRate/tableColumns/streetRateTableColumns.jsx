@@ -1,6 +1,6 @@
+import { formatCurrency, formatPercent } from '@/utils/formatters';
 import { Button, Flex, Space, Typography } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import { formatPercent, formatCurrency } from '@/utils/formatters';
 
 const { Text } = Typography;
 
@@ -21,7 +21,6 @@ export const getStreetRateTableColumns = ({
       title: 'Facility',
       dataIndex: 'facility_name',
       key: 'facility_name',
-      width: 250,
       sorter: true,
       render: (_, record) => (
         <Space direction="vertical" size={0}>
@@ -39,14 +38,12 @@ export const getStreetRateTableColumns = ({
       title: 'Market',
       dataIndex: 'market',
       key: 'market',
-      width: 140,
       sorter: true,
     },
     {
       title: 'Physical Occupancy %',
       dataIndex: 'physical_occupancy',
       key: 'physical_occupancy',
-      width: 140,
       align: 'center',
       sorter: true,
       render: (value) => (value != null ? `${parseFloat(value).toFixed(2)}%` : '0.00%'),
@@ -59,7 +56,6 @@ export const getStreetRateTableColumns = ({
           title: 'Avg Rate Change %',
           dataIndex: 'avr_rate_change_percent',
           key: 'avr_rate_change_percent',
-          width: 130,
           align: 'center',
           className: 'new-group-header',
           sorter: true,
@@ -74,7 +70,6 @@ export const getStreetRateTableColumns = ({
           title: 'Avg Rate Change $',
           dataIndex: 'avr_rate_change_amount',
           key: 'avr_rate_change_amount',
-          width: 130,
           align: 'center',
           className: 'new-group-header',
           sorter: true,
@@ -89,7 +84,6 @@ export const getStreetRateTableColumns = ({
           title: 'Largest Increase',
           dataIndex: 'largest_increase',
           key: 'largest_increase',
-          width: 120,
           align: 'center',
           className: 'new-group-header',
           sorter: true,
@@ -99,7 +93,6 @@ export const getStreetRateTableColumns = ({
           title: 'Largest Decrease',
           dataIndex: 'largest_decrease',
           key: 'largest_decrease',
-          width: 120,
           align: 'center',
           className: 'new-group-header',
           sorter: true,
@@ -111,7 +104,7 @@ export const getStreetRateTableColumns = ({
       title: 'Actions',
       key: 'actions',
       align: 'center',
-      width: 140,
+      width: 160,
       fixed: 'right',
       render: (_, record) => {
         const isExpanded = expandedRowKeys.includes(record.id);
