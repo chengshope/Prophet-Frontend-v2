@@ -1,7 +1,7 @@
-import { useRef, useCallback, useEffect, useState, useMemo } from 'react';
-import { GoogleMap, useLoadScript, MarkerF } from '@react-google-maps/api';
-import { Card, Typography, Space, Tag, Spin } from 'antd';
+import { GoogleMap, MarkerF, useLoadScript } from '@react-google-maps/api';
+import { Card, Space, Spin, Tag, Typography } from 'antd';
 import { getDistance } from 'geolib';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 const { Text } = Typography;
 
@@ -120,7 +120,7 @@ export default function CompetitorMap({
     return (
       <Card>
         <div style={{ textAlign: 'center', padding: '48px' }}>
-          <Spin size="large" />
+          <Spin />
           <div style={{ marginTop: '16px' }}>
             <Text type="secondary">Loading map...</Text>
           </div>

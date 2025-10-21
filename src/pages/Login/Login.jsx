@@ -3,7 +3,7 @@ import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Flex, Form, Input, Typography } from 'antd';
 import { Link } from 'react-router-dom';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 const Login = () => {
   const [login, { isLoading }] = useLoginMutation();

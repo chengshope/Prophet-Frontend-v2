@@ -1,16 +1,16 @@
-import { useEffect, useCallback, useState, useMemo, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { Row, Col, Input, Select, Segmented, Space, Card } from 'antd';
-import { ShopOutlined } from '@ant-design/icons';
-import PageFrame from '@/components/common/PageFrame';
-import { CompetitorsTable, CompetitorMap } from '@/components/widgets/Competitors';
 import { useGetCompetitorsQuery, useUpdateFacilityMutation } from '@/api/competitorsApi';
-import { useGetFacilityByIdQuery } from '@/api/streetRatesApi';
-import { setCachedFacilities } from '@/features/competitors/competitorsSlice';
-import { selectFacilityOptions } from '@/features/competitors/competitorsSelector';
-import { createValidatedStrategySetter } from '@/utils/strategyValidation';
 import { useGetFacilitiesListQuery } from '@/api/facilitiesApi';
+import { useGetFacilityByIdQuery } from '@/api/streetRatesApi';
+import PageFrame from '@/components/common/PageFrame';
+import { CompetitorMap, CompetitorsTable } from '@/components/widgets/Competitors';
+import { selectFacilityOptions } from '@/features/competitors/competitorsSelector';
+import { setCachedFacilities } from '@/features/competitors/competitorsSlice';
+import { createValidatedStrategySetter } from '@/utils/strategyValidation';
+import { ShopOutlined } from '@ant-design/icons';
+import { Card, Col, Input, Row, Segmented, Select, Space, Spin } from 'antd';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-dom';
 import './Competitors.less';
 
 const { Search } = Input;
@@ -111,6 +111,14 @@ const Competitors = () => {
       dispatch(setCachedFacilities(facilities));
     }
   }, [facilities, dispatch]);
+
+  // Auto-select first facility if no ID is provided
+  useEffect(() => {
+    if (!id && facilities && facilities.length > 0 && !facilitiesLoading) {
+      const firstFacility = facilities[0];
+      navigate(`/competitors/${firstFacility.id}`, { replace: true });
+    }
+  }, [id, facilities, facilitiesLoading, navigate]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -291,13 +299,24 @@ const Competitors = () => {
                     opacity: 0.6,
                   }}
                 >
-                  <ShopOutlined style={{ fontSize: '48px', marginBottom: '16px' }} />
-                  <div style={{ fontSize: '16px', fontWeight: 500 }}>Interactive Map</div>
-                  <div style={{ fontSize: '14px', marginTop: '8px' }}>
-                    {selectedFacility
-                      ? 'Loading competitor locations...'
-                      : 'Select a facility to view competitor locations'}
-                  </div>
+                  {isFacilityLoading ? (
+                    <>
+                      <Spin />
+                      <div style={{ fontSize: '16px', fontWeight: 500, marginTop: '16px' }}>
+                        Loading facility...
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <ShopOutlined style={{ fontSize: '48px', marginBottom: '16px' }} />
+                      <div style={{ fontSize: '16px', fontWeight: 500 }}>Interactive Map</div>
+                      <div style={{ fontSize: '14px', marginTop: '8px' }}>
+                        {selectedFacility
+                          ? 'Loading competitor locations...'
+                          : 'Select a facility to view competitor locations'}
+                      </div>
+                    </>
+                  )}
                 </div>
               )}
             </Card>

@@ -1,13 +1,13 @@
+import { MoreOutlined } from '@ant-design/icons';
 import { Button, Dropdown } from 'antd';
 import { memo } from 'react';
-import { MoreOutlined } from '@ant-design/icons';
 
 const competitorTypes = ['Direct', 'Indirect', 'Non-competitor'];
 
 const colors = {
-  Direct: 'green',
-  Indirect: 'pink',
-  'Non-competitor': 'yellow',
+  Direct: 'red',
+  Indirect: 'purple',
+  'Non-competitor': 'blue',
 };
 
 const CompetitorTypeSelect = memo(({ selected, onChange, disabled = false, size = 'small' }) => {
