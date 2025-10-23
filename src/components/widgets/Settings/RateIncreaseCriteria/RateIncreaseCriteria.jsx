@@ -1,14 +1,41 @@
-import { Form, InputNumber } from 'antd';
+import FormLabel from '@/components/common/FormLabel';
+import SettingGroup from '@/components/common/SettingGroup';
+import { isOverRecommended } from '@/utils/settingsHelpers';
 import {
   ClockCircleOutlined,
   DollarOutlined,
   PercentageOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import SettingGroup from '@/components/common/SettingGroup';
-import FormLabel from '@/components/common/FormLabel';
+import { Form, InputNumber } from 'antd';
+import { useEffect, useState } from 'react';
 
 const RateIncreaseCriteria = ({ scope, loading = false }) => {
+  const form = Form.useFormInstance();
+  const [maxPercentIncrease, setMaxPercentIncrease] = useState(null);
+  const [limitAboveStreetRate, setLimitAboveStreetRate] = useState(null);
+  const [percentAboveStreetRate, setPercentAboveStreetRate] = useState(null);
+
+  useEffect(() => {
+    if (form) {
+      const values = form.getFieldsValue([
+        'maxPercentIncrease',
+        'limitAboveStreetRate',
+        'percentAboveStreetRate',
+      ]);
+
+      if (values.maxPercentIncrease !== maxPercentIncrease) {
+        setMaxPercentIncrease(values.maxPercentIncrease);
+      }
+      if (values.limitAboveStreetRate !== limitAboveStreetRate) {
+        setLimitAboveStreetRate(values.limitAboveStreetRate);
+      }
+      if (values.percentAboveStreetRate !== percentAboveStreetRate) {
+        setPercentAboveStreetRate(values.percentAboveStreetRate);
+      }
+    }
+  }); // Run on every render to catch form value changes
+
   return (
     <SettingGroup
       title="Rate Increase Criteria"
@@ -74,7 +101,13 @@ const RateIncreaseCriteria = ({ scope, loading = false }) => {
         name="maxPercentIncrease"
         className="full-width-number"
       >
-        <InputNumber min={0} max={100} addonBefore="%" style={{ width: 300 }} />
+        <InputNumber
+          min={0}
+          addonBefore="%"
+          style={{ width: 300 }}
+          onChange={(value) => setMaxPercentIncrease(value)}
+          status={isOverRecommended(maxPercentIncrease) ? 'error' : ''}
+        />
       </Form.Item>
 
       <Form.Item
@@ -148,7 +181,13 @@ const RateIncreaseCriteria = ({ scope, loading = false }) => {
         name="limitAboveStreetRate"
         className="full-width-number"
       >
-        <InputNumber min={0} addonBefore="$" style={{ width: 300 }} />
+        <InputNumber
+          min={0}
+          addonBefore="$"
+          style={{ width: 300 }}
+          onChange={(value) => setLimitAboveStreetRate(value)}
+          status={isOverRecommended(limitAboveStreetRate, 1000) ? 'error' : ''}
+        />
       </Form.Item>
 
       <Form.Item
@@ -162,7 +201,13 @@ const RateIncreaseCriteria = ({ scope, loading = false }) => {
         name="percentAboveStreetRate"
         className="full-width-number"
       >
-        <InputNumber min={0} max={100} addonBefore="%" style={{ width: 300 }} />
+        <InputNumber
+          min={0}
+          addonBefore="%"
+          style={{ width: 300 }}
+          onChange={(value) => setPercentAboveStreetRate(value)}
+          status={isOverRecommended(percentAboveStreetRate) ? 'error' : ''}
+        />
       </Form.Item>
 
       <Form.Item

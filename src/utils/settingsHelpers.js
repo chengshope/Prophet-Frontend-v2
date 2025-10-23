@@ -1,5 +1,8 @@
 import { convertPercentageToDecimal, convertToNumber } from './dataConverters';
 
+export const isOverRecommended = (value, threshold = 100) =>
+  value !== null && value !== undefined && value >= threshold;
+
 export const prepareEcriSettings = (values, scope) => ({
   averagePercentIncrease: convertPercentageToDecimal(values.averagePercentIncrease),
   maxDollarIncrease: convertToNumber(values.maxDollarIncrease),
