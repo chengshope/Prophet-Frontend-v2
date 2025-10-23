@@ -14,6 +14,9 @@ const rawBaseQuery = fetchBaseQuery({
   timeout: 20 * 1000, // Set a long timeout for the Sync-data API call
 });
 
+// Track if we've already shown a 401 error to prevent duplicate notifications
+let isHandling401 = false;
+
 export const baseQuery = async (args, api, extraOptions) => {
   const res = await rawBaseQuery(args, api, extraOptions);
 
@@ -31,8 +34,17 @@ export const baseQuery = async (args, api, extraOptions) => {
         break;
 
       case 401:
-        api.dispatch(removeApiToken());
-        showError(message || 'Session expired. Please log in again.');
+        // Only show error and dispatch logout once, even if multiple requests fail
+        if (!isHandling401) {
+          isHandling401 = true;
+          api.dispatch(removeApiToken());
+          showError('Session expired. Please log in again.');
+
+          // Reset the flag after a short delay to allow for edge cases
+          setTimeout(() => {
+            isHandling401 = false;
+          }, 1000);
+        }
         break;
 
       case 403:
