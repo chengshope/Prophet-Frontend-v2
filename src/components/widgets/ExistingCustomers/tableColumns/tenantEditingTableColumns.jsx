@@ -87,7 +87,11 @@ export const getTenantEditingTableColumns = ({
       render: (value) => {
         const percentage = value * 100 || 0;
         const color = getMoveOutProbabilityColor(percentage);
-        return <Tag color={color} style={{ color: 'black' }}>{percentage.toFixed(1)}%</Tag>;
+        return (
+          <Tag color={color} style={{ color: 'black' }}>
+            {percentage.toFixed(1)}%
+          </Tag>
+        );
       },
     },
     {
@@ -112,7 +116,7 @@ export const getTenantEditingTableColumns = ({
       key: 'rate_increase_dollar',
       width: 130,
       align: 'center',
-      render: (value) => <div>${value.toFixed(2)}</div>
+      render: (value) => <div>${value.toFixed(2)}</div>,
     },
     {
       title: 'Rate Increase %',

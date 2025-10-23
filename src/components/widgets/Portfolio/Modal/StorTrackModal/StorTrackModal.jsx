@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Modal, Form, Select, InputNumber, Button, Spin, Typography } from 'antd';
+import { Button, Form, InputNumber, Modal, Select, Spin, Typography } from 'antd';
+import { useEffect, useState } from 'react';
 
 const { Option } = Select;
 const { Text } = Typography;
@@ -31,7 +31,11 @@ const StorTrackModal = ({
   }, [open, selectedFacility, onLookupStores, form]);
 
   useEffect(() => {
-    if (nearbyStores.length > 0 && selectedFacility?.comp_stores_info?.s_id) {
+    if (
+      Array.isArray(nearbyStores) &&
+      nearbyStores.length > 0 &&
+      selectedFacility?.comp_stores_info?.s_id
+    ) {
       const existingStore = nearbyStores.find(
         (store) => store.storeid === selectedFacility.comp_stores_info.s_id
       );
@@ -48,12 +52,14 @@ const StorTrackModal = ({
 
   const handleStoreChange = (storeId) => {
     setSelectedStore(storeId);
-    const store = nearbyStores.find((s) => s.storeid === storeId);
-    if (store) {
-      const existingRadius = selectedFacility?.comp_stores_info?.distance;
-      if (existingRadius) {
-        setRadius(existingRadius);
-        form.setFieldValue('radius', existingRadius);
+    if (Array.isArray(nearbyStores)) {
+      const store = nearbyStores.find((s) => s.storeid === storeId);
+      if (store) {
+        const existingRadius = selectedFacility?.comp_stores_info?.distance;
+        if (existingRadius) {
+          setRadius(existingRadius);
+          form.setFieldValue('radius', existingRadius);
+        }
       }
     }
   };
@@ -64,12 +70,14 @@ const StorTrackModal = ({
 
   const handleConfirm = () => {
     form.validateFields().then((values) => {
-      const selectedStoreData = nearbyStores.find((store) => store.storeid === values.store_id);
-      onConfirm({
-        facility: selectedFacility,
-        store: selectedStoreData,
-        radius: values.radius,
-      });
+      if (Array.isArray(nearbyStores)) {
+        const selectedStoreData = nearbyStores.find((store) => store.storeid === values.store_id);
+        onConfirm({
+          facility: selectedFacility,
+          store: selectedStoreData,
+          radius: values.radius,
+        });
+      }
     });
   };
 
@@ -126,11 +134,12 @@ const StorTrackModal = ({
               )
             }
           >
-            {nearbyStores.map((store) => (
-              <Option key={store.storeid} value={store.storeid}>
-                {store.storename} - {store.address}, {store.city}, {store.state}
-              </Option>
-            ))}
+            {Array.isArray(nearbyStores) &&
+              nearbyStores.map((store) => (
+                <Option key={store.storeid} value={store.storeid}>
+                  {store.storename} - {store.address}, {store.city}, {store.state}
+                </Option>
+              ))}
           </Select>
         </Form.Item>
 

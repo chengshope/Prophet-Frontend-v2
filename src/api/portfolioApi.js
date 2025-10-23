@@ -48,12 +48,12 @@ export const portfolioApi = createApi({
     }),
 
     updateFacilityStorTrack: builder.mutation({
-      query: ({ facilityId, stortrack_id, stortrack_radius }) => ({
+      query: ({ facilityId, stortrack_id, radius }) => ({
         url: `/facility_profile/update-facility/${facilityId}`,
         method: 'PUT',
         body: {
           stortrack_id,
-          stortrack_radius,
+          stortrack_radius: radius,
         },
       }),
       invalidatesTags: ['CompList'],
@@ -76,7 +76,6 @@ export const portfolioApi = createApi({
 
     getPortfolioCompanies: builder.query({
       query: () => '/portfolio/storEdge/companies',
-      transformResponse: (response) => response.result || response,
     }),
   }),
 });

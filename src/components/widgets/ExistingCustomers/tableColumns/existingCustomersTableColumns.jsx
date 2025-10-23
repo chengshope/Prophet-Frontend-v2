@@ -16,124 +16,124 @@ export const getExistingCustomersTableColumns = ({
   onPublish,
   navigate,
 }) => [
-    {
-      title: 'Facility',
-      dataIndex: 'facility_name',
-      key: 'facility_name',
-      sorter: true,
-      render: (value, record) => (
-        <Space direction="vertical" size={0}>
-          <Text strong>{value}</Text>
-          <Text style={{ fontSize: '11px', color: '#8c8c8c' }}>{record.address}</Text>
-        </Space>
-      ),
-    },
-    {
-      title: 'Market',
-      dataIndex: 'market',
-      key: 'market',
-      sorter: true,
-      render: (_, record) => `${record.city}, ${record.state}`,
-    },
-    {
-      title: 'Eligible Tenants',
-      dataIndex: 'tenants',
-      key: 'eligible_tenants',
-      sorter: true,
-      align: 'center',
-      render: (tenants) => tenants.length || 0,
-    },
-    {
-      title: 'New',
-      className: 'new-group-header',
-      children: [
-        {
-          title: 'Average Rate Increase %',
-          dataIndex: 'avr_rate_increase_percent',
-          key: 'avr_rate_increase_percent',
-          sorter: true,
-          align: 'center',
-          className: 'new-group-header',
-          render: (value) => {
-            const percentage = value || 0;
-            const color = percentage >= 0 ? '#52c41a' : '#ff4d4f';
-            const sign = percentage >= 0 ? '+' : '';
-            return (
-              <span style={{ color }}>
-                {sign}
-                {percentage.toFixed(2)}%
-              </span>
-            );
-          },
+  {
+    title: 'Facility',
+    dataIndex: 'facility_name',
+    key: 'facility_name',
+    sorter: true,
+    render: (value, record) => (
+      <Space direction="vertical" size={0}>
+        <Text strong>{value}</Text>
+        <Text style={{ fontSize: '11px', color: '#8c8c8c' }}>{record.address}</Text>
+      </Space>
+    ),
+  },
+  {
+    title: 'Market',
+    dataIndex: 'market',
+    key: 'market',
+    sorter: true,
+    render: (_, record) => `${record.city}, ${record.state}`,
+  },
+  {
+    title: 'Eligible Tenants',
+    dataIndex: 'tenants',
+    key: 'eligible_tenants',
+    sorter: true,
+    align: 'center',
+    render: (tenants) => tenants.length || 0,
+  },
+  {
+    title: 'New',
+    className: 'new-group-header',
+    children: [
+      {
+        title: 'Average Rate Increase %',
+        dataIndex: 'avr_rate_increase_percent',
+        key: 'avr_rate_increase_percent',
+        sorter: true,
+        align: 'center',
+        className: 'new-group-header',
+        render: (value) => {
+          const percentage = value || 0;
+          const color = percentage >= 0 ? '#52c41a' : '#ff4d4f';
+          const sign = percentage >= 0 ? '+' : '';
+          return (
+            <span style={{ color }}>
+              {sign}
+              {percentage.toFixed(2)}%
+            </span>
+          );
         },
-        {
-          title: 'Average Rate Change $',
-          dataIndex: 'avr_rate_increase_amount',
-          key: 'avr_rate_increase_amount',
-          sorter: true,
-          align: 'center',
-          className: 'new-group-header',
-          render: (value) => {
-            const avgChange = value || 0;
-            const color = avgChange >= 0 ? '#52c41a' : '#ff4d4f';
-            const sign = avgChange >= 0 ? '+' : '';
-            return (
-              <span style={{ color }}>
-                {sign}${avgChange.toFixed(2)}
-              </span>
-            );
-          },
+      },
+      {
+        title: 'Average Rate Change $',
+        dataIndex: 'avr_rate_increase_amount',
+        key: 'avr_rate_increase_amount',
+        sorter: true,
+        align: 'center',
+        className: 'new-group-header',
+        render: (value) => {
+          const avgChange = value || 0;
+          const color = avgChange >= 0 ? '#52c41a' : '#ff4d4f';
+          const sign = avgChange >= 0 ? '+' : '';
+          return (
+            <span style={{ color }}>
+              {sign}${avgChange.toFixed(2)}
+            </span>
+          );
         },
-        {
-          title: 'Largest Increase',
-          dataIndex: 'largest_rate_increase',
-          key: 'largest_increase',
-          sorter: true,
-          align: 'center',
-          className: 'new-group-header',
-          render: (value) => {
-            const amount = value || 0;
-            return `$${amount.toFixed(2)}`;
-          },
+      },
+      {
+        title: 'Largest Increase',
+        dataIndex: 'largest_rate_increase',
+        key: 'largest_increase',
+        sorter: true,
+        align: 'center',
+        className: 'new-group-header',
+        render: (value) => {
+          const amount = value || 0;
+          return `$${amount.toFixed(2)}`;
         },
-        {
-          title: 'Average Move-Out Probability',
-          dataIndex: 'avr_moveout_probability',
-          key: 'avr_moveout_probability',
-          sorter: true,
-          align: 'center',
-          className: 'new-group-header',
-          render: (value) => {
-            const percentage = value * 100 || 0;
-            const color = getMoveOutProbabilityColor(percentage);
-            return (
-              <Tag color={color} style={{ color: 'black' }}>
-                {percentage.toFixed(1)}%
-              </Tag>
-            );
-          },
+      },
+      {
+        title: 'Average Move-Out Probability',
+        dataIndex: 'avr_moveout_probability',
+        key: 'avr_moveout_probability',
+        sorter: true,
+        align: 'center',
+        className: 'new-group-header',
+        render: (value) => {
+          const percentage = value * 100 || 0;
+          const color = getMoveOutProbabilityColor(percentage);
+          return (
+            <Tag color={color} style={{ color: 'black' }}>
+              {percentage.toFixed(1)}%
+            </Tag>
+          );
         },
-      ],
-    },
-    {
-      title: 'Actions',
-      key: 'actions',
-      width: 160,
-      fixed: 'right',
-      align: 'center',
-      render: (_, record) => (
-        <FacilityActions
-          facility={record}
-          isExpanded={expandedRowKeys.includes(record.facility_id)}
-          onExpand={onExpand}
-          onClose={onClose}
-          onSaveChanges={onSaveChanges}
-          onPublish={onPublish}
-          navigate={navigate}
-        />
-      ),
-    },
-  ];
+      },
+    ],
+  },
+  {
+    title: 'Actions',
+    key: 'actions',
+    width: 160,
+    fixed: 'right',
+    align: 'center',
+    render: (_, record) => (
+      <FacilityActions
+        facility={record}
+        isExpanded={expandedRowKeys.includes(record.facility_id)}
+        onExpand={onExpand}
+        onClose={onClose}
+        onSaveChanges={onSaveChanges}
+        onPublish={onPublish}
+        navigate={navigate}
+      />
+    ),
+  },
+];
 
 const FacilityActions = ({ facility, isExpanded, onExpand, onClose, onSaveChanges, onPublish }) => {
   const newTenantChanges = useSelector(selectNewTenantChanges);
