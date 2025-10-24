@@ -136,7 +136,7 @@ const PortfolioSettings = ({ portfolioId }) => {
               >
                 <Select>
                   <Option value="active">Active</Option>
-                  <Option value="inactive">Inactive</Option>
+                  <Option value="disabled">Inactive</Option>
                 </Select>
               </Form.Item>
             </Col>

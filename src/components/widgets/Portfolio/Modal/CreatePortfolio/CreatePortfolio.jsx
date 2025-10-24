@@ -162,7 +162,7 @@ const CreatePortfolio = ({ visible, onCancel, onSuccess }) => {
             >
               <Select>
                 <Option value="active">Active</Option>
-                <Option value="inactive">Inactive</Option>
+                <Option value="disabled">Inactive</Option>
               </Select>
             </Form.Item>
           </Col>
@@ -233,7 +233,7 @@ const CreatePortfolio = ({ visible, onCancel, onSuccess }) => {
           <Row gutter={[16, 16]}>
             <Col xs={24} md={12}>
               <Form.Item
-                label="Company"
+                label="Corp Code"
                 name="corp_code"
                 rules={[{ required: true, message: 'Company is required' }]}
               >
