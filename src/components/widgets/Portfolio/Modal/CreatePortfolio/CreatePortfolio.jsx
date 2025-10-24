@@ -1,16 +1,16 @@
-import { useState, useEffect } from 'react';
-import { Modal, Form, Input, Select, Button, Row, Col, Divider, Table, Space, Tooltip } from 'antd';
-import {
-  PlusOutlined,
-  DeleteOutlined,
-  InfoCircleOutlined,
-  UserAddOutlined,
-} from '@ant-design/icons';
-import { showSuccess, showError } from '@/utils/messageService';
 import {
   useCreatePortfolioAndUsersMutation,
   useGetPortfolioCompaniesQuery,
 } from '@/api/portfolioApi';
+import { showError, showSuccess } from '@/utils/messageService';
+import {
+  DeleteOutlined,
+  InfoCircleOutlined,
+  PlusOutlined,
+  UserAddOutlined,
+} from '@ant-design/icons';
+import { Button, Col, Divider, Form, Input, Modal, Row, Select, Space, Table, Tooltip } from 'antd';
+import { useEffect, useState } from 'react';
 
 const { Option } = Select;
 
@@ -162,7 +162,7 @@ const CreatePortfolio = ({ visible, onCancel, onSuccess }) => {
             >
               <Select>
                 <Option value="active">Active</Option>
-                <Option value="disabled">Disabled</Option>
+                <Option value="inactive">Inactive</Option>
               </Select>
             </Form.Item>
           </Col>
