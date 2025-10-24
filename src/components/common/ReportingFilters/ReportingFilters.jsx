@@ -18,7 +18,7 @@ const ReportingFilters = ({
   style,
   className,
 }) => {
-  const { data: facilitiesResponse, isLoading: facilitiesLoading } = useGetFacilitiesListQuery();
+  const { data: facilitiesResponse, isLoading: facilitiesLoading } = useGetFacilitiesListQuery({ status: 'enabled' });
 
   const facilities = Array.isArray(facilitiesResponse) ? facilitiesResponse : [];
 

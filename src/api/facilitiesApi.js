@@ -7,7 +7,12 @@ export const facilitiesApi = createApi({
   tagTypes: ['Facility'],
   endpoints: (builder) => ({
     getFacilitiesList: builder.query({
-      query: () => '/street_rates/list',
+      query: (args) => {
+        const status = args?.status;
+        return status
+          ? `/street_rates/list?status=${status}`
+          : '/street_rates/list';
+      },
       providesTags: ['Facility'],
     }),
   }),
