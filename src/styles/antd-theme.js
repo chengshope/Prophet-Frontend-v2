@@ -183,9 +183,11 @@ export const lightTheme = {
 
     // Message customization
     Message: {
-      borderRadius: 8,
+      borderRadius: 12,
       paddingInline: 16,
       paddingBlock: 12,
+      contentBg: '#ffffff',
+      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
     },
 
     // Breadcrumb customization
@@ -438,6 +440,11 @@ export const darkTheme = {
       linkColor: 'rgba(255, 255, 255, 0.65)',
       linkHoverColor: '#40a9ff',
       separatorColor: 'rgba(255, 255, 255, 0.45)',
+    },
+    Message: {
+      ...lightTheme.components.Message,
+      contentBg: '#1f1f1f',
+      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
     },
   },
 };
