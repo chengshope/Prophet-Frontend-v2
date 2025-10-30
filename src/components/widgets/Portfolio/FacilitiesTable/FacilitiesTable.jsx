@@ -6,7 +6,8 @@ import {
 import { useLookupStorTrackMutation } from '@/api/settingsApi';
 import { selectPortfolioId } from '@/features/auth/authSelector';
 import { showError, showSuccess } from '@/utils/messageService';
-import { Card, Spin, Table } from 'antd';
+import { EnvironmentOutlined } from '@ant-design/icons';
+import { Card, Space, Spin, Table } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import StorTrackModal from '../Modal/StorTrackModal';
@@ -136,7 +137,16 @@ const FacilitiesTable = ({ portfolioId, onRefetch }) => {
 
   return (
     <>
-      <Card title="StorTrack" className="page-card" styles={{ body: { padding: '1px 0 0' } }}>
+      <Card
+        title={
+          <Space>
+            <EnvironmentOutlined />
+            StorTrack
+          </Space>
+        }
+        className="page-card"
+        styles={{ body: { padding: '1px 0 0' } }}
+      >
         <Spin spinning={facilitiesLoading || updatingStorTrack} tip="Loading facilities...">
           <Table
             columns={columns}
