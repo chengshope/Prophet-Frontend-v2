@@ -1,10 +1,10 @@
-import { Input, Button, Space, Typography, Tag, Tooltip, Flex, Checkbox } from 'antd';
 import {
+  CloseCircleOutlined,
   EditOutlined,
   InfoCircleOutlined,
   PlusCircleOutlined,
-  CloseCircleOutlined,
 } from '@ant-design/icons';
+import { Button, Checkbox, Flex, Input, Space, Tag, Tooltip, Typography } from 'antd';
 import dayjs from 'dayjs';
 
 import { formatCurrency } from '@/utils/formatters';
@@ -50,8 +50,8 @@ export const getUnitTypeStatisticsTableColumns = ({
                   <Text style={{ color: '#1890ff' }}>
                     {getSecondaryUnitTypeLabel(record.guide)} $
                     {parseFloat(record?.variance) > 0
-                      ? '+' + record.variance * 100
-                      : record.variance * 100}
+                      ? '+' + (record.variance * 100).toFixed(0)
+                      : (record.variance * 100).toFixed(0)}
                     %
                   </Text>
                 )}
@@ -59,7 +59,7 @@ export const getUnitTypeStatisticsTableColumns = ({
                   <Text style={{ color: '#1890ff' }}>
                     {record?.master_unittype_name}{' '}
                     {record?.adjustment_percentage !== 0
-                      ? `+${record?.adjustment_percentage * 100}%`
+                      ? `+${(record?.adjustment_percentage * 100).toFixed(1)}%`
                       : ''}
                   </Text>
                 )}
