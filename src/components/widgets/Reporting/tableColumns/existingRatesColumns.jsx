@@ -15,7 +15,7 @@ export const existingRatesColumns = [
     align: 'right',
     sorter: (a, b) => (a.totalIncreases || 0) - (b.totalIncreases || 0),
     sortDirections: ['ascend', 'descend'],
-    render: (value) => value?.toLocaleString() || '0',
+    render: (value) => (value || 0).toLocaleString('en-US'),
   },
   {
     title: 'Total Occupied Units',
@@ -30,6 +30,7 @@ export const existingRatesColumns = [
       return aValue - bValue;
     },
     sortDirections: ['ascend', 'descend'],
+    render: (value) => (value || 0).toLocaleString('en-US'),
   },
   {
     title: 'ECRI %',
@@ -71,8 +72,12 @@ export const existingRatesColumns = [
     render: (value) => {
       if (!value) return '$0.00';
       const numValue = parseFloat(value.toString().replace(/[$,]/g, '') || 0);
+      const formattedValue = numValue.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
       const color = numValue >= 0 ? 'var(--ant-color-success)' : 'var(--ant-color-error)';
-      return <span style={{ color }}>${value}</span>;
+      return <span style={{ color }}>${formattedValue}</span>;
     },
   },
   {
