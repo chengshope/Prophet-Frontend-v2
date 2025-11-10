@@ -10,6 +10,7 @@ import {
   Title,
   Tooltip,
 } from 'chart.js';
+import dayjs from 'dayjs';
 import { useMemo, useRef } from 'react';
 import { Line } from 'react-chartjs-2';
 import './MultiLineChart.less';
@@ -61,14 +62,22 @@ const MultiLineChart = ({
       return { labels: [], datasets: [] };
     }
 
-    // Collect and sort all unique dates
-    const allDates = new Set();
+    // Collect all unique dates with their raw date values for proper sorting
+    const dateMap = new Map();
     data.forEach((facility) => {
       facility.data?.forEach((item) => {
-        allDates.add(item.formattedDate || item.date);
+        const formattedDate = item.formattedDate || item.date;
+        const rawDate = item.date;
+        if (!dateMap.has(formattedDate)) {
+          dateMap.set(formattedDate, rawDate);
+        }
       });
     });
-    const sortedDates = [...allDates].sort();
+
+    // Sort dates chronologically using the raw date values
+    const sortedDates = Array.from(dateMap.entries())
+      .sort((a, b) => dayjs(a[1]).valueOf() - dayjs(b[1]).valueOf())
+      .map((entry) => entry[0]);
 
     const colors = generateColors(data.length);
 
