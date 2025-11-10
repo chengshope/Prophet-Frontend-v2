@@ -1,27 +1,28 @@
-import { useMemo } from 'react';
-import { Col } from 'antd';
-import LineChart from '@/components/common/LineChart';
 import { useGetOccupancyOverTimeQuery } from '@/api/reportingApi';
+import LineChart from '@/components/common/LineChart';
 import { formatOccupancy } from '@/utils/formatters';
+import { Col } from 'antd';
+import { useMemo } from 'react';
 
 const OccupancyChart = ({ apiParams }) => {
+  const { facilityIds, ...rest } = apiParams || {};
   const {
     data: occupancyOverTime,
     isLoading: loadingOccupancyChart,
     isFetching: fetchingOccupancyChart,
-  } = useGetOccupancyOverTimeQuery(apiParams);
+  } = useGetOccupancyOverTimeQuery(rest);
 
   const formattedOccupancyData = useMemo(() => {
     const occupancyData = occupancyOverTime?.data || [];
 
     return Array.isArray(occupancyData)
       ? occupancyData.map((item) => {
-          return {
-            date: item.date,
-            occupancy: item.occupancy_percentage || item.occupancy || 0,
-            formattedDate: item.formatted_date,
-          };
-        })
+        return {
+          date: item.date,
+          occupancy: item.occupancy_percentage || item.occupancy || 0,
+          formattedDate: item.formatted_date,
+        };
+      })
       : [];
   }, [occupancyOverTime]);
 
@@ -30,7 +31,7 @@ const OccupancyChart = ({ apiParams }) => {
       <LineChart
         data={formattedOccupancyData}
         dataKey="occupancy"
-        title="Occupancy Over Time"
+        title="Portfolio Occupancy Over Time"
         color="#1890ff"
         formatter={formatOccupancy}
         tooltipLabel="Occupancy"

@@ -1,8 +1,8 @@
-import { useMemo } from 'react';
-import { Col } from 'antd';
-import LineChart from '@/components/common/LineChart';
 import { useGetOccupancyOverTimeQuery } from '@/api/reportingApi';
+import LineChart from '@/components/common/LineChart';
 import { formatOccupancy } from '@/utils/formatters';
+import { Col } from 'antd';
+import { useMemo } from 'react';
 
 const OccupancyChart = ({ apiParams }) => {
   const {
@@ -16,12 +16,12 @@ const OccupancyChart = ({ apiParams }) => {
 
     return Array.isArray(occupancyData)
       ? occupancyData.map((item) => {
-          return {
-            date: item.date,
-            occupancy: item.occupancy_percentage || item.occupancy || 0,
-            formattedDate: item.formatted_date,
-          };
-        })
+        return {
+          date: item.date,
+          occupancy: item.occupancy_percentage || item.occupancy || 0,
+          formattedDate: item.formatted_date,
+        };
+      })
       : [];
   }, [occupancyOverTime]);
 
