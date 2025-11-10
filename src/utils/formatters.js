@@ -11,10 +11,10 @@ export const formatCurrency = (value, currency = 'USD') => {
 
 export const formatRevenue = (value) => {
   if (value === null || value === undefined || isNaN(value)) {
-    return '$0.00M';
+    return '$0';
   }
   const numValue = Number(value);
-  return `$${(numValue / 1000000).toFixed(2)}M`;
+  return `$${numValue.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
 };
 
 export const formatRevPAF = (value) => {

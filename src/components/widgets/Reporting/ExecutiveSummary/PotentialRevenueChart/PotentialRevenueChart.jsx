@@ -1,8 +1,8 @@
-import { useMemo } from 'react';
-import { Col } from 'antd';
-import LineChart from '@/components/common/LineChart';
 import { useGetGrossPotentialRevenueOverTimeQuery } from '@/api/reportingApi';
+import LineChart from '@/components/common/LineChart';
 import { formatRevenue } from '@/utils/formatters';
+import { Col } from 'antd';
+import { useMemo } from 'react';
 
 const PotentialRevenueChart = ({ apiParams }) => {
   const {
@@ -16,12 +16,12 @@ const PotentialRevenueChart = ({ apiParams }) => {
 
     return Array.isArray(potentialData)
       ? potentialData.map((item) => {
-          return {
-            date: item.date,
-            potential: item.gross_potential_revenue || item.potential_revenue || 0,
-            formattedDate: item.formatted_date,
-          };
-        })
+        return {
+          date: item.date,
+          potential: item.gross_potential_revenue || item.potential_revenue || 0,
+          formattedDate: item.formatted_date,
+        };
+      })
       : [];
   }, [potentialRevenueOverTime]);
 

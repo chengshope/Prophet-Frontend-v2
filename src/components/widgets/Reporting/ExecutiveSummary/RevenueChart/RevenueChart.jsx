@@ -1,8 +1,8 @@
-import { useMemo } from 'react';
-import { Col } from 'antd';
-import LineChart from '@/components/common/LineChart';
 import { useGetGrossRentalRevenueOverTimeQuery } from '@/api/reportingApi';
+import LineChart from '@/components/common/LineChart';
 import { formatRevenue } from '@/utils/formatters';
+import { Col } from 'antd';
+import { useMemo } from 'react';
 
 const RevenueChart = ({ apiParams }) => {
   const {
@@ -16,12 +16,12 @@ const RevenueChart = ({ apiParams }) => {
 
     return Array.isArray(revenueData)
       ? revenueData.map((item) => {
-          return {
-            date: item.date,
-            revenue: item.gross_rental_revenue || item.revenue || 0,
-            formattedDate: item.formatted_date,
-          };
-        })
+        return {
+          date: item.date,
+          revenue: item.gross_rental_revenue || item.revenue || 0,
+          formattedDate: item.formatted_date,
+        };
+      })
       : [];
   }, [revenueOverTime]);
 
