@@ -149,7 +149,7 @@ const PortfolioSettings = ({ portfolioId }) => {
                 <Select>
                   <Option value="storedge">storEDGE</Option>
                   <Option value="sitelink">SiteLink</Option>
-                  <Option value="ssm">SSM</Option>
+                  <Option value="ssm_cloud">SSM Cloud</Option>
                 </Select>
               </Form.Item>
             </Col>
@@ -159,7 +159,7 @@ const PortfolioSettings = ({ portfolioId }) => {
             {({ getFieldValue }) => {
               const pmsType = getFieldValue('pms_type');
 
-              if (pmsType === 'sitelink' || pmsType === 'ssm') {
+              if (pmsType === 'sitelink' || pmsType === 'ssm_cloud') {
                 return (
                   <Row gutter={[16, 16]}>
                     <Col xs={24} md={12} lg={8}>
