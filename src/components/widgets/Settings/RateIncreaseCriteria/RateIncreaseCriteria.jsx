@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react';
 const RateIncreaseCriteria = ({ scope, loading = false }) => {
   const form = Form.useFormInstance();
   const [maxPercentIncrease, setMaxPercentIncrease] = useState(null);
+  const [minPercentIncrease, setMinPercentIncrease] = useState(null);
   const [limitAboveStreetRate, setLimitAboveStreetRate] = useState(null);
   const [percentAboveStreetRate, setPercentAboveStreetRate] = useState(null);
 
@@ -20,12 +21,16 @@ const RateIncreaseCriteria = ({ scope, loading = false }) => {
     if (form) {
       const values = form.getFieldsValue([
         'maxPercentIncrease',
+        'minPercentIncrease',
         'limitAboveStreetRate',
         'percentAboveStreetRate',
       ]);
 
       if (values.maxPercentIncrease !== maxPercentIncrease) {
         setMaxPercentIncrease(values.maxPercentIncrease);
+      }
+      if (values.minPercentIncrease !== minPercentIncrease) {
+        setMinPercentIncrease(values.minPercentIncrease);
       }
       if (values.limitAboveStreetRate !== limitAboveStreetRate) {
         setLimitAboveStreetRate(values.limitAboveStreetRate);
@@ -122,7 +127,13 @@ const RateIncreaseCriteria = ({ scope, loading = false }) => {
         name="minPercentIncrease"
         className="full-width-number"
       >
-        <InputNumber min={0} max={100} addonBefore="%" style={{ width: 300 }} />
+        <InputNumber
+          min={0}
+          addonBefore="%"
+          style={{ width: 300 }}
+          onChange={(value) => setMinPercentIncrease(value)}
+          status={isOverRecommended(minPercentIncrease) ? 'error' : ''}
+        />
       </Form.Item>
 
       <Form.Item
