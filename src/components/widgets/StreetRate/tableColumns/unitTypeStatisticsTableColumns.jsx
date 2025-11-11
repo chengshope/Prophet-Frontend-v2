@@ -143,7 +143,7 @@ export const getUnitTypeStatisticsTableColumns = ({
       render: (value) => value || 0,
     },
     {
-      title: `Today's ${rateType === 'street_rate' ? 'Street' : pmsType == 'storedge' ? 'Managed' : 'Web'}`,
+      title: `Today's ${rateType === 'street_rate' ? 'Street' : pmsType == 'storedge' ? 'Managed' : 'Web'} Rate`,
       dataIndex: rateType === 'street_rate' ? 'std_rate' : 'web_rate',
       key: 'current_rate',
       width: 100,

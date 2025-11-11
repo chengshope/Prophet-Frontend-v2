@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
+import { useGetPortfolioSettingsQuery } from '@/api/settingsApi';
 import {
   useGetStreetRatesFacilitiesQuery,
   useLazyExportCSVQuery,
@@ -12,6 +13,7 @@ import {
 } from '@/api/streetRatesApi';
 import PageFrame from '@/components/common/PageFrame';
 import { ErrorModal, PublishConfirmModal, StreetRatesTable } from '@/components/widgets/StreetRate';
+import { selectPortfolioId } from '@/features/auth/authSelector';
 import {
   selectSavedRateUnits,
   selectStreetRatesTotal,
@@ -36,8 +38,13 @@ const StreetRates = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const portfolioId = useSelector(selectPortfolioId);
   const totalFacilities = useSelector(selectStreetRatesTotal);
   const savedRateChangedUnits = useSelector(selectSavedRateUnits);
+
+  const { data: portfolioSettings } = useGetPortfolioSettingsQuery(portfolioId, {
+    skip: !portfolioId,
+  });
 
   const apiParams = useMemo(() => {
     const params = {
@@ -192,6 +199,7 @@ const StreetRates = () => {
             total: totalFacilities || 0,
             onChange: handlePagination,
           }}
+          portfolioSettings={portfolioSettings}
           latestPublishedDate={latestPublishedDate}
           savedRateChangedUnitsCount={savedRateChangedUnits.length}
         />

@@ -7,6 +7,7 @@ export const settingsApi = createApi({
   endpoints: (builder) => ({
     getPortfolioSettings: builder.query({
       query: (portfolioId) => `/portfolio/${portfolioId}`,
+      providesTags: (result, error, portfolioId) => [{ type: 'Portfolio', id: portfolioId }],
     }),
 
     updatePortfolioSettings: builder.mutation({
@@ -15,6 +16,7 @@ export const settingsApi = createApi({
         method: 'PUT',
         body: data,
       }),
+      invalidatesTags: (result, error, { portfolioId }) => [{ type: 'Portfolio', id: portfolioId }],
     }),
 
     // Facility Settings
