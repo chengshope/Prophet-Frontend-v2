@@ -44,6 +44,14 @@ export const getTenantEditingTableColumns = ({
       render: (value) => value || '-',
     },
     {
+      title: 'Physical Occupancy',
+      dataIndex: 'physical_occupancy',
+      key: 'physical_occupancy',
+      width: 120,
+      align: 'center',
+      render: (value) => (value != null ? `${parseFloat(value).toFixed(2)}%` : '0.00%'),
+    },
+    {
       title: 'Current Tenant Rate',
       dataIndex: 'current_rate',
       key: 'current_rate',
