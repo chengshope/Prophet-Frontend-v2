@@ -1,10 +1,10 @@
-import { Table } from 'antd';
 import { useUpdateCompetitorMutation } from '@/api/competitorsApi';
-import { getCompetitorsTableColumns } from '../tableColumns';
 import { ShopOutlined } from '@ant-design/icons';
+import { Table } from 'antd';
+import { getCompetitorsTableColumns } from '../tableColumns';
 
 const CompetitorsTable = ({ data, loading, onCompetitorUpdate, onRowHover }) => {
-  const [updateCompetitor] = useUpdateCompetitorMutation();
+  const [updateCompetitor, { isLoading: isUpdatingCompetitor }] = useUpdateCompetitorMutation();
 
   const handleCompetitorTypeChange = async (competitorId, newType) => {
     try {
@@ -30,7 +30,7 @@ const CompetitorsTable = ({ data, loading, onCompetitorUpdate, onRowHover }) => 
       <Table
         columns={columns}
         dataSource={data}
-        loading={loading}
+        loading={loading || isUpdatingCompetitor}
         size="small"
         rowKey="id"
         bordered
