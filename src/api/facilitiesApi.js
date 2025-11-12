@@ -9,9 +9,7 @@ export const facilitiesApi = createApi({
     getFacilitiesList: builder.query({
       query: (args) => {
         const status = args?.status;
-        return status
-          ? `/street_rates/list?status=${status}`
-          : '/street_rates/list';
+        return status ? `/street_rates/list?status=${status}` : '/street_rates/list';
       },
       providesTags: ['Facility'],
     }),

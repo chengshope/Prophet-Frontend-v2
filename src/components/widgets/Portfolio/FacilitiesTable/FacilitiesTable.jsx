@@ -34,7 +34,8 @@ const FacilitiesTable = ({ portfolioId, onRefetch }) => {
   const [lookupStorTrack] = useLookupStorTrackMutation();
   const [updateFacilityStorTrack, { isLoading: updatingStorTrack }] =
     useUpdateFacilityStorTrackMutation();
-  const [updateCompetitorStore, { isLoading: updatingCompetitorStore }] = useUpdateCompetitorStoreMutation();
+  const [updateCompetitorStore, { isLoading: updatingCompetitorStore }] =
+    useUpdateCompetitorStoreMutation();
 
   // Load facilities from API
   useEffect(() => {

@@ -16,12 +16,12 @@ const PotentialRevenueChart = ({ apiParams }) => {
 
     return Array.isArray(potentialData)
       ? potentialData.map((item) => {
-        return {
-          date: item.date,
-          potential: item.gross_potential_revenue || item.potential_revenue || 0,
-          formattedDate: item.formatted_date,
-        };
-      })
+          return {
+            date: item.date,
+            potential: item.gross_potential_revenue || item.potential_revenue || 0,
+            formattedDate: item.formatted_date,
+          };
+        })
       : [];
   }, [potentialRevenueOverTime]);
 

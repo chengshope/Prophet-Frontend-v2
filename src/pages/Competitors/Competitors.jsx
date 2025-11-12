@@ -27,7 +27,9 @@ const Competitors = () => {
   const [hoveredCompetitor, setHoveredCompetitor] = useState(null);
   const [previousFacilityId, setPreviousFacilityId] = useState(null);
 
-  const { data: facilities, isLoading: facilitiesLoading } = useGetFacilitiesListQuery({ status: 'enabled' });
+  const { data: facilities, isLoading: facilitiesLoading } = useGetFacilitiesListQuery({
+    status: 'enabled',
+  });
 
   const { data: selectedFacility, isLoading: isFacilityLoading } = useGetFacilityByIdQuery(id, {
     skip: !id,

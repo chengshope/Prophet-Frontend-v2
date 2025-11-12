@@ -16,12 +16,12 @@ const RevenueChart = ({ apiParams }) => {
 
     return Array.isArray(revenueData)
       ? revenueData.map((item) => {
-        return {
-          date: item.date,
-          revenue: item.gross_rental_revenue || item.revenue || 0,
-          formattedDate: item.formatted_date,
-        };
-      })
+          return {
+            date: item.date,
+            revenue: item.gross_rental_revenue || item.revenue || 0,
+            formattedDate: item.formatted_date,
+          };
+        })
       : [];
   }, [revenueOverTime]);
 

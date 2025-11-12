@@ -16,12 +16,12 @@ const OccupancyChart = ({ apiParams }) => {
 
     return Array.isArray(occupancyData)
       ? occupancyData.map((item) => {
-        return {
-          date: item.date,
-          occupancy: item.occupancy_percentage || item.occupancy || 0,
-          formattedDate: item.formatted_date,
-        };
-      })
+          return {
+            date: item.date,
+            occupancy: item.occupancy_percentage || item.occupancy || 0,
+            formattedDate: item.formatted_date,
+          };
+        })
       : [];
   }, [occupancyOverTime]);
 
