@@ -26,7 +26,23 @@ export const getUnitTypeStatisticsTableColumns = ({
   setUnitToLock,
   setLockExpirationDate,
   setLockScheduleModalOpen,
+  rows,
 }) => {
+  // Extract unique attributes from all rows for the filter
+  const uniqueAttributes = Array.from(
+    new Set(
+      rows
+        .map((row) => row.unit_style)
+        .filter(Boolean)
+        .flatMap((style) =>
+          style
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean)
+        )
+    )
+  ).sort();
+
   return [
     {
       title: (
@@ -40,6 +56,7 @@ export const getUnitTypeStatisticsTableColumns = ({
       dataIndex: 'unit_type',
       key: 'unit_type',
       width: 200,
+      sorter: (a, b) => (a.unit_type || '').localeCompare(b.unit_type || ''),
       render: (unitType, record) => (
         <Flex justify="space-between" gap={12}>
           <Flex vertical={true}>
@@ -109,6 +126,65 @@ export const getUnitTypeStatisticsTableColumns = ({
       dataIndex: 'unit_style',
       key: 'unit_style',
       width: 150,
+      sorter: (a, b) => (a.unit_style || '').localeCompare(b.unit_style || ''),
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => {
+        const FilterContent = () => {
+          const handleApply = () => {
+            confirm();
+          };
+
+          const handleReset = () => {
+            setSelectedKeys([]);
+            clearFilters();
+          };
+
+          return (
+            <div style={{ padding: 8, minWidth: 200 }}>
+              <Space direction="vertical" style={{ width: '100%' }}>
+                <Space
+                  direction="vertical"
+                  style={{ width: '100%', maxHeight: 200, overflow: 'auto' }}
+                >
+                  {uniqueAttributes.map((attribute) => (
+                    <Checkbox
+                      key={attribute}
+                      checked={selectedKeys.includes(attribute)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedKeys([...selectedKeys, attribute]);
+                        } else {
+                          setSelectedKeys(selectedKeys.filter((key) => key !== attribute));
+                        }
+                      }}
+                    >
+                      {attribute}
+                    </Checkbox>
+                  ))}
+                </Space>
+                <div style={{ borderTop: '1px solid #f0f0f0', margin: '0' }} />
+                <Flex gap={8}>
+                  <Button size="small" onClick={handleReset} block>
+                    Reset
+                  </Button>
+                  <Button type="primary" size="small" onClick={handleApply} block>
+                    Apply
+                  </Button>
+                </Flex>
+              </Space>
+            </div>
+          );
+        };
+
+        return <FilterContent />;
+      },
+      onFilter: (value, record) => {
+        if (!record.unit_style) return false;
+        const rowAttributes = record.unit_style
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean);
+        return rowAttributes.includes(value);
+      },
       render: (text) => {
         if (!text) return '-';
         const styles = text
@@ -132,6 +208,7 @@ export const getUnitTypeStatisticsTableColumns = ({
       key: 'physical_occupancy',
       width: 100,
       align: 'right',
+      sorter: (a, b) => (a.physical_occupancy || 0) - (b.physical_occupancy || 0),
       render: (value) => (value != null ? `${parseFloat(value).toFixed(2)}%` : '0.00%'),
     },
     {
@@ -140,6 +217,7 @@ export const getUnitTypeStatisticsTableColumns = ({
       key: 'available_units',
       width: 80,
       align: 'right',
+      sorter: (a, b) => (a.available_units || 0) - (b.available_units || 0),
       render: (value) => (value ? value.toLocaleString() : '0'),
     },
     {
@@ -148,6 +226,11 @@ export const getUnitTypeStatisticsTableColumns = ({
       key: 'current_rate',
       width: 100,
       align: 'right',
+      sorter: (a, b) => {
+        const aValue = a[rateType === 'street_rate' ? 'std_rate' : 'web_rate'] || 0;
+        const bValue = b[rateType === 'street_rate' ? 'std_rate' : 'web_rate'] || 0;
+        return aValue - bValue;
+      },
       render: (value) => formatCurrency(value),
     },
     {
@@ -156,6 +239,13 @@ export const getUnitTypeStatisticsTableColumns = ({
       key: 'recommended_rate',
       width: 110,
       align: 'right',
+      sorter: (a, b) => {
+        const aValue =
+          a[rateType === 'street_rate' ? 'recommended_std_rate' : 'recommended_web_rate'] || 0;
+        const bValue =
+          b[rateType === 'street_rate' ? 'recommended_std_rate' : 'recommended_web_rate'] || 0;
+        return aValue - bValue;
+      },
       render: (value) => formatCurrency(value),
     },
     {
@@ -164,6 +254,13 @@ export const getUnitTypeStatisticsTableColumns = ({
       dataIndex: rateType === 'street_rate' ? 'difference_amount' : 'difference_amount_web',
       width: 100,
       align: 'right',
+      sorter: (a, b) => {
+        const aValue =
+          a[rateType === 'street_rate' ? 'difference_amount' : 'difference_amount_web'] || 0;
+        const bValue =
+          b[rateType === 'street_rate' ? 'difference_amount' : 'difference_amount_web'] || 0;
+        return aValue - bValue;
+      },
       render: (value) => {
         return (
           <Tag color={value >= 0 ? 'green' : 'volcano'}>
@@ -179,6 +276,13 @@ export const getUnitTypeStatisticsTableColumns = ({
       dataIndex: rateType === 'street_rate' ? 'difference_percent' : 'difference_percent_web',
       width: 100,
       align: 'right',
+      sorter: (a, b) => {
+        const aValue =
+          a[rateType === 'street_rate' ? 'difference_percent' : 'difference_percent_web'] || 0;
+        const bValue =
+          b[rateType === 'street_rate' ? 'difference_percent' : 'difference_percent_web'] || 0;
+        return aValue - bValue;
+      },
       render: (value) => `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`,
     },
     {
@@ -186,6 +290,17 @@ export const getUnitTypeStatisticsTableColumns = ({
       key: 'new_rate',
       width: 120,
       align: 'right',
+      sorter: (a, b) => {
+        const aValue =
+          a[rateType === 'street_rate' ? 'new_std_rate' : 'new_web_rate'] ||
+          a[rateType === 'street_rate' ? 'recommended_std_rate' : 'recommended_web_rate'] ||
+          0;
+        const bValue =
+          b[rateType === 'street_rate' ? 'new_std_rate' : 'new_web_rate'] ||
+          b[rateType === 'street_rate' ? 'recommended_std_rate' : 'recommended_web_rate'] ||
+          0;
+        return aValue - bValue;
+      },
       render: (_, record) => {
         const isEditing = editingUnit === record.ut_id;
         const isLocked = record.locked;
@@ -259,6 +374,18 @@ export const getUnitTypeStatisticsTableColumns = ({
       key: 'lock_rate',
       width: 120,
       align: 'center',
+      sorter: (a, b) => {
+        if (a.locked && !b.locked) return -1;
+        if (!a.locked && b.locked) return 1;
+        if (a.locked && b.locked) {
+          if (a.lock_expiration_date && b.lock_expiration_date) {
+            return new Date(a.lock_expiration_date) - new Date(b.lock_expiration_date);
+          }
+          if (a.lock_expiration_date) return -1;
+          if (b.lock_expiration_date) return 1;
+        }
+        return 0;
+      },
       render: (_, record) => {
         const isLocked = record.locked;
         const hasExpiration = record.lock_expiration_date;

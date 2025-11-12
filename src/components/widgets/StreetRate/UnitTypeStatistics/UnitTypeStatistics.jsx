@@ -1,18 +1,18 @@
-import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Table, message } from 'antd';
 import { useGetUnitTypesQuery, useUpdateUnitTypeMutation } from '@/api/streetRatesApi';
 import { selectPmsType } from '@/features/auth/authSelector';
 import { updateFacility } from '@/features/streetRates/streetRatesSlice';
-import { getUnitTypeStatisticsTableColumns } from '../tableColumns/unitTypeStatisticsTableColumns';
+import { Table, message } from 'antd';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   LinkOrAnchorModal,
-  UnitTypeLinkingModal,
-  UnitTypeCategoryModal,
-  RemoveConfirmModal,
   LockScheduleConfirmModal,
   LockScheduleDateModal,
+  RemoveConfirmModal,
+  UnitTypeCategoryModal,
+  UnitTypeLinkingModal,
 } from '../Modal';
+import { getUnitTypeStatisticsTableColumns } from '../tableColumns/unitTypeStatisticsTableColumns';
 
 const UnitTypeStatistics = ({ facilityId, rows, rateType, changedUnits = [] }) => {
   const [editingUnit, setEditingUnit] = useState(null);
@@ -193,6 +193,7 @@ const UnitTypeStatistics = ({ facilityId, rows, rateType, changedUnits = [] }) =
     setUnitToLock,
     setLockExpirationDate,
     setLockScheduleModalOpen,
+    rows,
   });
 
   return (
