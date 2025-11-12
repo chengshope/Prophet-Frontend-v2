@@ -41,7 +41,7 @@ export const getExistingCustomersTableColumns = ({
     key: 'eligible_tenants',
     sorter: true,
     align: 'center',
-    render: (tenants) => tenants.length || 0,
+    render: (tenants) => (tenants?.length ? tenants.length.toLocaleString() : '0'),
   },
   {
     title: 'New',
@@ -55,13 +55,18 @@ export const getExistingCustomersTableColumns = ({
         align: 'center',
         className: 'new-group-header',
         render: (value) => {
-          const percentage = value || 0;
+          const percentage = Number(value) || 0;
           const color = percentage >= 0 ? '#52c41a' : '#ff4d4f';
           const sign = percentage >= 0 ? '+' : '';
+          const formatted = percentage.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          });
+
           return (
             <span style={{ color }}>
               {sign}
-              {percentage.toFixed(2)}%
+              {formatted}%
             </span>
           );
         },

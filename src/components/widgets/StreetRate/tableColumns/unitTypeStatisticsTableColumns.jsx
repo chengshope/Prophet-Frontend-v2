@@ -140,7 +140,7 @@ export const getUnitTypeStatisticsTableColumns = ({
       key: 'available_units',
       width: 80,
       align: 'right',
-      render: (value) => value || 0,
+      render: (value) => (value ? value.toLocaleString() : '0'),
     },
     {
       title: `Today's ${rateType === 'street_rate' ? 'Street' : pmsType == 'storedge' ? 'Managed' : 'Web'} Rate`,
