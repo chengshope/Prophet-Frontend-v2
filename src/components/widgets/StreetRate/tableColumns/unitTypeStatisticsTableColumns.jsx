@@ -118,7 +118,7 @@ export const getUnitTypeStatisticsTableColumns = ({
         return (
           <Space wrap size={1}>
             {styles.map((style, index) => (
-              <Tag key={index} size="small">
+              <Tag key={index} size="small" style={{ marginRight: 1 }}>
                 {style}
               </Tag>
             ))}

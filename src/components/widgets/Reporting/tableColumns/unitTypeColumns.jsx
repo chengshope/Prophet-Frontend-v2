@@ -1,4 +1,5 @@
 import { formatCurrency } from '@/utils/formatters';
+import { Tag } from 'antd';
 
 export const unitTypeColumns = [
   {
@@ -9,7 +10,7 @@ export const unitTypeColumns = [
     fixed: 'left',
     sorter: (a, b) => (a.unitType || '').localeCompare(b.unitType || ''),
     sortDirections: ['ascend', 'descend'],
-    render: (value) => <span style={{ fontWeight: 500 }}>{value || 'N/A'}</span>,
+    render: (value) => <span>{value || 'N/A'}</span>,
   },
   {
     title: 'Beginning Occupancy',
@@ -146,6 +147,13 @@ export const unitTypeColumns = [
     responsive: ['xl'],
     render: (value) => {
       if (typeof value === 'string' && value.startsWith('$')) {
+        if (value === '$0.00') {
+          return (
+            <Tag color="#eee" style={{ color: '#666', marginRight: 0 }}>
+              Not Found
+            </Tag>
+          );
+        }
         return value;
       }
       return formatCurrency(value);
