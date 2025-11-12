@@ -34,7 +34,7 @@ const FacilitiesTable = ({ portfolioId, onRefetch }) => {
   const [lookupStorTrack] = useLookupStorTrackMutation();
   const [updateFacilityStorTrack, { isLoading: updatingStorTrack }] =
     useUpdateFacilityStorTrackMutation();
-  const [updateCompetitorStore] = useUpdateCompetitorStoreMutation();
+  const [updateCompetitorStore, { isLoading: updatingCompetitorStore }] = useUpdateCompetitorStoreMutation();
 
   // Load facilities from API
   useEffect(() => {
@@ -167,7 +167,7 @@ const FacilitiesTable = ({ portfolioId, onRefetch }) => {
           setNearbyStores([]);
         }}
         onConfirm={handleStorTrackConfirm}
-        confirmLoading={updatingStorTrack}
+        confirmLoading={updatingStorTrack || updatingCompetitorStore}
         selectedFacility={selectedFacility}
         nearbyStores={nearbyStores}
         loadingStores={loadingStores}
