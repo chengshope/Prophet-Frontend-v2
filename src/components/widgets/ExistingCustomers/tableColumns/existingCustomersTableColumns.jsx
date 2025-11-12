@@ -74,12 +74,16 @@ export const getExistingCustomersTableColumns = ({
         align: 'center',
         className: 'new-group-header',
         render: (value) => {
-          const avgChange = value || 0;
+          const avgChange = Number(value) || 0;
           const color = avgChange >= 0 ? '#52c41a' : '#ff4d4f';
           const sign = avgChange >= 0 ? '+' : '';
+          const formatted = avgChange.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          });
           return (
             <span style={{ color }}>
-              {sign}${avgChange.toFixed(2)}
+              {sign}${formatted}
             </span>
           );
         },
@@ -92,8 +96,8 @@ export const getExistingCustomersTableColumns = ({
         align: 'center',
         className: 'new-group-header',
         render: (value) => {
-          const amount = value || 0;
-          return `$${amount.toFixed(2)}`;
+          const amount = Number(value) || 0;
+          return `$${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
         },
       },
       {
