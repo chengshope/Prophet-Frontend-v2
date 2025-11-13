@@ -26,6 +26,11 @@ export const getTenantEditingTableColumns = ({
       title: 'Tenant Name/Unit',
       key: 'tenant_name',
       width: 180,
+      sorter: (a, b) => {
+        const aName = `${a.tenant_fname} ${a.tenant_lname}`.toLowerCase();
+        const bName = `${b.tenant_fname} ${b.tenant_lname}`.toLowerCase();
+        return aName.localeCompare(bName);
+      },
       render: (_, tenant) => (
         <div>
           <div style={{ fontWeight: 'bold', fontSize: '13px' }}>
@@ -41,6 +46,7 @@ export const getTenantEditingTableColumns = ({
       key: 'unit_type',
       width: 120,
       align: 'center',
+      sorter: (a, b) => (a.unit_type || '').localeCompare(b.unit_type || ''),
       render: (value) => value || '-',
     },
     {
@@ -49,6 +55,7 @@ export const getTenantEditingTableColumns = ({
       key: 'physical_occupancy',
       width: 120,
       align: 'center',
+      sorter: (a, b) => (a.physical_occupancy || 0) - (b.physical_occupancy || 0),
       render: (value) => (value != null ? `${parseFloat(value).toFixed(2)}%` : '0.00%'),
     },
     {
@@ -57,6 +64,7 @@ export const getTenantEditingTableColumns = ({
       key: 'current_rate',
       width: 130,
       align: 'center',
+      sorter: (a, b) => (a.current_rate || 0) - (b.current_rate || 0),
       render: (value, tenant) => (
         <div style={{ color: showCurrentRateColor(tenant) }}>{formatCurrency(value || 0)}</div>
       ),
@@ -67,6 +75,7 @@ export const getTenantEditingTableColumns = ({
       key: 'street_rate',
       width: 130,
       align: 'center',
+      sorter: (a, b) => (a.std_rate || 0) - (b.std_rate || 0),
       render: (value) => formatCurrency(value || 0),
     },
     {
@@ -74,6 +83,11 @@ export const getTenantEditingTableColumns = ({
       key: 'street_rate_delta',
       width: 130,
       align: 'center',
+      sorter: (a, b) => {
+        const aDelta = (a.current_rate || 0) - (a.std_rate || 0);
+        const bDelta = (b.current_rate || 0) - (b.std_rate || 0);
+        return aDelta - bDelta;
+      },
       render: (_, tenant) => {
         const delta = (tenant.current_rate || 0) - (tenant.std_rate || 0);
         const color = delta >= 0 ? '#52c41a' : '#ff4d4f';
@@ -92,6 +106,7 @@ export const getTenantEditingTableColumns = ({
       key: 'moveout_probability',
       width: 150,
       align: 'center',
+      sorter: (a, b) => (a.move_out_probability || 0) - (b.move_out_probability || 0),
       render: (value) => {
         const percentage = value * 100 || 0;
         const color = getMoveOutProbabilityColor(percentage);
@@ -107,6 +122,11 @@ export const getTenantEditingTableColumns = ({
       key: 'previously_increased',
       width: 120,
       align: 'center',
+      sorter: (a, b) => {
+        const aValue = dayjs(a.move_in_date).isBefore(dayjs(a.last_ecri_date)) ? 1 : 0;
+        const bValue = dayjs(b.move_in_date).isBefore(dayjs(b.last_ecri_date)) ? 1 : 0;
+        return aValue - bValue;
+      },
       render: (_, tenant) =>
         dayjs(tenant.move_in_date).isBefore(dayjs(tenant.last_ecri_date)) ? 'Yes' : 'No',
     },
@@ -116,6 +136,11 @@ export const getTenantEditingTableColumns = ({
       key: 'last_increase_date',
       width: 120,
       align: 'center',
+      sorter: (a, b) => {
+        const aDate = new Date(a.last_ecri_date);
+        const bDate = new Date(b.last_ecri_date);
+        return aDate - bDate;
+      },
       render: (value) => moment(value).format('M/D/YY'),
     },
     {
@@ -124,6 +149,7 @@ export const getTenantEditingTableColumns = ({
       key: 'rate_increase_dollar',
       width: 130,
       align: 'center',
+      sorter: (a, b) => (a.increase_amount || 0) - (b.increase_amount || 0),
       render: (value) => <div>${value.toFixed(2)}</div>,
     },
     {
@@ -132,6 +158,7 @@ export const getTenantEditingTableColumns = ({
       key: 'rate_increase',
       width: 130,
       align: 'center',
+      sorter: (a, b) => (a.increase_percentage || 0) - (b.increase_percentage || 0),
       render: (value) => <div>{(value * 100.0).toFixed(2)}%</div>,
     },
     {
@@ -140,6 +167,11 @@ export const getTenantEditingTableColumns = ({
       key: 'effective_date',
       width: 120,
       align: 'center',
+      sorter: (a, b) => {
+        const aDate = new Date(a.effective_date);
+        const bDate = new Date(b.effective_date);
+        return aDate - bDate;
+      },
       render: (date) => {
         if (!date) return '-';
         const d = new Date(date);
@@ -156,6 +188,11 @@ export const getTenantEditingTableColumns = ({
       key: 'new_rate',
       width: 160,
       align: 'center',
+      sorter: (a, b) => {
+        const aValue = editingTenants[a.ecri_id]?.new_rate || a.current_rate || 0;
+        const bValue = editingTenants[b.ecri_id]?.new_rate || b.current_rate || 0;
+        return aValue - bValue;
+      },
       render: (_, tenant) => {
         const isEditing = editingTenantId === tenant.ecri_id;
         const currentValue = editingTenants[tenant.ecri_id]?.new_rate || tenant.current_rate;
