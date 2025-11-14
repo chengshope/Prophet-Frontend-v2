@@ -174,7 +174,7 @@ export const getTenantEditingTableColumns = ({
       },
       render: (date) => {
         if (!date) return '-';
-        const d = new Date(date);
+        const d = new Date(date + 'T00:00:00');
         return d.toLocaleDateString('en-US', {
           year: '2-digit',
           month: '2-digit',
