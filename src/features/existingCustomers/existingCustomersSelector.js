@@ -69,9 +69,10 @@ export const getFormattedSummaryData = createSelector(
 
     const totalTenants = sum_tenants.toLocaleString();
     const averageRateIncrease = fc_length > 0 ? (sum_avr_rate_inc / fc_length).toFixed(2) : '0.00';
-    const estimatedRevenueIncrease = (
-      sum_tenants > 0 ? sum_rev_inc / sum_tenants : 0
-    ).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const estimatedRevenueIncrease = sum_rev_inc.toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
     const averageMoveOutProbability = fc_length > 0 ? (sum_avr_mop / fc_length).toFixed(1) : '0.0';
 
     return {
