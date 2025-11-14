@@ -24,22 +24,26 @@ Prophet is an AI-driven revenue management platform that provides automated stre
 ## 🛠️ Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd Prophet-Frontend-v2
    ```
 
 2. **Install dependencies**
+
    ```bash
    yarn install
    ```
 
 3. **Set up environment variables**
+
    ```bash
    cp .env.example .env
    ```
 
    Edit `.env` and configure:
+
    ```env
    VITE_BACKEND_HOST=http://localhost:3000
    VITE_GOOGLE_MAPS_API_KEY=your_google_maps_api_key_here
@@ -48,17 +52,21 @@ Prophet is an AI-driven revenue management platform that provides automated stre
 ## 🏃 Running the Application
 
 ### Development Mode
+
 ```bash
 yarn dev
 ```
+
 The application will be available at `http://localhost:5432`
 
 ### Production Build
+
 ```bash
 yarn build
 ```
 
 ### Preview Production Build
+
 ```bash
 yarn preview
 ```
@@ -66,6 +74,7 @@ yarn preview
 ## 🧹 Code Quality
 
 ### Linting
+
 ```bash
 # Check for linting errors
 yarn lint
@@ -75,6 +84,7 @@ yarn lint:fix
 ```
 
 ### Formatting
+
 ```bash
 # Format code with Prettier
 yarn format
@@ -119,30 +129,35 @@ src/
 ## 🔑 Key Features
 
 ### 🤖 AI-Driven Revenue Management
+
 - **Daily Street Rate Recommendations** - Automated analysis of market and competitive intelligence
 - **ECRI Move-Out Probability** - Calculated move-out probabilities for individual tenants during rate increases
 - **Insights Dashboard** - Track revenue impact, customer response, and pricing performance in real-time
 - **Algorithm-Driven Pricing** - Smart pricing recommendations with a click of a button
 
 ### 🏢 Portfolio Management
+
 - View and manage multiple portfolios
 - User management per portfolio
 - Facility management across properties
 - Portfolio-level controls for pricing strategies
 
 ### 🎯 Competitor Intelligence
+
 - **Automated Competitor Rate Monitoring** - Automatically pulls in competitor pricing to keep you market-aware
 - Track competitor facilities and occupancy
 - Geographic visualization with Google Maps
 - Compare rates across the market
 
 ### 💰 Street Rates & ECRI
+
 - Monitor market rates in real-time
 - Automated rate analysis (eliminates manual spreadsheets)
 - Historical rate tracking
 - Predictive insights into customer retention risk before rate increases
 
 ### 📊 Reporting & Analytics
+
 - Revenue impact tracking
 - Customer response analytics
 - Data visualization with interactive charts
@@ -150,12 +165,14 @@ src/
 - Performance metrics and KPIs
 
 ### 🔐 Authentication & Security
+
 - Secure login with email/password
 - Forgot password flow
 - Reset password with Terms of Service acceptance
 - Protected routes with authentication guards
 
 ### ⚙️ Settings
+
 - User preferences
 - Application configuration
 - Theme customization
@@ -163,6 +180,7 @@ src/
 ## 🎨 Styling
 
 The application uses:
+
 - **Ant Design** for component styling
 - **LESS** for custom styles
 - Custom theme configuration in `src/styles/antd-theme.js`
@@ -177,6 +195,7 @@ The application uses:
 ## 🌐 API Integration
 
 API services are organized in `src/api/`:
+
 - `authApi.js` - Authentication endpoints
 - `portfolioApi.js` - Portfolio management
 - `competitorsApi.js` - Competitor data
@@ -188,6 +207,7 @@ API services are organized in `src/api/`:
 ## 📝 Code Style
 
 The project follows:
+
 - ESLint configuration with React best practices
 - Prettier for consistent formatting
 - Single quotes, semicolons always
@@ -215,15 +235,18 @@ SpareBox Technologies provides technological solutions designed to optimize the 
 ## 🔗 Related Links
 
 ### Prophet Application
+
 - **Production**: [prophet.spareboxtech.com](https://prophet.spareboxtech.com)
 - **Staging**: [staging-prophet.spareboxtech.com](https://staging-prophet.spareboxtech.com)
 - **Product Introduction**: [https://spareboxtech.com/prophet/](https://spareboxtech.com/prophet/)
 
 ### SpareBox Technologies
+
 - [SpareBox Technologies](https://spareboxtech.com/)
 - [Terms of Service](https://spareboxtech.com/terms-of-service-bigfoot-prophet/)
 
 ### Documentation
+
 - [Ant Design Documentation](https://ant.design/)
 - [Vite Documentation](https://vitejs.dev/)
 - [React Documentation](https://react.dev/)
