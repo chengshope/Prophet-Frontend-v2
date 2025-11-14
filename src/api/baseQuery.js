@@ -11,7 +11,7 @@ const rawBaseQuery = fetchBaseQuery({
     }
     return headers;
   },
-  timeout: 60 * 1000, // Set a long timeout for the Sync-data API call
+  timeout: 5 * 60 * 1000, // Set a long timeout for the Sync-data API call
 });
 
 // Track if we've already shown a 401 error to prevent duplicate notifications
