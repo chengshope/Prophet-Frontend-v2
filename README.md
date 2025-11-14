@@ -214,9 +214,16 @@ SpareBox Technologies provides technological solutions designed to optimize the 
 
 ## 🔗 Related Links
 
-- [Prophet Product Page](https://spareboxtech.com/prophet/)
+### Prophet Application
+- **Production**: [prophet.spareboxtech.com](https://prophet.spareboxtech.com)
+- **Staging**: [staging-prophet.spareboxtech.com](https://staging-prophet.spareboxtech.com)
+- **Product Introduction**: [https://spareboxtech.com/prophet/](https://spareboxtech.com/prophet/)
+
+### SpareBox Technologies
 - [SpareBox Technologies](https://spareboxtech.com/)
 - [Terms of Service](https://spareboxtech.com/terms-of-service-bigfoot-prophet/)
+
+### Documentation
 - [Ant Design Documentation](https://ant.design/)
 - [Vite Documentation](https://vitejs.dev/)
 - [React Documentation](https://react.dev/)
