@@ -1,6 +1,6 @@
 import { useResetPasswordMutation } from '@/api/authApi';
 import { ArrowLeftOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
-import { Button, Flex, Form, Input, Result, Typography } from 'antd';
+import { Button, Checkbox, Flex, Form, Input, Result, Typography } from 'antd';
 import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 
@@ -21,6 +21,7 @@ const ResetPassword = () => {
         token: tokenParam,
         password: values.password,
         confirmPassword: values.confirmPassword,
+        termsAccepted: values.termsAccepted,
       }).unwrap();
       setDone(true);
     } catch {
@@ -88,13 +89,36 @@ const ResetPassword = () => {
           <Input.Password prefix={<LockOutlined />} placeholder="Confirm new password" />
         </Form.Item>
 
+        <Form.Item
+          name="termsAccepted"
+          valuePropName="checked"
+          rules={[
+            {
+              validator: (_, value) =>
+                value
+                  ? Promise.resolve()
+                  : Promise.reject(new Error('You must accept the Terms of Service')),
+            },
+          ]}
+        >
+          <Checkbox>
+            I agree to the{' '}
+            <a
+              href="https://spareboxtech.com/terms-of-service-bigfoot-prophet/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Terms of Service.
+            </a>
+          </Checkbox>
+        </Form.Item>
+
         <Form.Item>
           <Button
             type="primary"
             htmlType="submit"
             loading={isLoading}
             block
-            style={{ marginTop: 12 }}
           >
             Update Password
           </Button>

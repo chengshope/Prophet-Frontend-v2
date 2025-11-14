@@ -32,15 +32,10 @@ export const authApi = createApi({
 
     // Reset password endpoint
     resetPassword: builder.mutation({
-      query: (data) => ({
+      query: (body) => ({
         url: '/reset-password',
         method: 'POST',
-        body: {
-          token: data.token,
-          email: data.email,
-          password: data.password,
-          confirmPassword: data.confirmPassword,
-        },
+        body,
       }),
     }),
 
